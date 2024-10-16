@@ -14,30 +14,31 @@ datasource db {
 }
 
 model Space {
-  id                 String                  @id @unique @default(cuid())
-  company_name       String                  @db.VarChar(255)
-  name               String                  @db.VarChar(255)
-  description        String                  @db.VarChar(255)
-  email              String                  @unique @db.VarChar(255)
-  is_email_verified  Boolean                 @default(false)
-  banner             String?                 @db.VarChar(255)
-  logo_url           String?                 @db.VarChar(255)
+  id                 String                   @id @unique @default(cuid())
+  company_name       String                   @db.VarChar(255)
+  name               String                   @db.VarChar(255)
+  description        String                   @db.VarChar(255)
+  email              String                   @unique @db.VarChar(255)
+  is_email_verified  Boolean                  @default(false)
+  banner             String?                  @db.VarChar(255)
+  logo_url           String?                  @db.VarChar(255)
   category           String
-  created_at         DateTime                @default(now())
-  updated_at         DateTime                @updatedAt
+  created_at         DateTime                 @default(now())
+  updated_at         DateTime                 @updatedAt
   created_by         String
   updated_by         String
-  links              SpaceLinks[]
-  documents          SpaceDocuments[]        @relation("SpaceToDocuments")
-  quests             Quest[]                 @relation("SpaceToQuest")
-  email_verification SpaceEmailVerification?
+  links              SpaceLinks[]             @relation("SpaceLinks")
+  documents          SpaceDocuments[]         @relation("SpaceToDocuments")
+  quests             Quest[]                  @relation("SpaceToQuest")
+  email_verification SpaceEmailVerification[] @relation("SpaceEmailVerification")
 }
 
 model SpaceEmailVerification {
   id         String   @id @unique @default(cuid())
   token      String   @unique
-  space      Space    @relation(fields: [space_id], references: [id])
-  space_id   String   @unique
+  space      Space?   @relation("SpaceEmailVerification", fields: [space_id], references: [id])
+  is_expired Boolean  @default(false)
+  space_id   String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   created_by String
@@ -51,14 +52,15 @@ model SpaceLinks {
   updated_at DateTime @updatedAt
   created_by String
   updated_by String
-  Space      Space?   @relation(fields: [spaceId], references: [id])
-  spaceId    String?
+  space      Space    @relation("SpaceLinks", fields: [space_id], references: [id])
+  space_id   String
 }
 
 model SpaceDocuments {
   id         String   @id @unique @default(cuid())
   space_id   String
   space      Space    @relation("SpaceToDocuments", fields: [space_id], references: [id])
+  path       String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   created_by String
