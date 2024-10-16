@@ -2,6 +2,7 @@ import {inject, injectable} from "tsyringe";
 import {SpaceService} from "../service/spaceService";
 import {NextFunction, Request, Response} from "express";
 import {CreateSpaceDto} from "../dtos/spaceDTO";
+import {HttpException} from "../exceptions/httpException";
 
 @injectable()
 export class SpaceController {
@@ -17,7 +18,19 @@ export class SpaceController {
             const {data, message, statusCode} = await this.spaceService.createSpace(spaceDto);
             res.status(statusCode).send({ data, message})
         } catch(error: any) {
-            console.log(error)
+            next(error)
+        }
+    }
+
+    getSpace = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const spaceId: string = req.params.id;
+            if(!spaceId) {
+                throw new HttpException(400, "invalid spaceID");
+            }
+            const {data, message, statusCode} = await this.spaceService.getSpace(spaceId);
+            res.status(statusCode).send({ data, message})
+        } catch(error: any) {
             next(error)
         }
     }
@@ -27,8 +40,49 @@ export class SpaceController {
             const {data, message, statusCode} = await this.spaceService.uploadDocuments(req, res);
             res.status(statusCode).send({ data, message})
         } catch (error: any) {
-            console.log(error)
             next(error)
         }
     }
+
+    sentVerificationEmail = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const {data, message, statusCode} = await this.spaceService.sentVerificationEmail(req.params.id);
+            res.status(statusCode).send({ data, message})
+        } catch (error: any) {
+            next(error)
+        }
+    }
+
+    verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const {data, message, statusCode} = await this.spaceService.verifyEmail(req.params.token);
+            res.status(statusCode).send({ data, message})
+        } catch (error: any) {
+            next(error)
+        }
+    }
+
+    addSpaceLinks = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const {link} = req.body;
+            const spaceId = String(req.params.id);
+            if (!link) {
+                throw new HttpException(400, "invalid link")
+            }
+            const {data, message, statusCode} = await this.spaceService.addSpaceLinks(spaceId, link);
+            res.status(statusCode).send({ data, message})
+        } catch(error: any) {
+            next(error)
+        }
+    }
+
+    addLogo = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const {data, message, statusCode} = await this.spaceService.addLogo(req, res);
+            res.status(statusCode).send({ data, message})
+        } catch (error: any) {
+            next(error)
+        }
+    }
+
 }
