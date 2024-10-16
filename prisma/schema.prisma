@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Space {
+  id                 String                  @id @unique @default(cuid())
+  company_name       String                  @db.VarChar(255)
+  name               String                  @db.VarChar(255)
+  description        String                  @db.VarChar(255)
+  email              String                  @unique @db.VarChar(255)
+  is_email_verified  Boolean                 @default(false)
+  banner             String?                 @db.VarChar(255)
+  logo_url           String?                 @db.VarChar(255)
+  category           String
+  created_at         DateTime                @default(now())
+  updated_at         DateTime                @updatedAt
+  created_by         String
+  updated_by         String
+  links              SpaceLinks[]
+  documents          SpaceDocuments[]        @relation("SpaceToDocuments")
+  quests             Quest[]                 @relation("SpaceToQuest")
+  email_verification SpaceEmailVerification?
+}
+
+model SpaceEmailVerification {
+  id         String   @id @unique @default(cuid())
+  token      String   @unique
+  space      Space    @relation(fields: [space_id], references: [id])
+  space_id   String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by String
+  updated_by String
+}
+
+model SpaceLinks {
+  id         String   @id @unique @default(cuid())
+  link       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by String
+  updated_by String
+  Space      Space?   @relation(fields: [spaceId], references: [id])
+  spaceId    String?
+}
+
+model SpaceDocuments {
+  id         String   @id @unique @default(cuid())
+  space_id   String
+  space      Space    @relation("SpaceToDocuments", fields: [space_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by String
+  updated_by String
+}
+
+model Quest {
+  id                String        @id @unique @default(cuid())
+  space_id          String
+  title             String        @db.VarChar(255)
+  description       String        @db.VarChar(255)
+  participant_limit Int
+  max_reward_point  Int
+  end_date          DateTime
+  reattempt         Int
+  status            QuestStatus
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  space             Space         @relation("SpaceToQuest", fields: [space_id], references: [id])
+  template          QuestTemplate @relation(fields: [template_id], references: [id])
+  template_id       String        @unique
+}
+
+model QuestTemplate {
+  id            String                @id @unique @default(cuid())
+  template_name String                @db.VarChar(255)
+  description   String                @db.Text
+  category      QuestTemplateCategory
+  created_at    DateTime              @default(now())
+  updated_at    DateTime              @updatedAt
+  quest         Quest?                @relation
+}
+
+enum QuestStatus {
+  DRAFTED
+  INITIATED
+  SCHEDULED
+  PAUSED
+  RUNNING
+  ENDED
+}
+
+enum QuestTemplateCategory {
+  GENERAL
+  TIMED
+  MINI_GAMES
+  VOTE
+}
