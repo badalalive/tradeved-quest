@@ -23,7 +23,8 @@ CREATE TABLE `Space` (
 CREATE TABLE `SpaceEmailVerification` (
     `id` VARCHAR(191) NOT NULL,
     `token` VARCHAR(191) NOT NULL,
-    `space_id` VARCHAR(191) NOT NULL,
+    `is_expired` BOOLEAN NOT NULL DEFAULT false,
+    `space_id` VARCHAR(191) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
     `created_by` VARCHAR(191) NOT NULL,
@@ -31,7 +32,6 @@ CREATE TABLE `SpaceEmailVerification` (
 
     UNIQUE INDEX `SpaceEmailVerification_id_key`(`id`),
     UNIQUE INDEX `SpaceEmailVerification_token_key`(`token`),
-    UNIQUE INDEX `SpaceEmailVerification_space_id_key`(`space_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -43,7 +43,7 @@ CREATE TABLE `SpaceLinks` (
     `updated_at` DATETIME(3) NOT NULL,
     `created_by` VARCHAR(191) NOT NULL,
     `updated_by` VARCHAR(191) NOT NULL,
-    `spaceId` VARCHAR(191) NULL,
+    `space_id` VARCHAR(191) NOT NULL,
 
     UNIQUE INDEX `SpaceLinks_id_key`(`id`),
     PRIMARY KEY (`id`)
@@ -96,10 +96,10 @@ CREATE TABLE `QuestTemplate` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `SpaceEmailVerification` ADD CONSTRAINT `SpaceEmailVerification_space_id_fkey` FOREIGN KEY (`space_id`) REFERENCES `Space`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `SpaceEmailVerification` ADD CONSTRAINT `SpaceEmailVerification_space_id_fkey` FOREIGN KEY (`space_id`) REFERENCES `Space`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `SpaceLinks` ADD CONSTRAINT `SpaceLinks_spaceId_fkey` FOREIGN KEY (`spaceId`) REFERENCES `Space`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `SpaceLinks` ADD CONSTRAINT `SpaceLinks_space_id_fkey` FOREIGN KEY (`space_id`) REFERENCES `Space`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `SpaceDocuments` ADD CONSTRAINT `SpaceDocuments_space_id_fkey` FOREIGN KEY (`space_id`) REFERENCES `Space`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
