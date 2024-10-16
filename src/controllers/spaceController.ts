@@ -17,8 +17,18 @@ export class SpaceController {
             const {data, message, statusCode} = await this.spaceService.createSpace(spaceDto);
             res.status(statusCode).send({ data, message})
         } catch(error: any) {
+            console.log(error)
             next(error)
         }
     }
 
+    uploadDocuments = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const {data, message, statusCode} = await this.spaceService.uploadDocuments(req, res);
+            res.status(statusCode).send({ data, message})
+        } catch (error: any) {
+            console.log(error)
+            next(error)
+        }
+    }
 }

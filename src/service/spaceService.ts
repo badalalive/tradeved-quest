@@ -2,6 +2,8 @@ import {inject, injectable} from "tsyringe";
 import {SpaceRepository} from "../repository/spaceRepository";
 import {CreateSpaceDto} from "../dtos/spaceDTO";
 import {HttpException} from "../exceptions/httpException";
+import {Request, Response} from "express";
+import {upload} from "../config/multerConfig";
 
 @injectable()
 export class SpaceService {
@@ -12,10 +14,17 @@ export class SpaceService {
 
     createSpace = async (spaceDTO: CreateSpaceDto) => {
 
-        // Check if the space with the same email already exists
-        const existingSpace = await this.spaceRepository.findSpaceByEmail(spaceDTO.email);
+        // Check if the space with the same email or company name already exists
+        let existingSpace = await this.spaceRepository.findSpaceByEmailOrCompanyName(spaceDTO.email, spaceDTO.company_name);
         if (existingSpace) {
-            throw new HttpException(409, 'Space with this email already exists.');
+            throw new HttpException(409, 'Space with this email/company already exists.');
+        }
+        const spaceName = spaceDTO.name;
+        if(spaceName) {
+            existingSpace = await this.spaceRepository.findSpaceByName(spaceName);
+        }
+        if(existingSpace) {
+            throw new HttpException(409, 'Space with name already exist');
         }
 
         // Create a new space using the repository
@@ -33,4 +42,28 @@ export class SpaceService {
             throw new HttpException(500, 'Error creating the space.');
         }
     };
+
+    uploadDocuments = async (req: Request, res: Response) => {
+        await new Promise<void>((resolve, reject) => {
+            upload.array('files', 10)(req, res, (err: any) => {
+                if (err) {
+                    return reject(new HttpException(400, err.message));
+                }
+                if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
+                    return reject(new HttpException(400, "No file uploaded"));
+                }
+                resolve();
+            });
+        });
+
+        const filesInfo = (req.files as Express.Multer.File[]).map(file => ({
+            filename: file.originalname,
+            path: `${process.env.SERVER_URL}/${file.destination}${file.filename}`
+        }));
+        return {
+            statusCode: 200,
+            message: "File(s) uploaded successfully!",
+            data: filesInfo
+        };
+    }
 }

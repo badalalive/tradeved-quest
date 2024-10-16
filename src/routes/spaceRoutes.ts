@@ -14,7 +14,7 @@ const spaceRoutes: Router = Router();
  *     summary: Create a new Space
  *     description: Creates a new Space with the provided data.
  *     tags:
- *       - Spaces
+ *       - Space
  *     requestBody:
  *       required: true
  *       content:
@@ -109,6 +109,79 @@ const spaceRoutes: Router = Router();
  *                   example: "Internal server error"
  */
 spaceRoutes.post("", spaceController.create)
+/**
+ * @swagger
+ * /space/upload-documents:
+ *   post:
+ *     summary: Upload multiple documents
+ *     description: Upload multiple files such as PDFs, Word documents, or images. The endpoint supports up to 10 files in one request.
+ *     tags:
+ *       - Space
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               files:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *     responses:
+ *       200:
+ *         description: Files uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: File(s) uploaded successfully!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       filename:
+ *                         type: string
+ *                         example: example.pdf
+ *                       path:
+ *                         type: string
+ *                         example: https://your-server.com/uploads/documents/example.pdf
+ *       400:
+ *         description: No files uploaded or invalid file
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: No file uploaded
+ *       500:
+ *         description: Server error during file upload
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
+spaceRoutes.post("/upload-documents", spaceController.uploadDocuments)
 
 export default spaceRoutes;
 

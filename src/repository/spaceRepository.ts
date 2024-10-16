@@ -11,11 +11,16 @@ export class SpaceRepository {
     }
 
     // Find space by email
-    async findSpaceByEmail(email: string) {
+    async findSpaceByEmailOrCompanyName(email: string, companyName: string) {
         await this.prismaClient.$connect();
 
         const space = await this.prismaClient.space.findFirst({
-            where: { email: email },
+            where: {
+                OR: [
+                    { email: email },
+                    { company_name: companyName }
+                ],
+            },
         });
 
         await this.prismaClient.$disconnect();
@@ -78,4 +83,17 @@ export class SpaceRepository {
 
         return space;
     }
+
+    async findSpaceByName(name: string) {
+        await this.prismaClient.$connect();
+
+        const space = await this.prismaClient.space.findFirst({
+            where: { name: name },
+        });
+
+        await this.prismaClient.$disconnect();
+
+        return space;
+    }
+
 }
