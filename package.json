@@ -5,13 +5,20 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist",
     "prettier": "prettier --write .",
     "dev": "nodemon --watch src --exec ts-node src/index.ts",
-    "build": "tsc",
+    "build": "rimraf dist && tsc",
     "serve": "nodemon dist/index.js",
     "prisma:migrate": "prisma migrate dev --preview-feature --name migration",
     "prisma:generate": "prisma generate"
   },
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -25,9 +32,11 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.15",
+    "pre-commit": "^1.2.2",
     "prettier": "^3.3.3",
     "prisma": "^5.19.1",
     "reflect-metadata": "^0.2.2",
+    "rimraf": "^6.0.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "tsyringe": "^4.8.0"
