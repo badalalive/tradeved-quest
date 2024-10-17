@@ -67,11 +67,7 @@ export function split(thing: any) {
         : "<complex:" + thing.toString() + ">";
   }
 }
-
-if (require.main === module) {
-  app.listen(port, () => {
+app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
   });
-
-  app._router.stack.forEach(print.bind(null, []));
-}
+app._router.stack.forEach(print.bind(null, []));
