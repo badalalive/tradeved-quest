@@ -4,12 +4,13 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
+    "postinstall": "prisma generate",
     "start": "node dist/index.js",
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add dist",
     "prettier": "prettier --write .",
     "dev": "nodemon --watch src --exec ts-node src/index.ts",
-    "build": "prisma generate && rimraf dist && tsc",
+    "build": "rimraf dist && tsc",
     "serve": "nodemon dist/index.js",
     "prisma:migrate": "prisma migrate dev --preview-feature --name migration",
     "prisma:generate": "prisma generate"
