@@ -20,6 +20,8 @@ model Space {
   description        String                   @db.VarChar(255)
   email              String                   @unique @db.VarChar(255)
   is_email_verified  Boolean                  @default(false)
+  status             SpaceStatus              @default(PENDING)
+  reject_reason      String?
   banner             String?                  @db.VarChar(255)
   logo_url           String?                  @db.VarChar(255)
   category           String
@@ -92,6 +94,12 @@ model QuestTemplate {
   created_at    DateTime              @default(now())
   updated_at    DateTime              @updatedAt
   quest         Quest?                @relation
+}
+
+enum SpaceStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum QuestStatus {
