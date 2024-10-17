@@ -599,6 +599,102 @@ spaceRoutes.put("/add-links/:id", spaceController.addSpaceLinks)
  *                   example: "Internal server error"
  */
 spaceRoutes.put("/add-logo/:id", spaceController.addLogo)
+/**
+ * @swagger
+ * /space/status/{id}/{type}:
+ *   put:
+ *     summary: Update the status of a space
+ *     description: Updates the status of a space to either APPROVED or REJECTED, with an optional rejection reason.
+ *     tags:
+ *       - Space
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the space whose status is being updated
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: type
+ *         required: true
+ *         description: The new status of the space. Can be APPROVED or REJECTED.
+ *         schema:
+ *           type: string
+ *           enum: [APPROVED, REJECTED]
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               reject_reason:
+ *                 type: string
+ *                 description: The reason for rejecting the space (only required if the type is REJECTED).
+ *                 example: "The space does not meet the criteria"
+ *     responses:
+ *       200:
+ *         description: Status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Status updated successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "space-id-123"
+ *                     status:
+ *                       type: string
+ *                       example: "APPROVED"
+ *       400:
+ *         description: Invalid input data (e.g., invalid space ID or status type)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid space ID or status type"
+ *       404:
+ *         description: Space not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: "Space not found"
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+spaceRoutes.put("/status/:id/:type", spaceController.updateStatus)
 
 export default spaceRoutes;
 

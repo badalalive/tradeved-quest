@@ -1,5 +1,5 @@
 import {inject, injectable} from "tsyringe";
-import {PrismaClient, Space, SpaceDocuments, SpaceEmailVerification, SpaceLinks} from "@prisma/client";
+import {PrismaClient, Space, SpaceDocuments, SpaceEmailVerification, SpaceLinks, SpaceStatus} from "@prisma/client";
 import {CreateSpaceDto} from "../dtos/spaceDTO";
 
 @injectable()
@@ -183,6 +183,20 @@ export class SpaceRepository {
         const space = await this.prismaClient.space.update({
             data: {
                 logo_url: url
+            }, where: {
+                id: spaceId
+            }
+        })
+        await this.prismaClient.$disconnect();
+        return space;
+    }
+
+    async updateSpaceStatus(spaceId: string, status: SpaceStatus, reject_reason: string): Promise<Space | null> {
+        await this.prismaClient.$connect();
+        const space = await this.prismaClient.space.update({
+            data: {
+                status: status,
+                reject_reason: reject_reason
             }, where: {
                 id: spaceId
             }

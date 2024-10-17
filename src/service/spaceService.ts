@@ -6,6 +6,7 @@ import {Request, Response} from "express";
 import {uploadDocument, uploadImage} from "../config/multerConfig";
 import {verificationMailTemplate} from "../templates/mailTemplate";
 import {generateRandomToken, sendEmail} from "../utils/utilities";
+import {SpaceStatus} from "@prisma/client";
 
 @injectable()
 export class SpaceService {
@@ -153,8 +154,7 @@ export class SpaceService {
         }
     }
 
-    addLogo = async (req: Request, res: Response) => {
-        const spaceId = String(req.params.id);
+    addLogo = async (spaceId: string, req: Request, res: Response) => {
         const space = await this.spaceRepository.findSpaceById(spaceId);
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
@@ -184,4 +184,23 @@ export class SpaceService {
             data: fileInfo
         };
     };
+
+    updateStatus = async (spaceId: string, type: string, reject_reason: string) => {
+        let space = await this.spaceRepository.findSpaceById(spaceId);
+        if (!space) {
+            throw new HttpException(400, 'Space does not exist');
+        }
+        if (space.status !== 'PENDING') {
+            throw new HttpException(400, 'invalid action');
+        }
+        const status = SpaceStatus[type as keyof typeof SpaceStatus];
+        space = await this.spaceRepository.updateSpaceStatus(spaceId, status, reject_reason)
+
+        return {
+            statusCode: 200,
+            message: `${status} Successfully`,
+            data: space
+        }
+    }
+
 }

@@ -78,7 +78,32 @@ export class SpaceController {
 
     addLogo = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const {data, message, statusCode} = await this.spaceService.addLogo(req, res);
+            const spaceId = req.params.id;
+            if (!spaceId) {
+                throw new HttpException(400, "invalid space id")
+            }
+            const {data, message, statusCode} = await this.spaceService.addLogo(spaceId, req, res);
+            res.status(statusCode).send({ data, message})
+        } catch (error: any) {
+            next(error)
+        }
+    }
+
+    updateStatus = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const spaceId = req.params.id;
+            const type = req.params.type;
+            let reject_reason = req.body.reject_reason;
+            if (!spaceId) {
+                throw new HttpException(400, "invalid space id")
+            }
+            if (!(type === 'APPROVED' || type === 'REJECTED')) {
+                throw new HttpException(400, "invalid status type")
+            }
+            if (type === 'APPROVED') {
+                reject_reason = "";
+            }
+            const {data, message, statusCode} = await this.spaceService.updateStatus(spaceId, type, reject_reason);
             res.status(statusCode).send({ data, message})
         } catch (error: any) {
             next(error)
