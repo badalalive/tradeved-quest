@@ -73,7 +73,7 @@ model Quest {
   id                String        @id @unique @default(cuid())
   space_id          String
   title             String        @db.VarChar(255)
-  description       String        @db.VarChar(255)
+  description       String        @db.VarChar(1000)
   participant_limit Int
   max_reward_point  Int
   end_date          DateTime
