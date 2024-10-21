@@ -1,6 +1,6 @@
 import {inject, injectable} from "tsyringe";
 import {SpaceRepository} from "../repository/spaceRepository";
-import {CreateSpaceDto} from "../dtos/spaceDTO";
+import {CreateSpaceDto} from "../dto/spaceDTO";
 import {HttpException} from "../exceptions/httpException";
 import {Request, Response} from "express";
 import {uploadDocument, uploadImage} from "../config/multerConfig";

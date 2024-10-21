@@ -1,7 +1,7 @@
 import {inject, injectable} from "tsyringe";
 import {SpaceService} from "../service/spaceService";
 import {NextFunction, Request, Response} from "express";
-import {CreateSpaceDto} from "../dtos/spaceDTO";
+import {CreateSpaceDto} from "../dto/spaceDTO";
 import {HttpException} from "../exceptions/httpException";
 
 @injectable()

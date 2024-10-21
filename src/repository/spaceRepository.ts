@@ -1,6 +1,6 @@
 import {inject, injectable} from "tsyringe";
 import {PrismaClient, Space, SpaceDocuments, SpaceEmailVerification, SpaceLinks, SpaceStatus} from "@prisma/client";
-import {CreateSpaceDto} from "../dtos/spaceDTO";
+import {CreateSpaceDto} from "../dto/spaceDTO";
 
 @injectable()
 export class SpaceRepository {
