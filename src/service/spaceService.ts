@@ -78,7 +78,7 @@ export class SpaceService {
 
         const filesInfo = (req.files as Express.Multer.File[]).map(file => ({
             filename: file.originalname,
-            path: `${process.env.SERVER_URL}/${file.destination}${file.filename}`
+            path: `${process.env.SERVER_URL}${file.destination}${file.filename}`
         }));
         let spaceDocuments: any[] = [];
         if (filesInfo.length > 0) {
