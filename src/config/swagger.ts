@@ -24,7 +24,7 @@ const options: Options = {
       },
     ],
   },
-  apis: ["./dist/routes/*.js", "./dist/controllers/*.js", "./dist/dtos/*.js"], // Files containing annotations
+  apis: ["./dist/routes/*.js", "./dist/controllers/*.js", "./dist/dto/*.js"], // Files containing annotations
 };
 
 export default options;
