@@ -6,6 +6,9 @@ const spaceController_1 = require("../controllers/spaceController");
 const spaceService_1 = require("../service/spaceService");
 const spaceRepository_1 = require("../repository/spaceRepository");
 const client_1 = require("@prisma/client");
+const questController_1 = require("../controllers/questController");
+const questRepository_1 = require("../repository/questRepository");
+const questService_1 = require("../service/questService");
 exports.prisma = new client_1.PrismaClient({
     errorFormat: "minimal",
 });
@@ -14,7 +17,10 @@ tsyringe_1.container.register("PrismaClient", {
 });
 // controllers
 tsyringe_1.container.registerSingleton("SpaceController", spaceController_1.SpaceController);
+tsyringe_1.container.registerSingleton("QuestController", questController_1.QuestController);
 // services
 tsyringe_1.container.registerSingleton("SpaceService", spaceService_1.SpaceService);
+tsyringe_1.container.registerSingleton("QuestService", questService_1.QuestService);
 // repositories
 tsyringe_1.container.registerSingleton("SpaceRepository", spaceRepository_1.SpaceRepository);
+tsyringe_1.container.registerSingleton("QuestRepository", questRepository_1.QuestRepository);
