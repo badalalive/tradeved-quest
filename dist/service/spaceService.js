@@ -141,7 +141,7 @@ let SpaceService = class SpaceService {
             }
             // save email verification token
             const tokenData = yield this.tokenRepository.createToken(space.id);
-            const link = `${process.env.SERVER_URL}verify-email/${tokenData.token}`;
+            const link = `${process.env.SPACE_FRONTEND_END_POINT}create-space/verify-email/${tokenData.token}`;
             const emailContent = (0, mailTemplate_1.verificationMailTemplate)(link);
             yield (0, utilities_1.sendEmail)(space.email, "Space Creation Link", emailContent);
             return {
