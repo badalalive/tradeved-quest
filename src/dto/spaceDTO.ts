@@ -38,6 +38,12 @@ export class CreateSpaceDto {
     @IsUrl()
     logo_url?: string;
 
+    @IsOptional()
+    @IsString()
+    @MaxLength(255)
+    @IsUrl()
+    banner?: string;
+
     @IsArray()
     @IsUrl({}, { each: true })
     links?: string[];  // Ensure links are validated as an array of URLs

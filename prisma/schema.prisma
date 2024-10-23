@@ -22,6 +22,7 @@ model Space {
   status        SpaceStatus      @default(PENDING)
   reject_reason String?
   logo_url      String?          @db.VarChar(255)
+  banner        String?          @db.VarChar(255)
   category      String?
   created_at    DateTime         @default(now())
   updated_at    DateTime         @updatedAt

@@ -205,6 +205,38 @@ let SpaceService = class SpaceService {
                 data: fileInfo
             };
         });
+        this.addBanner = (tokenData, req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
+            const space = yield this.spaceRepository.findSpaceById(tokenData.space_id);
+            if (!space) {
+                throw new httpException_1.HttpException(400, 'Space does not exist');
+            }
+            if (space.status !== client_1.SpaceStatus.PENDING) {
+                throw new httpException_1.HttpException(400, 'invalid Request');
+            }
+            // Use the `uploadImage` middleware for single image upload
+            yield new Promise((resolve, reject) => {
+                multerConfig_1.uploadImage.single('file')(req, res, (err) => {
+                    if (err) {
+                        return reject(new httpException_1.HttpException(400, err.message));
+                    }
+                    if (!req.file) {
+                        return reject(new httpException_1.HttpException(400, "No file uploaded"));
+                    }
+                    resolve();
+                });
+            });
+            const fileInfo = {
+                filename: (_a = req.file) === null || _a === void 0 ? void 0 : _a.originalname,
+                path: `${process.env.SERVER_URL}${(_b = req.file) === null || _b === void 0 ? void 0 : _b.destination}${(_c = req.file) === null || _c === void 0 ? void 0 : _c.filename}`,
+            };
+            yield this.spaceRepository.createSpaceBanner(tokenData.space_id, fileInfo.path);
+            return {
+                statusCode: 200,
+                message: "Banner uploaded successfully!",
+                data: fileInfo
+            };
+        });
         this.updateStatus = (spaceId, type, reject_reason) => __awaiter(this, void 0, void 0, function* () {
             let space = yield this.spaceRepository.findSpaceById(spaceId);
             if (!space) {

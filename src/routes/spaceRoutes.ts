@@ -551,6 +551,96 @@ spaceRoutes.post("/verify-space-link/:token", validateTokenMiddleware, spaceCont
 spaceRoutes.put("/upload-logo/:token", validateTokenMiddleware, spaceController.addLogo)
 /**
  * @swagger
+ * /space/upload-banner/{token}:
+ *   put:
+ *     summary: Upload a logo for a space
+ *     description: Uploads a single image file (logo) to a space identified by the provided space ID.
+ *     tags:
+ *       - Space
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         description: The email verification token
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: The image file to upload
+ *     responses:
+ *       200:
+ *         description: Banner uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Banner uploaded successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     filename:
+ *                       type: string
+ *                       example: "banner.png"
+ *                     path:
+ *                       type: string
+ *                       example: "https://yourserver.com/uploads/images/banner.png"
+ *       400:
+ *         description: No file uploaded or space does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: "No file uploaded"
+ *       404:
+ *         description: Space not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: "Space not found"
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+spaceRoutes.put("/upload-banner/:token", validateTokenMiddleware, spaceController.addBanner)
+/**
+ * @swagger
  * /space/status/{id}/{type}:
  *   put:
  *     summary: Update the status of a space

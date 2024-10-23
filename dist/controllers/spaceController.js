@@ -124,6 +124,15 @@ let SpaceController = class SpaceController {
                 next(error);
             }
         });
+        this.addBanner = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { data, message, statusCode } = yield this.spaceService.addBanner(req.tokenData, req, res);
+                res.status(statusCode).send({ data, message });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
         this.updateStatus = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const spaceId = req.params.id;

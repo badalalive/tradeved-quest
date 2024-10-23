@@ -203,6 +203,39 @@ export class SpaceService {
         };
     };
 
+    addBanner = async (tokenData: any, req: Request, res: Response) => {
+        const space = await this.spaceRepository.findSpaceById(tokenData.space_id);
+        if (!space) {
+            throw new HttpException(400, 'Space does not exist');
+        }
+        if (space.status !== SpaceStatus.PENDING) {
+            throw new HttpException(400, 'invalid Request');
+        }
+        // Use the `uploadImage` middleware for single image upload
+        await new Promise<void>((resolve, reject) => {
+            uploadImage.single('file')(req, res, (err: any) => {
+                if (err) {
+                    return reject(new HttpException(400, err.message));
+                }
+                if (!req.file) {
+                    return reject(new HttpException(400, "No file uploaded"));
+                }
+                resolve();
+            });
+        });
+
+        const fileInfo = {
+            filename: req.file?.originalname,
+            path: `${process.env.SERVER_URL}${req.file?.destination}${req.file?.filename}`,
+        };
+        await this.spaceRepository.createSpaceBanner(tokenData.space_id, fileInfo.path)
+        return {
+            statusCode: 200,
+            message: "Banner uploaded successfully!",
+            data: fileInfo
+        };
+    };
+
     updateStatus = async (spaceId: string, type: string, reject_reason: string) => {
         let space = await this.spaceRepository.findSpaceById(spaceId);
         if (!space) {

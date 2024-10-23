@@ -182,6 +182,19 @@ export class SpaceRepository {
         return space;
     }
 
+    async createSpaceBanner(spaceId: string, url: string): Promise<Space | null> {
+        await this.prismaClient.$connect();
+        const space = await this.prismaClient.space.update({
+            data: {
+                banner: url
+            }, where: {
+                id: spaceId
+            }
+        })
+        await this.prismaClient.$disconnect();
+        return space;
+    }
+
     async updateSpaceStatus(spaceId: string, status: SpaceStatus, reject_reason: string): Promise<Space | null> {
         await this.prismaClient.$connect();
         const space = await this.prismaClient.space.update({

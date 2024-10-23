@@ -185,6 +185,20 @@ let SpaceRepository = class SpaceRepository {
             return space;
         });
     }
+    createSpaceBanner(spaceId, url) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const space = yield this.prismaClient.space.update({
+                data: {
+                    banner: url
+                }, where: {
+                    id: spaceId
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return space;
+        });
+    }
     updateSpaceStatus(spaceId, status, reject_reason) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();

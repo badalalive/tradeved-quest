@@ -113,6 +113,15 @@ export class SpaceController {
         }
     }
 
+    addBanner = async (req: RequestWithTokenData, res: Response, next: NextFunction) => {
+        try {
+            const {data, message, statusCode} = await this.spaceService.addBanner(req.tokenData, req, res);
+            res.status(statusCode).send({ data, message})
+        } catch (error: any) {
+            next(error)
+        }
+    }
+
     updateStatus = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const spaceId = req.params.id;
