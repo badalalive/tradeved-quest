@@ -12,9 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyTokenAndRolesMiddleware = void 0;
+exports.validateTokenMiddleware = exports.verifyTokenAndRolesMiddleware = void 0;
 const httpException_1 = require("../exceptions/httpException");
-const axios_1 = __importDefault(require("axios")); // To make HTTP requests to the other microservice
+const axios_1 = __importDefault(require("axios"));
+const tsyringe_1 = require("tsyringe");
+const tokenRepository_1 = require("../repository/tokenRepository"); // To make HTTP requests to the other microservice
 const verifyTokenAndRolesMiddleware = (allowedRoles) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         const token = req.headers['authorization'];
@@ -52,3 +54,29 @@ const verifyTokenAndRolesMiddleware = (allowedRoles) => {
     });
 };
 exports.verifyTokenAndRolesMiddleware = verifyTokenAndRolesMiddleware;
+const validateTokenMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const tokenRepository = tsyringe_1.container.resolve(tokenRepository_1.TokenRepository);
+        // Retrieve the token from params
+        const token = String(req.params.token) || "";
+        // Check if the token is provided
+        if (!token) {
+            throw new httpException_1.HttpException(400, "Token required");
+        }
+        // Validate the token using the token repository
+        const tokenData = yield tokenRepository.validateToken(token);
+        // Check if the token is valid and associated with a space
+        if (!tokenData || !tokenData.space_id) {
+            throw new httpException_1.HttpException(403, "Invalid Token");
+        }
+        // Attach token data to the request object (optional)
+        req.tokenData = tokenData;
+        // Proceed to the next middleware/controller
+        next();
+    }
+    catch (error) {
+        // Handle error and pass it to the next error handler middleware
+        next(error);
+    }
+});
+exports.validateTokenMiddleware = validateTokenMiddleware;

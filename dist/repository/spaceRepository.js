@@ -29,44 +29,26 @@ let SpaceRepository = class SpaceRepository {
         this.prismaClient = prismaClient;
     }
     // Find space by email
-    findSpaceByEmailOrCompanyName(email, companyName) {
+    findSpaceByCompanyName(companyName) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const space = yield this.prismaClient.space.findFirst({
-                where: {
-                    OR: [
-                        { email: email },
-                        { company_name: companyName }
-                    ],
-                }, include: {
-                    links: true,
-                    documents: true,
-                    quests: true
-                }
+                where: { company_name: companyName },
             });
             yield this.prismaClient.$disconnect();
             return space;
         });
     }
     // Create a new space
-    create(spaceDTO) {
+    create(email) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const newSpace = yield this.prismaClient.space.create({
                 data: {
-                    company_name: spaceDTO.company_name,
-                    name: spaceDTO.name || "",
-                    description: spaceDTO.description || "",
-                    email: spaceDTO.email,
-                    is_email_verified: spaceDTO.is_email_verified || false,
-                    banner: spaceDTO.banner || "",
-                    logo_url: spaceDTO.logo_url || "",
-                    category: spaceDTO.category || "",
-                    created_at: new Date(),
-                    updated_at: new Date(),
+                    email: email,
                     /// @todo update this actual user id which is creating
-                    created_by: spaceDTO.created_by || "",
-                    updated_by: spaceDTO.updated_by || "",
+                    created_by: "",
+                    updated_by: "",
                 },
             });
             yield this.prismaClient.$disconnect();
@@ -100,6 +82,21 @@ let SpaceRepository = class SpaceRepository {
             return space;
         });
     }
+    // Find space by Email (for updating or retrieving details)
+    findSpaceByEmail(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const space = yield this.prismaClient.space.findUnique({
+                where: { email: email }, include: {
+                    links: true,
+                    documents: true,
+                    quests: true
+                },
+            });
+            yield this.prismaClient.$disconnect();
+            return space;
+        });
+    }
     findSpaceByName(name) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
@@ -108,60 +105,6 @@ let SpaceRepository = class SpaceRepository {
             });
             yield this.prismaClient.$disconnect();
             return space;
-        });
-    }
-    createEmailVerificationToken(spaceId, token) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.prismaClient.$connect();
-            const spaceEmailVerification = yield this.prismaClient.spaceEmailVerification.create({
-                data: {
-                    space_id: spaceId,
-                    token: token,
-                    created_by: spaceId,
-                    updated_by: spaceId
-                }
-            });
-            yield this.prismaClient.$disconnect();
-            return spaceEmailVerification;
-        });
-    }
-    findSpaceEmailVerificationByToken(token) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.prismaClient.$connect();
-            const spaceEmailVerification = this.prismaClient.spaceEmailVerification.findUnique({
-                where: {
-                    token: token
-                }, include: {
-                    space: true
-                }
-            });
-            yield this.prismaClient.$disconnect();
-            return spaceEmailVerification;
-        });
-    }
-    expireEmailVerificationTokens(spaceId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.prismaClient.$connect();
-            try {
-                const spaceEmailVerification = yield this.prismaClient.spaceEmailVerification.updateMany({
-                    where: {
-                        space_id: spaceId,
-                    },
-                    data: {
-                        is_expired: true,
-                    },
-                });
-                yield this.prismaClient.$disconnect();
-                return spaceEmailVerification;
-            }
-            catch (error) {
-                // Handle case where no record is found
-                if (error.code === 'P2025') {
-                    // P2025 is the Prisma error code for "Record not found"
-                    return null;
-                }
-                throw error; // Re-throw any other errors
-            }
         });
     }
     createSpaceDocuments(spaceDocuments) {

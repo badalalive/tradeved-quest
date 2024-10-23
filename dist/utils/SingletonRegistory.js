@@ -9,6 +9,7 @@ const client_1 = require("@prisma/client");
 const questController_1 = require("../controllers/questController");
 const questRepository_1 = require("../repository/questRepository");
 const questService_1 = require("../service/questService");
+const tokenRepository_1 = require("../repository/tokenRepository");
 exports.prisma = new client_1.PrismaClient({
     errorFormat: "minimal",
 });
@@ -24,3 +25,4 @@ tsyringe_1.container.registerSingleton("QuestService", questService_1.QuestServi
 // repositories
 tsyringe_1.container.registerSingleton("SpaceRepository", spaceRepository_1.SpaceRepository);
 tsyringe_1.container.registerSingleton("QuestRepository", questRepository_1.QuestRepository);
+tsyringe_1.container.registerSingleton("TokenRepository", tokenRepository_1.TokenRepository);

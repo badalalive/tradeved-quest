@@ -12,17 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateSpaceDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateSpaceDto {
-    constructor() {
-        this.company_name = "";
-        this.email = "";
-        this.is_email_verified = false;
-        this.category = "";
-    }
 }
 exports.CreateSpaceDto = CreateSpaceDto;
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.MaxLength)(255),
     __metadata("design:type", String)
 ], CreateSpaceDto.prototype, "company_name", void 0);
@@ -34,7 +28,7 @@ __decorate([
 ], CreateSpaceDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.MaxLength)(255),
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
@@ -42,14 +36,9 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MaxLength)(255),
+    (0, class_validator_1.MaxLength)(1000),
     __metadata("design:type", String)
 ], CreateSpaceDto.prototype, "description", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsBoolean)(),
-    __metadata("design:type", Boolean)
-], CreateSpaceDto.prototype, "is_email_verified", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
@@ -65,7 +54,7 @@ __decorate([
 ], CreateSpaceDto.prototype, "logo_url", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateSpaceDto.prototype, "category", void 0);
 __decorate([

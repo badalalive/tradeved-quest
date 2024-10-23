@@ -24,14 +24,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SpaceController = void 0;
 const tsyringe_1 = require("tsyringe");
 const spaceService_1 = require("../service/spaceService");
+const spaceDTO_1 = require("../dto/spaceDTO");
 const httpException_1 = require("../exceptions/httpException");
+const emailDTO_1 = require("../dto/emailDTO");
+const class_transformer_1 = require("class-transformer");
+const class_validator_1 = require("class-validator");
+const utilities_1 = require("../utils/utilities");
 let SpaceController = class SpaceController {
     constructor(spaceService) {
         this.spaceService = spaceService;
         this.create = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const spaceDto = req.body;
-                const { data, message, statusCode } = yield this.spaceService.createSpace(spaceDto);
+                // Transform plain object to class instance
+                const spaceDTO = (0, class_transformer_1.plainToInstance)(spaceDTO_1.CreateSpaceDto, req.body);
+                // Validate the instance
+                const validationErrors = yield (0, class_validator_1.validate)(spaceDTO);
+                if (validationErrors.length > 0) {
+                    // Extract error messages for all fields
+                    const errorMessages = (0, utilities_1.extractErrorMessages)(validationErrors);
+                    return next(new httpException_1.HttpException(400, errorMessages));
+                }
+                // Call the service to create the space
+                const { data, message, statusCode } = yield this.spaceService.createSpace(req.tokenData, spaceDTO);
+                // Send the response
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
@@ -42,7 +57,7 @@ let SpaceController = class SpaceController {
             try {
                 const spaceId = req.params.id;
                 if (!spaceId) {
-                    throw new httpException_1.HttpException(400, "invalid spaceID");
+                    next(new httpException_1.HttpException(400, "invalid spaceID"));
                 }
                 const { data, message, statusCode } = yield this.spaceService.getSpace(spaceId);
                 res.status(statusCode).send({ data, message });
@@ -53,25 +68,34 @@ let SpaceController = class SpaceController {
         });
         this.uploadDocuments = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const { data, message, statusCode } = yield this.spaceService.uploadDocuments(req, res);
+                const { data, message, statusCode } = yield this.spaceService.uploadDocuments(req.tokenData, req, res);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
             }
         });
-        this.sentVerificationEmail = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.sentSpaceCreationLink = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const { data, message, statusCode } = yield this.spaceService.sentVerificationEmail(req.params.id);
+                // Transform plain object to class instance
+                const emailDTO = (0, class_transformer_1.plainToInstance)(emailDTO_1.EmailDto, req.body);
+                // Validate the instance
+                const validationErrors = yield (0, class_validator_1.validate)(emailDTO);
+                if (validationErrors.length > 0) {
+                    // Extract error messages for all fields
+                    const errorMessages = (0, utilities_1.extractErrorMessages)(validationErrors);
+                    return next(new httpException_1.HttpException(400, errorMessages));
+                }
+                const { data, message, statusCode } = yield this.spaceService.sentSpaceCreationLink(emailDTO.email);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
             }
         });
-        this.verifyEmail = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.verifySpaceLink = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const { data, message, statusCode } = yield this.spaceService.verifyEmail(req.params.token);
+                const { data, message, statusCode } = yield this.spaceService.verifySpaceLink(req.tokenData);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
@@ -81,11 +105,10 @@ let SpaceController = class SpaceController {
         this.addSpaceLinks = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const { link } = req.body;
-                const spaceId = String(req.params.id);
                 if (!link) {
-                    throw new httpException_1.HttpException(400, "invalid link");
+                    next(new httpException_1.HttpException(400, "invalid link"));
                 }
-                const { data, message, statusCode } = yield this.spaceService.addSpaceLinks(spaceId, link);
+                const { data, message, statusCode } = yield this.spaceService.addSpaceLinks(req.tokenData, link);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
@@ -94,11 +117,7 @@ let SpaceController = class SpaceController {
         });
         this.addLogo = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const spaceId = req.params.id;
-                if (!spaceId) {
-                    throw new httpException_1.HttpException(400, "invalid space id");
-                }
-                const { data, message, statusCode } = yield this.spaceService.addLogo(spaceId, req, res);
+                const { data, message, statusCode } = yield this.spaceService.addLogo(req.tokenData, req, res);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
@@ -111,15 +130,24 @@ let SpaceController = class SpaceController {
                 const type = req.params.type;
                 let reject_reason = req.body.reject_reason;
                 if (!spaceId) {
-                    throw new httpException_1.HttpException(400, "invalid space id");
+                    next(new httpException_1.HttpException(400, "invalid space id"));
                 }
                 if (!(type === 'APPROVED' || type === 'REJECTED')) {
-                    throw new httpException_1.HttpException(400, "invalid status type");
+                    next(new httpException_1.HttpException(400, "invalid status type"));
                 }
                 if (type === 'APPROVED') {
                     reject_reason = "";
                 }
                 const { data, message, statusCode } = yield this.spaceService.updateStatus(spaceId, type, reject_reason);
+                res.status(statusCode).send({ data, message });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+        this.submitSpaceForm = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { data, message, statusCode } = yield this.spaceService.submitForm(req.tokenData);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {

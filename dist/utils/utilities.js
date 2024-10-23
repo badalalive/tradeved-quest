@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendEmail = exports.generateRandomToken = void 0;
+exports.extractErrorMessages = exports.sendEmail = exports.generateRandomToken = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const generateRandomToken = (length) => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -50,3 +50,33 @@ const sendEmail = (email, subject, emailContent) => __awaiter(void 0, void 0, vo
     }
 });
 exports.sendEmail = sendEmail;
+const extractErrorMessages = (errors) => {
+    const errorMessages = {};
+    errors.forEach(error => {
+        if (error.constraints) {
+            // Collect all error messages for the current field
+            errorMessages[error.property] = Object.values(error.constraints);
+        }
+        // If there are nested validation errors (e.g., for array or object properties), handle them recursively
+        if (error.children && error.children.length > 0) {
+            // Recursively extract messages for children
+            error.children.forEach((childError) => {
+                const childMessages = (0, exports.extractErrorMessages)([childError]);
+                Object.keys(childMessages).forEach(key => {
+                    if (errorMessages[error.property]) {
+                        // Merge child messages into the same property array if already exists
+                        errorMessages[error.property] = [
+                            ...errorMessages[error.property],
+                            ...childMessages[key],
+                        ];
+                    }
+                    else {
+                        errorMessages[error.property] = childMessages[key];
+                    }
+                });
+            });
+        }
+    });
+    return errorMessages;
+};
+exports.extractErrorMessages = extractErrorMessages;

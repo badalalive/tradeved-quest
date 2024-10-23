@@ -14,37 +14,40 @@ datasource db {
 }
 
 model Space {
-  id                 String                   @id @unique @default(cuid())
-  company_name       String                   @db.VarChar(255)
-  name               String                   @db.VarChar(255)
-  description        String                   @db.VarChar(1000)
-  email              String                   @unique @db.VarChar(255)
-  is_email_verified  Boolean                  @default(false)
-  status             SpaceStatus              @default(PENDING)
-  reject_reason      String?
-  banner             String?                  @db.VarChar(255)
-  logo_url           String?                  @db.VarChar(255)
-  category           String
-  created_at         DateTime                 @default(now())
-  updated_at         DateTime                 @updatedAt
-  created_by         String
-  updated_by         String
-  links              SpaceLinks[]             @relation("SpaceLinks")
-  documents          SpaceDocuments[]         @relation("SpaceToDocuments")
-  quests             Quest[]                  @relation("SpaceToQuest")
-  email_verification SpaceEmailVerification[] @relation("SpaceEmailVerification")
+  id            String           @id @unique @default(cuid())
+  company_name  String?          @db.VarChar(255)
+  name          String?          @db.VarChar(255)
+  description   String?          @db.VarChar(1000)
+  email         String           @unique @db.VarChar(255)
+  status        SpaceStatus      @default(PENDING)
+  reject_reason String?
+  banner        String?          @db.VarChar(255)
+  logo_url      String?          @db.VarChar(255)
+  category      String?
+  created_at    DateTime         @default(now())
+  updated_at    DateTime         @updatedAt
+  created_by    String
+  updated_by    String
+  links         SpaceLinks[]     @relation("SpaceLinks")
+  documents     SpaceDocuments[] @relation("SpaceToDocuments")
+  quests        Quest[]          @relation("SpaceToQuest")
+  token         Token[]          @relation("Token")
 }
 
-model SpaceEmailVerification {
-  id         String   @id @unique @default(cuid())
-  token      String   @unique
-  space      Space?   @relation("SpaceEmailVerification", fields: [space_id], references: [id])
-  is_expired Boolean  @default(false)
-  space_id   String?
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  created_by String
-  updated_by String
+model Token {
+  id          Int       @id @default(autoincrement())
+  token       String    @unique
+  status      KeyStatus
+  expire_time DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Space       Space?    @relation("Token", fields: [space_id], references: [id])
+  space_id    String?
+}
+
+enum KeyStatus {
+  EXPIRED
+  ACTIVE
 }
 
 model SpaceLinks {
@@ -98,6 +101,7 @@ model QuestTemplate {
 
 enum SpaceStatus {
   PENDING
+  REVIEW
   APPROVED
   REJECTED
 }
