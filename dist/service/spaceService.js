@@ -56,6 +56,20 @@ let SpaceService = class SpaceService {
                 }
             }
             const newSpace = yield this.spaceRepository.updateSpaceById(tokenData.space_id, spaceDTO);
+            // if link is present then perform the query
+            if (spaceDTO.links && spaceDTO.links.length > 0) {
+                const spaceLinks = [];
+                spaceDTO.links.map((link) => {
+                    const spaceLink = {
+                        link: link,
+                        space_id: space.id,
+                        created_by: space.id,
+                        updated_by: space.id
+                    };
+                    spaceLinks.push(spaceLink);
+                });
+                const result = yield this.spaceRepository.createSpaceLinks(spaceLinks);
+            }
             return {
                 message: 'Space Details Updated',
                 data: newSpace,

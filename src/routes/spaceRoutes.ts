@@ -40,6 +40,9 @@ const spaceRoutes: Router = Router();
  *               description:
  *                 type: string
  *                 example: "This is an awesome space"
+ *               links:
+ *                 type: array
+ *                 example: ["https://goggle.com"]
  *               category:
  *                 type: string
  *                 example: "Technology"
@@ -458,99 +461,7 @@ spaceRoutes.post("/space-creation-link", spaceController.sentSpaceCreationLink)
 spaceRoutes.post("/verify-space-link/:token", validateTokenMiddleware, spaceController.verifySpaceLink)
 /**
  * @swagger
- * /space/add-links/{token}:
- *   put:
- *     summary: Add links to a space
- *     description: Adds external or relevant links to a space identified by the provided space ID.
- *     tags:
- *       - Space
- *     parameters:
- *       - in: path
- *         name: token
- *         required: true
- *         description: The email verification token
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               link:
- *                 type: string
- *                 example: "https://example.com"
- *                 description: The URL link to add to the space
- *     responses:
- *       200:
- *         description: Link added successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 statusCode:
- *                   type: number
- *                   example: 200
- *                 message:
- *                   type: string
- *                   example: "Link added successfully"
- *                 data:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: string
- *                       example: "space-id-123"
- *                     links:
- *                       type: array
- *                       items:
- *                         type: string
- *                         example: "https://example.com"
- *       400:
- *         description: Invalid link or bad request
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 statusCode:
- *                   type: number
- *                   example: 400
- *                 message:
- *                   type: string
- *                   example: "Invalid link or request"
- *       404:
- *         description: Space not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 statusCode:
- *                   type: number
- *                   example: 404
- *                 message:
- *                   type: string
- *                   example: "Space not found"
- *       500:
- *         description: Server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 statusCode:
- *                   type: number
- *                   example: 500
- *                 message:
- *                   type: string
- *                   example: "Internal server error"
- */
-spaceRoutes.put("/add-links/:token", validateTokenMiddleware, spaceController.addSpaceLinks)
-/**
- * @swagger
- * /space/add-logo/{token}:
+ * /space/upload-logo/{token}:
  *   put:
  *     summary: Upload a logo for a space
  *     description: Uploads a single image file (logo) to a space identified by the provided space ID.
@@ -637,7 +548,7 @@ spaceRoutes.put("/add-links/:token", validateTokenMiddleware, spaceController.ad
  *                   type: string
  *                   example: "Internal server error"
  */
-spaceRoutes.put("/add-logo/:token", validateTokenMiddleware, spaceController.addLogo)
+spaceRoutes.put("/upload-logo/:token", validateTokenMiddleware, spaceController.addLogo)
 /**
  * @swagger
  * /space/status/{id}/{type}:

@@ -61,7 +61,13 @@ let SpaceRepository = class SpaceRepository {
             yield this.prismaClient.$connect();
             const updatedSpace = yield this.prismaClient.space.update({
                 where: { id: id },
-                data: Object.assign(Object.assign({}, updateData), { updated_at: new Date() }),
+                data: {
+                    company_name: updateData.company_name,
+                    name: updateData.name,
+                    category: updateData.category,
+                    description: updateData.description,
+                    updated_at: new Date(), // Automatically update the updated_at timestamp
+                },
             });
             yield this.prismaClient.$disconnect();
             return updatedSpace;
@@ -130,6 +136,39 @@ let SpaceRepository = class SpaceRepository {
             });
             yield this.prismaClient.$disconnect();
             return spaceLink;
+        });
+    }
+    createSpaceLinks(spaceLinks) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            // Extract the links (URLs) from the spaceLinks array
+            const linksToInsert = spaceLinks.map(linkObj => linkObj.link);
+            // Query existing URLs in the database
+            const existingLinks = yield this.prismaClient.spaceLinks.findMany({
+                where: {
+                    link: {
+                        in: linksToInsert
+                    }
+                },
+                select: {
+                    link: true
+                }
+            });
+            // Extract existing URLs from the result
+            const existingUrls = existingLinks.map(link => link.link);
+            // Filter out objects whose links already exist in the database
+            const newLinks = spaceLinks.filter(linkObj => !existingUrls.includes(linkObj.link));
+            // Only insert new links that are not duplicates
+            if (newLinks.length > 0) {
+                const insertedLinks = yield this.prismaClient.spaceLinks.createMany({
+                    data: newLinks,
+                    skipDuplicates: true
+                });
+                yield this.prismaClient.$disconnect();
+                return insertedLinks;
+            }
+            yield this.prismaClient.$disconnect();
+            return null; // Return null or a custom message if no new links were inserted
         });
     }
     createSpaceLogo(spaceId, url) {

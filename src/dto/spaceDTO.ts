@@ -6,6 +6,8 @@ import {
     IsNotEmpty,
     IsUrl,
     MaxLength,
+    IsArray,
+    ArrayNotEmpty,
 } from 'class-validator';
 
 export class CreateSpaceDto {
@@ -35,6 +37,10 @@ export class CreateSpaceDto {
     @MaxLength(255)
     @IsUrl()
     logo_url?: string;
+
+    @IsArray()
+    @IsUrl({}, { each: true })
+    links?: string[];  // Ensure links are validated as an array of URLs
 
     @IsString()
     @IsOptional()

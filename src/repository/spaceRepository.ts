@@ -48,7 +48,10 @@ export class SpaceRepository {
         const updatedSpace = await this.prismaClient.space.update({
             where: { id: id },
             data: {
-                ...updateData,
+                company_name: updateData.company_name,
+                name: updateData.name,
+                category: updateData.category,
+                description: updateData.description,
                 updated_at: new Date(), // Automatically update the updated_at timestamp
             },
         });
@@ -125,6 +128,45 @@ export class SpaceRepository {
         })
         await this.prismaClient.$disconnect();
         return spaceLink;
+    }
+
+    async createSpaceLinks(spaceLinks: any[]): Promise<any | null> {
+        await this.prismaClient.$connect();
+
+        // Extract the links (URLs) from the spaceLinks array
+        const linksToInsert = spaceLinks.map(linkObj => linkObj.link);
+
+        // Query existing URLs in the database
+        const existingLinks = await this.prismaClient.spaceLinks.findMany({
+            where: {
+                link: {
+                    in: linksToInsert
+                }
+            },
+            select: {
+                link: true
+            }
+        });
+
+        // Extract existing URLs from the result
+        const existingUrls = existingLinks.map(link => link.link);
+
+        // Filter out objects whose links already exist in the database
+        const newLinks = spaceLinks.filter(linkObj => !existingUrls.includes(linkObj.link));
+
+        // Only insert new links that are not duplicates
+        if (newLinks.length > 0) {
+            const insertedLinks = await this.prismaClient.spaceLinks.createMany({
+                data: newLinks,
+                skipDuplicates: true
+            });
+
+            await this.prismaClient.$disconnect();
+            return insertedLinks;
+        }
+
+        await this.prismaClient.$disconnect();
+        return null;  // Return null or a custom message if no new links were inserted
     }
 
     async createSpaceLogo(spaceId: string, url: string): Promise<Space | null> {

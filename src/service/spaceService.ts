@@ -6,7 +6,7 @@ import {Request, Response} from "express";
 import {uploadDocument, uploadImage} from "../config/multerConfig";
 import {verificationMailTemplate} from "../templates/mailTemplate";
 import {generateRandomToken, sendEmail} from "../utils/utilities";
-import {KeyStatus, Space, SpaceStatus} from "@prisma/client";
+import {KeyStatus, Space, SpaceLinks, SpaceStatus} from "@prisma/client";
 import {TokenRepository} from "../repository/tokenRepository";
 
 @injectable()
@@ -43,6 +43,20 @@ export class SpaceService {
             tokenData.space_id,
             spaceDTO
         );
+        // if link is present then perform the query
+        if(spaceDTO.links && spaceDTO.links.length > 0) {
+            const spaceLinks: any[] = [];
+            spaceDTO.links.map((link: string) => {
+                const spaceLink: any = {
+                    link: link,
+                    space_id: space.id,
+                    created_by: space.id,
+                    updated_by: space.id
+                }
+                spaceLinks.push(spaceLink)
+            })
+            const result = await this.spaceRepository.createSpaceLinks(spaceLinks);
+        }
 
         return {
             message: 'Space Details Updated',
