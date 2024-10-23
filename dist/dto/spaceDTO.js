@@ -43,12 +43,6 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(255),
-    __metadata("design:type", String)
-], CreateSpaceDto.prototype, "banner", void 0);
-__decorate([
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.MaxLength)(255),
     (0, class_validator_1.IsUrl)(),
     __metadata("design:type", String)
 ], CreateSpaceDto.prototype, "logo_url", void 0);

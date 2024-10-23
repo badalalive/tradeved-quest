@@ -21,7 +21,6 @@ model Space {
   email         String           @unique @db.VarChar(255)
   status        SpaceStatus      @default(PENDING)
   reject_reason String?
-  banner        String?          @db.VarChar(255)
   logo_url      String?          @db.VarChar(255)
   category      String?
   created_at    DateTime         @default(now())

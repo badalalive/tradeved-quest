@@ -212,18 +212,45 @@ export class SpaceService {
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
-        if(space.status === SpaceStatus.REVIEW) {
+
+        // Check if space is already submitted for review
+        if (space.status === SpaceStatus.REVIEW) {
             throw new HttpException(409, 'Already Submitted');
         }
+
+        // Check if the request is valid based on the current status
         if (space.status !== SpaceStatus.PENDING) {
             throw new HttpException(400, 'Invalid Request');
         }
+
+        // Validate that all required fields are filled
+        const requiredFields = ['company_name', 'name', 'description', 'email', 'banner', 'logo_url', 'category'];
+
+        for (const field of requiredFields) {
+            if (!space[field]) {
+                throw new HttpException(400, `Field ${field} is required and not filled.`);
+            }
+        }
+
+        // Check that there is at least one SpaceLink
+        if (!space.links || space.links.length === 0) {
+            throw new HttpException(400, 'At least one space link is required.');
+        }
+
+        // Check that there is at least one SpaceDocument
+        if (!space.documents || space.documents.length === 0) {
+            throw new HttpException(400, 'At least one space document is required.');
+        }
+
+        // Update the space status to "REVIEW" if validation passes
         space = await this.spaceRepository.updateSpaceStatus(space.id, SpaceStatus.REVIEW, "");
+
+        // Return the success response
         return {
             data: space,
             statusCode: 200,
-            message: "Submit For Review"
-        }
-    }
+            message: "Submit For Review",
+        };
+    };
 
 }

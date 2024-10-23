@@ -33,11 +33,6 @@ export class CreateSpaceDto {
     @IsOptional()
     @IsString()
     @MaxLength(255)
-    banner?: string;
-
-    @IsOptional()
-    @IsString()
-    @MaxLength(255)
     @IsUrl()
     logo_url?: string;
 
