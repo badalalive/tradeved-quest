@@ -1,7 +1,9 @@
 import {HttpException} from "../exceptions/httpException";
 import { Response, NextFunction } from 'express';
-import { RequestWithUser } from "../interfaces/auth.interface";
-import axios from 'axios'; // To make HTTP requests to the other microservice
+import { RequestWithUser, RequestWithTokenData } from "../interfaces/auth.interface";
+import axios from 'axios';
+import {container} from "tsyringe";
+import {TokenRepository} from "../repository/tokenRepository"; // To make HTTP requests to the other microservice
 
 export const verifyTokenAndRolesMiddleware = (allowedRoles: string[]) => {
     return async (req: RequestWithUser, res: Response, next: NextFunction) => {
@@ -43,4 +45,38 @@ export const verifyTokenAndRolesMiddleware = (allowedRoles: string[]) => {
             return next(new HttpException(500, 'Internal server error'));
         }
     };
+};
+
+export const validateTokenMiddleware = async (
+    req: RequestWithTokenData,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const tokenRepository = container.resolve(TokenRepository);
+        // Retrieve the token from params
+        const token = String(req.params.token) || "";
+
+        // Check if the token is provided
+        if (!token) {
+            throw new HttpException(400, "Token required");
+        }
+
+        // Validate the token using the token repository
+        const tokenData = await tokenRepository.validateToken(token);
+
+        // Check if the token is valid and associated with a space
+        if (!tokenData || !tokenData.space_id) {
+            throw new HttpException(403, "Invalid Token");
+        }
+
+        // Attach token data to the request object (optional)
+        req.tokenData = tokenData;
+
+        // Proceed to the next middleware/controller
+        next();
+    } catch (error) {
+        // Handle error and pass it to the next error handler middleware
+        next(error);
+    }
 };

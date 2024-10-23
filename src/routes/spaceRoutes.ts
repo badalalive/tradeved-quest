@@ -1,7 +1,7 @@
 import {container} from "tsyringe";
 import {Router} from "express";
 import {SpaceController} from "../controllers/spaceController";
-import {verifyTokenAndRolesMiddleware} from "../middlewares/authMiddleWare";
+import {validateTokenMiddleware, verifyTokenAndRolesMiddleware} from "../middlewares/authMiddleWare";
 import {UserRole} from "../utils/userRole";
 
 
@@ -11,12 +11,19 @@ const spaceRoutes: Router = Router();
 
 /**
  * @swagger
- * /space:
+ * /space/create/{token}:
  *   post:
- *     summary: Create a new Space
- *     description: Creates a new Space with the provided data.
+ *     summary: Fill Space Details
+ *     description: Fill Space Details provided with token
  *     tags:
  *       - Space
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         description: The email verification token
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -30,9 +37,6 @@ const spaceRoutes: Router = Router();
  *               name:
  *                 type: string
  *                 example: "Awesome Space"
- *               email:
- *                 type: string
- *                 example: "admin@awesomeinc.com"
  *               description:
  *                 type: string
  *                 example: "This is an awesome space"
@@ -99,6 +103,16 @@ const spaceRoutes: Router = Router();
  *                 message:
  *                   type: string
  *                   example: "Invalid input data"
+ *       404:
+ *         description: Space ID not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Space ID not found"
  *       500:
  *         description: Internal server error
  *         content:
@@ -110,10 +124,10 @@ const spaceRoutes: Router = Router();
  *                   type: string
  *                   example: "Internal server error"
  */
-spaceRoutes.post("", spaceController.create)
+spaceRoutes.post("/create/:token", validateTokenMiddleware, spaceController.create)
 /**
  * @swagger
- * /space/{id}:
+ * /space/details/{id}:
  *   get:
  *     summary: Retrieve space details
  *     description: Fetches the details of a space identified by the provided space ID.
@@ -200,10 +214,10 @@ spaceRoutes.post("", spaceController.create)
  *                   type: string
  *                   example: "Internal server error"
  */
-spaceRoutes.get("/:id", spaceController.getSpace)
+spaceRoutes.get("/details/:id", spaceController.getSpace)
 /**
  * @swagger
- * /space/upload-documents/{id}:
+ * /space/upload-documents/{token}:
  *   put:
  *     summary: Upload multiple documents
  *     description: Upload multiple files such as PDFs, Word documents, or images. The endpoint supports up to 10 files in one request. The files will be associated with the specified space ID.
@@ -211,9 +225,9 @@ spaceRoutes.get("/:id", spaceController.getSpace)
  *       - Space
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: token
  *         required: true
- *         description: ID of the space to which the documents belong
+ *         description: The email verification token
  *         schema:
  *           type: string
  *     requestBody:
@@ -241,7 +255,7 @@ spaceRoutes.get("/:id", spaceController.getSpace)
  *                   example: 200
  *                 message:
  *                   type: string
- *                   example: File(s) uploaded successfully!
+ *                   example: "File(s) uploaded successfully!"
  *                 data:
  *                   type: array
  *                   items:
@@ -249,10 +263,10 @@ spaceRoutes.get("/:id", spaceController.getSpace)
  *                     properties:
  *                       filename:
  *                         type: string
- *                         example: example.pdf
+ *                         example: "example.pdf"
  *                       path:
  *                         type: string
- *                         example: https://your-server.com/uploads/documents/example.pdf
+ *                         example: "https://your-server.com/uploads/documents/example.pdf"
  *       400:
  *         description: No files uploaded or invalid file
  *         content:
@@ -265,7 +279,7 @@ spaceRoutes.get("/:id", spaceController.getSpace)
  *                   example: 400
  *                 message:
  *                   type: string
- *                   example: No file uploaded
+ *                   example: "No file uploaded"
  *       500:
  *         description: Server error during file upload
  *         content:
@@ -278,24 +292,27 @@ spaceRoutes.get("/:id", spaceController.getSpace)
  *                   example: 500
  *                 message:
  *                   type: string
- *                   example: Internal server error
+ *                   example: "Internal server error"
  */
-spaceRoutes.put("/upload-documents/:id", spaceController.uploadDocuments)
+spaceRoutes.put("/upload-documents/:token", validateTokenMiddleware, spaceController.uploadDocuments)
 /**
  * @swagger
- * /space/send-verification-email/{id}:
+ * /space/space-creation-link:
  *   post:
- *     summary: Send verification email for a space
- *     description: Sends a verification email to the space's registered email address. If the email is already verified, it returns a 409 conflict status.
+ *     summary: Send space creation link to email
+ *     description: Sends a verification email to the space's registered email address. If the email is already verified, it returns a 409 conflict status. If no email is provided, it returns a 400 error.
  *     tags:
  *       - Space
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: ID of the space
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "admin@gmail.com"
  *     responses:
  *       200:
  *         description: Verification email sent successfully
@@ -317,6 +334,16 @@ spaceRoutes.put("/upload-documents/:id", spaceController.uploadDocuments)
  *                 message:
  *                   type: string
  *                   example: "Email Sent"
+ *       400:
+ *         description: Email required or invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Email required"
  *       404:
  *         description: Space not found
  *         content:
@@ -348,13 +375,13 @@ spaceRoutes.put("/upload-documents/:id", spaceController.uploadDocuments)
  *                   type: string
  *                   example: "Internal Server Error"
  */
-spaceRoutes.post("/send-verification-email/:id", spaceController.sentVerificationEmail)
+spaceRoutes.post("/space-creation-link", spaceController.sentSpaceCreationLink)
 /**
  * @swagger
- * /space/verify-email/{token}:
+ * /space/verify-space-link/{token}:
  *   post:
- *     summary: Verify email address using a token
- *     description: Verifies the email address using the provided token. If the token is invalid or expired, appropriate error responses are returned.
+ *     summary: Verify space link token and give space details
+ *     description: Verify space link token and give space details. If the token is invalid or expired, appropriate error responses are returned.
  *     tags:
  *       - Space
  *     parameters:
@@ -387,6 +414,16 @@ spaceRoutes.post("/send-verification-email/:id", spaceController.sentVerificatio
  *                     is_expired:
  *                       type: boolean
  *                       example: false
+ *       400:
+ *         description: Invalid request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Token required"
  *       404:
  *         description: Space not found
  *         content:
@@ -408,7 +445,7 @@ spaceRoutes.post("/send-verification-email/:id", spaceController.sentVerificatio
  *                   type: string
  *                   example: "Token has expired"
  *       500:
- *         description: Invalid request
+ *         description: Internal server error
  *         content:
  *           application/json:
  *             schema:
@@ -416,12 +453,12 @@ spaceRoutes.post("/send-verification-email/:id", spaceController.sentVerificatio
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Invalid Request"
+ *                   example: "Internal Server Error"
  */
-spaceRoutes.post("/verify-email/:token", spaceController.verifyEmail)
+spaceRoutes.post("/verify-space-link/:token", validateTokenMiddleware, spaceController.verifySpaceLink)
 /**
  * @swagger
- * /space/add-links/{id}:
+ * /space/add-links/{token}:
  *   put:
  *     summary: Add links to a space
  *     description: Adds external or relevant links to a space identified by the provided space ID.
@@ -429,9 +466,9 @@ spaceRoutes.post("/verify-email/:token", spaceController.verifyEmail)
  *       - Space
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: token
  *         required: true
- *         description: ID of the space to which links will be added
+ *         description: The email verification token
  *         schema:
  *           type: string
  *     requestBody:
@@ -510,10 +547,10 @@ spaceRoutes.post("/verify-email/:token", spaceController.verifyEmail)
  *                   type: string
  *                   example: "Internal server error"
  */
-spaceRoutes.put("/add-links/:id", spaceController.addSpaceLinks)
+spaceRoutes.put("/add-links/:token", validateTokenMiddleware, spaceController.addSpaceLinks)
 /**
  * @swagger
- * /space/add-logo/{id}:
+ * /space/add-logo/{token}:
  *   put:
  *     summary: Upload a logo for a space
  *     description: Uploads a single image file (logo) to a space identified by the provided space ID.
@@ -521,9 +558,9 @@ spaceRoutes.put("/add-links/:id", spaceController.addSpaceLinks)
  *       - Space
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: token
  *         required: true
- *         description: ID of the space to which the logo will be uploaded
+ *         description: The email verification token
  *         schema:
  *           type: string
  *     requestBody:
@@ -600,7 +637,7 @@ spaceRoutes.put("/add-links/:id", spaceController.addSpaceLinks)
  *                   type: string
  *                   example: "Internal server error"
  */
-spaceRoutes.put("/add-logo/:id", spaceController.addLogo)
+spaceRoutes.put("/add-logo/:token", validateTokenMiddleware, spaceController.addLogo)
 /**
  * @swagger
  * /space/status/{id}/{type}:
@@ -697,6 +734,106 @@ spaceRoutes.put("/add-logo/:id", spaceController.addLogo)
  *                   example: "Internal server error"
  */
 spaceRoutes.put("/status/:id/:type", spaceController.updateStatus)
+/**
+ * @swagger
+ * /space/submit/{token}:
+ *   post:
+ *     summary: Submit a space form
+ *     description: Submits a form for a space identified by the provided token.
+ *     tags:
+ *       - Space
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         description: The email verification token
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Space form submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Space created successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "ckl8cbsyh0001ap5s4x83do89"
+ *                     company_name:
+ *                       type: string
+ *                       example: "Awesome Inc."
+ *                     name:
+ *                       type: string
+ *                       example: "Awesome Space"
+ *                     email:
+ *                       type: string
+ *                       example: "admin@awesomeinc.com"
+ *                     description:
+ *                       type: string
+ *                       example: "This is an awesome space"
+ *                     category:
+ *                       type: string
+ *                       example: "Technology"
+ *                     created_by:
+ *                       type: string
+ *                       example: "admin"
+ *                     updated_by:
+ *                       type: string
+ *                       example: "admin"
+ *                     created_at:
+ *                       type: string
+ *                       example: "2024-10-14T12:34:56.789Z"
+ *                     updated_at:
+ *                       type: string
+ *                       example: "2024-10-14T12:34:56.789Z"
+ *       400:
+ *         description: Invalid input or missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid input data."
+ *       404:
+ *         description: Space not found or invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: "Space not found or invalid token."
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error."
+ */
+spaceRoutes.post("/submit/:token", validateTokenMiddleware, spaceController.submitSpaceForm)
 
 export default spaceRoutes;
 

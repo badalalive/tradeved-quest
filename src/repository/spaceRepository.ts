@@ -1,5 +1,5 @@
 import {inject, injectable} from "tsyringe";
-import {PrismaClient, Space, SpaceDocuments, SpaceEmailVerification, SpaceLinks, SpaceStatus} from "@prisma/client";
+import {PrismaClient, Space, SpaceDocuments, SpaceLinks, SpaceStatus} from "@prisma/client";
 import {CreateSpaceDto} from "../dto/spaceDTO";
 
 @injectable()
@@ -11,20 +11,11 @@ export class SpaceRepository {
     }
 
     // Find space by email
-    async findSpaceByEmailOrCompanyName(email: string, companyName: string): Promise<Space | null> {
+    async findSpaceByCompanyName(companyName: string): Promise<Space | null> {
         await this.prismaClient.$connect();
 
         const space = await this.prismaClient.space.findFirst({
-            where: {
-                OR: [
-                    { email: email },
-                    { company_name: companyName }
-                ],
-            }, include: {
-                links: true,
-                documents: true,
-                quests: true
-            }
+            where: { company_name: companyName },
         });
 
         await this.prismaClient.$disconnect();
@@ -33,24 +24,15 @@ export class SpaceRepository {
     }
 
     // Create a new space
-    async create(spaceDTO: CreateSpaceDto): Promise<Space | null> {
+    async create(email: string): Promise<Space | null> {
         await this.prismaClient.$connect();
 
         const newSpace = await this.prismaClient.space.create({
             data: {
-                company_name: spaceDTO.company_name,
-                name: spaceDTO.name || "",
-                description: spaceDTO.description || "",
-                email: spaceDTO.email,
-                is_email_verified: spaceDTO.is_email_verified || false,
-                banner: spaceDTO.banner || "",
-                logo_url: spaceDTO.logo_url || "",
-                category: spaceDTO.category || "",
-                created_at: new Date(),
-                updated_at: new Date(),
+                email: email,
                 /// @todo update this actual user id which is creating
-                created_by: spaceDTO.created_by || "",
-                updated_by: spaceDTO.updated_by || "",
+                created_by: "",
+                updated_by: "",
             },
         });
 
@@ -92,6 +74,23 @@ export class SpaceRepository {
 
         return space;
     }
+    // Find space by Email (for updating or retrieving details)
+
+    async findSpaceByEmail(email: string): Promise<Space | null> {
+        await this.prismaClient.$connect();
+
+        const space = await this.prismaClient.space.findUnique({
+            where: { email: email }, include: {
+                links: true,
+                documents: true,
+                quests: true
+            },
+        });
+
+        await this.prismaClient.$disconnect();
+
+        return space;
+    }
 
     async findSpaceByName(name: string): Promise<Space | null> {
         await this.prismaClient.$connect();
@@ -103,56 +102,6 @@ export class SpaceRepository {
         await this.prismaClient.$disconnect();
 
         return space;
-    }
-
-    async createEmailVerificationToken(spaceId: string, token: string): Promise<SpaceEmailVerification | null> {
-        await this.prismaClient.$connect();
-        const spaceEmailVerification = await this.prismaClient.spaceEmailVerification.create({
-            data: {
-                space_id: spaceId,
-                token: token,
-                created_by: spaceId,
-                updated_by: spaceId
-            }
-        })
-        await this.prismaClient.$disconnect();
-        return spaceEmailVerification;
-    }
-
-    async findSpaceEmailVerificationByToken(token: string): Promise<SpaceEmailVerification | null> {
-        await this.prismaClient.$connect();
-        const spaceEmailVerification = this.prismaClient.spaceEmailVerification.findUnique({
-            where: {
-                token: token
-            }, include: {
-                space: true
-            }
-        })
-        await this.prismaClient.$disconnect();
-        return spaceEmailVerification;
-    }
-
-    async expireEmailVerificationTokens(spaceId: string): Promise<any | null> {
-        await this.prismaClient.$connect();
-        try {
-            const spaceEmailVerification = await this.prismaClient.spaceEmailVerification.updateMany({
-                where: {
-                    space_id: spaceId,
-                },
-                data: {
-                    is_expired: true,
-                },
-            });
-            await this.prismaClient.$disconnect();
-            return spaceEmailVerification;
-        } catch (error: any) {
-            // Handle case where no record is found
-            if (error.code === 'P2025') {
-                // P2025 is the Prisma error code for "Record not found"
-                return null;
-            }
-            throw error; // Re-throw any other errors
-        }
     }
 
     async createSpaceDocuments(spaceDocuments: any[]): Promise<void>  {

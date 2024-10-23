@@ -6,44 +6,49 @@ import {Request, Response} from "express";
 import {uploadDocument, uploadImage} from "../config/multerConfig";
 import {verificationMailTemplate} from "../templates/mailTemplate";
 import {generateRandomToken, sendEmail} from "../utils/utilities";
-import {SpaceStatus} from "@prisma/client";
+import {KeyStatus, Space, SpaceStatus} from "@prisma/client";
+import {TokenRepository} from "../repository/tokenRepository";
 
 @injectable()
 export class SpaceService {
     constructor (
         @inject("SpaceRepository")
         private spaceRepository: SpaceRepository,
+        @inject("TokenRepository")
+        private tokenRepository: TokenRepository,
     ) {}
 
-    createSpace = async (spaceDTO: CreateSpaceDto) => {
+    createSpace = async (tokenData: any, spaceDTO: CreateSpaceDto) => {
+        const space = await this.spaceRepository.findSpaceById(tokenData.space_id);
+        if (!space) {
+            throw new HttpException(400, 'Space does not exist');
+        }
+        if (space.status !== SpaceStatus.PENDING) {
+            throw new HttpException(400, 'invalid Request');
+        }
+        // Check if the space with the company name already exists
+        if (spaceDTO.company_name) {
+            const existingSpace: any = await this.spaceRepository.findSpaceByCompanyName(spaceDTO.company_name);
+            if (existingSpace && existingSpace.id !== tokenData.space_id) {
+                throw new HttpException(409, 'Space with this company name already exists.');
+            }
+        }
+        if (spaceDTO.name) {
+            const existingSpace: any = await this.spaceRepository.findSpaceByName(spaceDTO.name);
+            if (existingSpace && existingSpace.id !== tokenData.space_id) {
+                throw new HttpException(409, 'Space with this space name already exists.');
+            }
+        }
+        const newSpace = await this.spaceRepository.updateSpaceById(
+            tokenData.space_id,
+            spaceDTO
+        );
 
-        // Check if the space with the same email or company name already exists
-        let existingSpace = await this.spaceRepository.findSpaceByEmailOrCompanyName(spaceDTO.email, spaceDTO.company_name);
-        if (existingSpace) {
-            throw new HttpException(409, 'Space with this email/company already exists.');
-        }
-        const spaceName = spaceDTO.name;
-        if(spaceName) {
-            existingSpace = await this.spaceRepository.findSpaceByName(spaceName);
-        }
-        if(existingSpace) {
-            throw new HttpException(409, 'Space with name already exist');
-        }
-
-        // Create a new space using the repository
-        try {
-            const newSpace = await this.spaceRepository.create(
-                spaceDTO
-            );
-
-            return {
-                message: 'Space successfully created.',
-                data: newSpace,
-                statusCode: 201,
-            };
-        } catch (error) {
-            throw new HttpException(500, 'Error creating the space.');
-        }
+        return {
+            message: 'Space Details Updated',
+            data: newSpace,
+            statusCode: 201,
+        };
     };
 
     getSpace = async (spaceId: string) => {
@@ -58,11 +63,14 @@ export class SpaceService {
         }
     }
 
-    uploadDocuments = async (req: Request, res: Response) => {
+    uploadDocuments = async (tokenData: any, req: Request, res: Response) => {
         const spaceId = String(req.params.id);
         const space = await this.spaceRepository.findSpaceById(spaceId);
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
+        }
+        if (space.status !== SpaceStatus.PENDING) {
+            throw new HttpException(400, 'invalid Request');
         }
         await new Promise<void>((resolve, reject) => {
             uploadDocument.array('files', 10)(req, res, (err: any) => {
@@ -101,52 +109,46 @@ export class SpaceService {
         };
     }
 
-    sentVerificationEmail = async (spaceId: string) => {
-        const space = await this.spaceRepository.findSpaceById(spaceId);
+    sentSpaceCreationLink = async (email: string) => {
+        let space: any = await this.spaceRepository.findSpaceByEmail(email)
+        // if email is not associate with any space then create new one else create new token that's it
         if(!space) {
-            throw new HttpException(404, 'Space doe not exist')
+            space = await this.spaceRepository.create(email);
         }
-        if (space.is_email_verified) {
-            throw new HttpException(409, "Email Already Verified")
+        if (space.status !== SpaceStatus.PENDING) {
+            throw new HttpException(400, 'invalid Request');
         }
-        const token = generateRandomToken(24);
-        const link = `${process.env.SERVER_URL}verify-email/${token}`
-        const emailContent = verificationMailTemplate(link);
         // save email verification token
-        await this.spaceRepository.createEmailVerificationToken(spaceId, token);
-        await sendEmail(space.email, "Space Email Verification", emailContent)
+        const tokenData: any = await this.tokenRepository.createToken(space.id);
+        const link = `${process.env.SERVER_URL}verify-email/${tokenData.token}`
+        const emailContent = verificationMailTemplate(link);
+        await sendEmail(space.email, "Space Creation Link", emailContent)
         return {
             statusCode: 200,
-            message: "Email Sent",
+            message: "Link Sent",
             data: space
         };
     }
 
-    verifyEmail = async (token: string) => {
-        const spaceEmailVerification = await this.spaceRepository.findSpaceEmailVerificationByToken(token);
+    verifySpaceLink = async (tokenData: any) => {
+        const space = tokenData.space_id ? await this.spaceRepository.findSpaceById(tokenData.space_id) : {};
 
-        if(!spaceEmailVerification) {
-            throw new HttpException(500, 'Invalid Request')
-        }
-
-        if(!spaceEmailVerification.space_id) {
-            throw new HttpException(500, 'Invalid Space')
-        }
-
-        if (spaceEmailVerification.is_expired) {
-            throw new HttpException(410, "Token has expired");
-        }
-
-        await this.spaceRepository.expireEmailVerificationTokens(spaceEmailVerification.space_id);
         return {
             statusCode: 200,
             message: "Email Verified Successfully",
-            data: spaceEmailVerification
+            data: space
         }
     }
 
-    addSpaceLinks = async (spaceId: string, link: string) => {
-        const spaceLink = await this.spaceRepository.createSpaceLink(spaceId, link)
+    addSpaceLinks = async (tokenData: any, link: string) => {
+        const space = await this.spaceRepository.findSpaceById(tokenData.space_id);
+        if (!space) {
+            throw new HttpException(400, 'Space does not exist');
+        }
+        if (space.status !== SpaceStatus.PENDING) {
+            throw new HttpException(400, 'invalid Request');
+        }
+        const spaceLink = await this.spaceRepository.createSpaceLink(tokenData.space_id, link)
         return {
             statusCode: 200,
             message: "Space Link Attached Successfully",
@@ -154,12 +156,14 @@ export class SpaceService {
         }
     }
 
-    addLogo = async (spaceId: string, req: Request, res: Response) => {
-        const space = await this.spaceRepository.findSpaceById(spaceId);
+    addLogo = async (tokenData: any, req: Request, res: Response) => {
+        const space = await this.spaceRepository.findSpaceById(tokenData.space_id);
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
-
+        if (space.status !== SpaceStatus.PENDING) {
+            throw new HttpException(400, 'invalid Request');
+        }
         // Use the `uploadImage` middleware for single image upload
         await new Promise<void>((resolve, reject) => {
             uploadImage.single('file')(req, res, (err: any) => {
@@ -177,7 +181,7 @@ export class SpaceService {
             filename: req.file?.originalname,
             path: `${process.env.SERVER_URL}${req.file?.destination}${req.file?.filename}`,
         };
-        await this.spaceRepository.createSpaceLogo(spaceId, fileInfo.path)
+        await this.spaceRepository.createSpaceLogo(tokenData.space_id, fileInfo.path)
         return {
             statusCode: 200,
             message: "Logo uploaded successfully!",
@@ -200,6 +204,25 @@ export class SpaceService {
             statusCode: 200,
             message: `${status} Successfully`,
             data: space
+        }
+    }
+
+    submitForm = async (tokenData: any) => {
+        let space: any = await this.spaceRepository.findSpaceById(tokenData.space_id);
+        if (!space) {
+            throw new HttpException(400, 'Space does not exist');
+        }
+        if(space.status === SpaceStatus.REVIEW) {
+            throw new HttpException(409, 'Already Submitted');
+        }
+        if (space.status !== SpaceStatus.PENDING) {
+            throw new HttpException(400, 'Invalid Request');
+        }
+        space = await this.spaceRepository.updateSpaceStatus(space.id, SpaceStatus.REVIEW, "");
+        return {
+            data: space,
+            statusCode: 200,
+            message: "Submit For Review"
         }
     }
 

@@ -10,9 +10,9 @@ import {
 
 export class CreateSpaceDto {
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @MaxLength(255)
-    company_name: string = "";
+    company_name?: string;
 
     @IsOptional()
     @IsString()
@@ -20,19 +20,15 @@ export class CreateSpaceDto {
     name?: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     @MaxLength(255)
     @IsEmail()
-    email: string = "";
+    email?: string;
 
     @IsOptional()
     @IsString()
-    @MaxLength(255)
+    @MaxLength(1000)
     description?: string;
-
-    @IsOptional()
-    @IsBoolean()
-    is_email_verified?: boolean = false;
 
     @IsOptional()
     @IsString()
@@ -46,8 +42,8 @@ export class CreateSpaceDto {
     logo_url?: string;
 
     @IsString()
-    @IsNotEmpty()
-    category: string = "";
+    @IsOptional()
+    category?: string;
 
     @IsOptional()
     @IsString()
