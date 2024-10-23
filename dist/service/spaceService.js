@@ -221,7 +221,7 @@ let SpaceService = class SpaceService {
                 throw new httpException_1.HttpException(400, 'Invalid Request');
             }
             // Validate that all required fields are filled
-            const requiredFields = ['company_name', 'name', 'description', 'email', 'banner', 'logo_url', 'category'];
+            const requiredFields = ['company_name', 'name', 'description', 'email', 'logo_url', 'category'];
             for (const field of requiredFields) {
                 if (!space[field]) {
                     throw new httpException_1.HttpException(400, `Field ${field} is required and not filled.`);

@@ -224,7 +224,7 @@ export class SpaceService {
         }
 
         // Validate that all required fields are filled
-        const requiredFields = ['company_name', 'name', 'description', 'email', 'banner', 'logo_url', 'category'];
+        const requiredFields = ['company_name', 'name', 'description', 'email', 'logo_url', 'category'];
 
         for (const field of requiredFields) {
             if (!space[field]) {
