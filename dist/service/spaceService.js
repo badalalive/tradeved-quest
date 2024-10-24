@@ -25,7 +25,6 @@ exports.SpaceService = void 0;
 const tsyringe_1 = require("tsyringe");
 const spaceRepository_1 = require("../repository/spaceRepository");
 const httpException_1 = require("../exceptions/httpException");
-const multerConfig_1 = require("../config/multerConfig");
 const mailTemplate_1 = require("../templates/mailTemplate");
 const utilities_1 = require("../utils/utilities");
 const client_1 = require("@prisma/client");
@@ -96,17 +95,17 @@ let SpaceService = class SpaceService {
             if (space.status !== client_1.SpaceStatus.PENDING) {
                 throw new httpException_1.HttpException(400, 'invalid Request');
             }
-            yield new Promise((resolve, reject) => {
-                multerConfig_1.uploadDocument.array('files', 10)(req, res, (err) => {
-                    if (err) {
-                        return reject(new httpException_1.HttpException(400, err.message));
-                    }
-                    if (!req.files || req.files.length === 0) {
-                        return reject(new httpException_1.HttpException(400, "No file uploaded"));
-                    }
-                    resolve();
-                });
-            });
+            // await new Promise<void>((resolve, reject) => {
+            //     uploadDocument.array('files', 10)(req, res, (err: any) => {
+            //         if (err) {
+            //             return reject(new HttpException(400, err.message));
+            //         }
+            //         if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
+            //             return reject(new HttpException(400, "No file uploaded"));
+            //         }
+            //         resolve();
+            //     });
+            // });
             const filesInfo = req.files.map(file => ({
                 filename: file.originalname,
                 path: `${process.env.SERVER_URL}${file.destination}${file.filename}`
@@ -183,17 +182,17 @@ let SpaceService = class SpaceService {
                 throw new httpException_1.HttpException(400, 'invalid Request');
             }
             // Use the `uploadImage` middleware for single image upload
-            yield new Promise((resolve, reject) => {
-                multerConfig_1.uploadImage.single('file')(req, res, (err) => {
-                    if (err) {
-                        return reject(new httpException_1.HttpException(400, err.message));
-                    }
-                    if (!req.file) {
-                        return reject(new httpException_1.HttpException(400, "No file uploaded"));
-                    }
-                    resolve();
-                });
-            });
+            // await new Promise<void>((resolve, reject) => {
+            //     uploadImage.single('file')(req, res, (err: any) => {
+            //         if (err) {
+            //             return reject(new HttpException(400, err.message));
+            //         }
+            //         if (!req.file) {
+            //             return reject(new HttpException(400, "No file uploaded"));
+            //         }
+            //         resolve();
+            //     });
+            // });
             const fileInfo = {
                 filename: (_a = req.file) === null || _a === void 0 ? void 0 : _a.originalname,
                 path: `${process.env.SERVER_URL}${(_b = req.file) === null || _b === void 0 ? void 0 : _b.destination}${(_c = req.file) === null || _c === void 0 ? void 0 : _c.filename}`,
@@ -215,17 +214,17 @@ let SpaceService = class SpaceService {
                 throw new httpException_1.HttpException(400, 'invalid Request');
             }
             // Use the `uploadImage` middleware for single image upload
-            yield new Promise((resolve, reject) => {
-                multerConfig_1.uploadImage.single('file')(req, res, (err) => {
-                    if (err) {
-                        return reject(new httpException_1.HttpException(400, err.message));
-                    }
-                    if (!req.file) {
-                        return reject(new httpException_1.HttpException(400, "No file uploaded"));
-                    }
-                    resolve();
-                });
-            });
+            // await new Promise<void>((resolve, reject) => {
+            //     uploadImage.single('file')(req, res, (err: any) => {
+            //         if (err) {
+            //             return reject(new HttpException(400, err.message));
+            //         }
+            //         if (!req.file) {
+            //             return reject(new HttpException(400, "No file uploaded"));
+            //         }
+            //         resolve();
+            //     });
+            // });
             const fileInfo = {
                 filename: (_a = req.file) === null || _a === void 0 ? void 0 : _a.originalname,
                 path: `${process.env.SERVER_URL}${(_b = req.file) === null || _b === void 0 ? void 0 : _b.destination}${(_c = req.file) === null || _c === void 0 ? void 0 : _c.filename}`,

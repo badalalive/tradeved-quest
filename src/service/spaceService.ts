@@ -86,17 +86,17 @@ export class SpaceService {
         if (space.status !== SpaceStatus.PENDING) {
             throw new HttpException(400, 'invalid Request');
         }
-        await new Promise<void>((resolve, reject) => {
-            uploadDocument.array('files', 10)(req, res, (err: any) => {
-                if (err) {
-                    return reject(new HttpException(400, err.message));
-                }
-                if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
-                    return reject(new HttpException(400, "No file uploaded"));
-                }
-                resolve();
-            });
-        });
+        // await new Promise<void>((resolve, reject) => {
+        //     uploadDocument.array('files', 10)(req, res, (err: any) => {
+        //         if (err) {
+        //             return reject(new HttpException(400, err.message));
+        //         }
+        //         if (!req.files || (req.files as Express.Multer.File[]).length === 0) {
+        //             return reject(new HttpException(400, "No file uploaded"));
+        //         }
+        //         resolve();
+        //     });
+        // });
 
         const filesInfo = (req.files as Express.Multer.File[]).map(file => ({
             filename: file.originalname,
@@ -179,17 +179,17 @@ export class SpaceService {
             throw new HttpException(400, 'invalid Request');
         }
         // Use the `uploadImage` middleware for single image upload
-        await new Promise<void>((resolve, reject) => {
-            uploadImage.single('file')(req, res, (err: any) => {
-                if (err) {
-                    return reject(new HttpException(400, err.message));
-                }
-                if (!req.file) {
-                    return reject(new HttpException(400, "No file uploaded"));
-                }
-                resolve();
-            });
-        });
+        // await new Promise<void>((resolve, reject) => {
+        //     uploadImage.single('file')(req, res, (err: any) => {
+        //         if (err) {
+        //             return reject(new HttpException(400, err.message));
+        //         }
+        //         if (!req.file) {
+        //             return reject(new HttpException(400, "No file uploaded"));
+        //         }
+        //         resolve();
+        //     });
+        // });
 
         const fileInfo = {
             filename: req.file?.originalname,
@@ -212,17 +212,17 @@ export class SpaceService {
             throw new HttpException(400, 'invalid Request');
         }
         // Use the `uploadImage` middleware for single image upload
-        await new Promise<void>((resolve, reject) => {
-            uploadImage.single('file')(req, res, (err: any) => {
-                if (err) {
-                    return reject(new HttpException(400, err.message));
-                }
-                if (!req.file) {
-                    return reject(new HttpException(400, "No file uploaded"));
-                }
-                resolve();
-            });
-        });
+        // await new Promise<void>((resolve, reject) => {
+        //     uploadImage.single('file')(req, res, (err: any) => {
+        //         if (err) {
+        //             return reject(new HttpException(400, err.message));
+        //         }
+        //         if (!req.file) {
+        //             return reject(new HttpException(400, "No file uploaded"));
+        //         }
+        //         resolve();
+        //     });
+        // });
 
         const fileInfo = {
             filename: req.file?.originalname,
