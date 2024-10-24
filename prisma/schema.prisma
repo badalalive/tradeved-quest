@@ -93,9 +93,34 @@ model Quest {
   space               Space                 @relation("SpaceToQuest", fields: [space_id], references: [id])
   template            QuestTemplate         @relation(fields: [template_id], references: [id])
   template_id         String                @unique
+  moduleQuests        ModuleQuest[]
   questParticipant    QuestParticipant[]
   QuestVote           QuestVote[]
   questVoteDiscussion QuestVoteDiscussion[]
+}
+
+model ModuleQuest {
+  id         String   @id @unique @default(cuid())
+  module     Module   @relation(fields: [module_id], references: [id])
+  module_id  String
+  quest      Quest    @relation(fields: [quest_id], references: [id])
+  quest_id   String
+  order      Int? // Optional: Display order of quests within the module
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Module {
+  id               String        @id @unique @default(cuid())
+  title            String        @db.VarChar(255) // Title of the module
+  description      String        @db.VarChar(1000) // Description of the module
+  background_color String        @db.VarChar(7) // HEX code for the module's background color
+  image_url        String        @db.VarChar(255) // URL to a module image
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+  created_by       String
+  updated_by       String
+  moduleQuests     ModuleQuest[] // Relation to the join table for many-to-many relationship with Quest
 }
 
 model QuestParticipant {
