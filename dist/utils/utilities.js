@@ -14,12 +14,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.extractErrorMessages = exports.sendEmail = exports.generateRandomToken = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
+const crypto_1 = require("crypto");
 const generateRandomToken = (length) => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const randomValues = (0, crypto_1.randomBytes)(length); // Generate cryptographically secure random bytes
     let token = '';
     for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * chars.length);
-        token += chars[randomIndex];
+        // Use the random byte value to select a character from the chars string
+        token += chars[randomValues[i] % chars.length];
     }
     return token;
 };

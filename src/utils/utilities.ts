@@ -1,11 +1,12 @@
 import nodemailer from "nodemailer";
-
+import { randomBytes } from 'crypto';
 export const generateRandomToken = (length: number): string => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const randomValues = randomBytes(length);  // Generate cryptographically secure random bytes
     let token = '';
     for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * chars.length);
-        token += chars[randomIndex];
+        // Use the random byte value to select a character from the chars string
+        token += chars[randomValues[i] % chars.length];
     }
     return token;
 }

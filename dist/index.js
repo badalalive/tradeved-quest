@@ -23,6 +23,11 @@ app.use(express_1.default.json());
 // swagger docs api
 const swaggerSpec = (0, swagger_jsdoc_1.default)(swagger_1.default);
 app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerSpec));
+// Serve Swagger JSON
+app.get('/api-docs.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+});
 app.use((0, cors_1.default)({
     // origin: process.env.ORIGIN,
     origin: process.env.ORIGIN,
