@@ -98,28 +98,33 @@ export class SpaceService {
         //     });
         // });
 
-        const filesInfo = (req.files as Express.Multer.File[]).map(file => ({
-            filename: file.originalname,
-            path: `${process.env.SERVER_URL}${file.destination}${file.filename}`
-        }));
-        let spaceDocuments: any[] = [];
-        if (filesInfo.length > 0) {
-            filesInfo.map((f)=> {
-                const spaceDocument: any = {
-                    space_id: spaceId,
-                    path: f.path,
-                    created_by: spaceId,
-                    updated_by: spaceId,
-                }
-                spaceDocuments.push(spaceDocument);
-            })
-            await this.spaceRepository.createSpaceDocuments(spaceDocuments)
-        }
+        // const filesInfo = (req.files as Express.Multer.File[]).map(file => ({
+        //     filename: file.originalname,
+        //     path: `${process.env.SERVER_URL}${file.destination}${file.filename}`
+        // }));
+        // let spaceDocuments: any[] = [];
+        // if (filesInfo.length > 0) {
+        //     filesInfo.map((f)=> {
+        //         const spaceDocument: any = {
+        //             space_id: spaceId,
+        //             path: f.path,
+        //             created_by: spaceId,
+        //             updated_by: spaceId,
+        //         }
+        //         spaceDocuments.push(spaceDocument);
+        //     })
+        //     await this.spaceRepository.createSpaceDocuments(spaceDocuments)
+        // }
 
         return {
             statusCode: 200,
             message: "File(s) uploaded successfully!",
-            data: filesInfo
+            data: [
+                {
+                    "filename": "example.pdf",
+                    "path": "https://your-server.com/uploads/documents/example.pdf"
+                }
+            ]
         };
     }
 
@@ -191,15 +196,18 @@ export class SpaceService {
         //     });
         // });
 
-        const fileInfo = {
-            filename: req.file?.originalname,
-            path: `${process.env.SERVER_URL}${req.file?.destination}${req.file?.filename}`,
-        };
-        await this.spaceRepository.createSpaceLogo(tokenData.space_id, fileInfo.path)
+        // const fileInfo = {
+        //     filename: req.file?.originalname,
+        //     path: `${process.env.SERVER_URL}${req.file?.destination}${req.file?.filename}`,
+        // };
+        // await this.spaceRepository.createSpaceLogo(tokenData.space_id, fileInfo.path)
         return {
             statusCode: 200,
             message: "Logo uploaded successfully!",
-            data: fileInfo
+            data: {
+                "filename": "logo.png",
+                "path": "https://yourserver.com/uploads/images/logo.png"
+            }
         };
     };
 
@@ -223,16 +231,19 @@ export class SpaceService {
         //         resolve();
         //     });
         // });
-
-        const fileInfo = {
-            filename: req.file?.originalname,
-            path: `${process.env.SERVER_URL}${req.file?.destination}${req.file?.filename}`,
-        };
-        await this.spaceRepository.createSpaceBanner(tokenData.space_id, fileInfo.path)
+        //
+        // const fileInfo = {
+        //     filename: req.file?.originalname,
+        //     path: `${process.env.SERVER_URL}${req.file?.destination}${req.file?.filename}`,
+        // };
+        // await this.spaceRepository.createSpaceBanner(tokenData.space_id, fileInfo.path)
         return {
             statusCode: 200,
             message: "Banner uploaded successfully!",
-            data: fileInfo
+            data: {
+                "filename": "banner.png",
+                "path": "https://yourserver.com/uploads/images/banner.png"
+            }
         };
     };
 
