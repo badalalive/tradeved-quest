@@ -78,7 +78,7 @@ export class SpaceService {
     }
 
     uploadDocuments = async (tokenData: any, req: Request, res: Response) => {
-        const spaceId = String(req.params.id);
+        const spaceId = tokenData.space_id;
         const space = await this.spaceRepository.findSpaceById(spaceId);
         if (!space) {
             throw new HttpException(400, 'Space does not exist');

@@ -88,7 +88,7 @@ let SpaceService = class SpaceService {
             };
         });
         this.uploadDocuments = (tokenData, req, res) => __awaiter(this, void 0, void 0, function* () {
-            const spaceId = String(req.params.id);
+            const spaceId = tokenData.space_id;
             const space = yield this.spaceRepository.findSpaceById(spaceId);
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
