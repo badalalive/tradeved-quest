@@ -13,6 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// space related tables
 model Space {
   id            String           @id @unique @default(cuid())
   company_name  String?          @db.VarChar(255)
@@ -72,33 +73,134 @@ model SpaceDocuments {
   updated_by String
 }
 
+// quest core tables
 model Quest {
-  id                String        @id @unique @default(cuid())
-  space_id          String
-  title             String        @db.VarChar(255)
-  description       String        @db.VarChar(1000)
-  participant_limit Int
-  max_reward_point  Int
-  end_date          DateTime
-  reattempt         Int
-  status            QuestStatus
-  created_at        DateTime      @default(now())
-  updated_at        DateTime      @updatedAt
-  space             Space         @relation("SpaceToQuest", fields: [space_id], references: [id])
-  template          QuestTemplate @relation(fields: [template_id], references: [id])
-  template_id       String        @unique
+  id                  String                @id @unique @default(cuid())
+  space_id            String
+  title               String                @db.VarChar(255)
+  description         String                @db.VarChar(1000)
+  participant_limit   Int
+  max_reward_point    Int
+  end_date            DateTime
+  reattempt           Int
+  status              QuestStatus
+  category            QuestCategory
+  quest_time          Int? // quest time in seconds
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @updatedAt
+  created_by          String
+  updated_by          String
+  space               Space                 @relation("SpaceToQuest", fields: [space_id], references: [id])
+  template            QuestTemplate         @relation(fields: [template_id], references: [id])
+  template_id         String                @unique
+  questParticipant    QuestParticipant[]
+  QuestVote           QuestVote[]
+  questVoteDiscussion QuestVoteDiscussion[]
+}
+
+model QuestParticipant {
+  id                String                @id @unique @default(cuid())
+  quest             Quest                 @relation(fields: [quest_id], references: [id])
+  quest_id          String
+  participant_id    String // user id that participate
+  joined_at         DateTime              @default(now())
+  completion_status QuestCompletionStatus @default(NOT_STARTED)
+  score             Int? // Optional, can be null if not yet scored
+  reward_points     Int? // Points earned, capped at quest.max_reward_point
+  reward_collected  Boolean               @default(false)
+  completed_at      DateTime? // Optional, can be null if not yet completed
+  reattempt_count   Int                   @default(0) // Tracks reattempts up to quest.reattempt
+  created_at        DateTime              @default(now())
+  updated_at        DateTime              @updatedAt
 }
 
 model QuestTemplate {
-  id            String                @id @unique @default(cuid())
-  template_name String                @db.VarChar(255)
-  description   String                @db.Text
-  category      QuestTemplateCategory
-  created_at    DateTime              @default(now())
-  updated_at    DateTime              @updatedAt
-  quest         Quest?                @relation
+  id            String   @id @unique @default(cuid())
+  template_name String   @db.VarChar(255)
+  description   String   @db.Text
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  quest         Quest?   @relation
 }
 
+// quest qna template related table
+model QuestQNA {
+  id               String             @id @unique @default(cuid())
+  total_question   Int? // total questions
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  questQNAQuestion QuestQNAQuestion[]
+}
+
+model Question {
+  id               String             @id @unique @default(cuid())
+  question         String             @db.VarChar(500)
+  answer_type      AnswerType         @default(SINGLE)
+  options          Option[]
+  answer           Answer[]
+  questQNAQuestion QuestQNAQuestion[]
+}
+
+model QuestQNAQuestion {
+  id               String         @id @unique @default(cuid())
+  questQna         QuestQNA       @relation(fields: [questQna_id], references: [id])
+  questQna_id      String
+  question         Question       @relation(fields: [questionId], references: [id])
+  questionId       String
+  question_status  QuestionStatus @default(UNATTEMPTED)
+  selected_options String?
+}
+
+model Option {
+  id         String   @id @unique @default(cuid())
+  content    String
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId String
+  Answer     Answer[]
+}
+
+model Answer {
+  id         String   @id @unique @default(cuid())
+  question   Question @relation(fields: [questionId], references: [id])
+  questionId String
+  option     Option   @relation(fields: [optionId], references: [id])
+  optionId   String
+}
+
+// quest vote template related table
+model QuestVote {
+  id                   String                 @id @unique @default(cuid())
+  quest                Quest                  @relation(fields: [quest_id], references: [id])
+  quest_id             String
+  news_item            String                 @db.VarChar(255) // Name or identifier of the news item voted on
+  upvotes              Int                    @default(0) // Count of upvotes
+  downvotes            Int                    @default(0) // Count of downvotes
+  created_at           DateTime               @default(now())
+  updated_at           DateTime               @updatedAt
+  QuestParticipantVote QuestParticipantVote[]
+}
+
+model QuestParticipantVote {
+  id             String    @id @unique @default(cuid())
+  quest_vote     QuestVote @relation(fields: [quest_vote_id], references: [id])
+  quest_vote_id  String
+  participant_id String // user id
+  vote_type      VoteType // Enum for UPVOTE or DOWNVOTE
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+}
+
+model QuestVoteDiscussion {
+  id         String   @id @unique @default(cuid())
+  quest      Quest    @relation(fields: [quest_id], references: [id])
+  quest_id   String
+  user_id    String
+  comment    String   @db.Text
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+// enums
 enum SpaceStatus {
   PENDING
   REVIEW
@@ -115,9 +217,32 @@ enum QuestStatus {
   ENDED
 }
 
-enum QuestTemplateCategory {
+enum QuestCategory {
   GENERAL
   TIMED
   MINI_GAMES
-  VOTE
+  DAILY
+}
+
+enum AnswerType {
+  SINGLE // For questions expecting exactly one answer
+  MULTIPLE // For questions expecting more than one answer
+}
+
+enum QuestionStatus {
+  UNATTEMPTED
+  CORRECT
+  INCORRECT
+}
+
+enum QuestCompletionStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+enum VoteType {
+  UPVOTE
+  DOWNVOTE
 }
