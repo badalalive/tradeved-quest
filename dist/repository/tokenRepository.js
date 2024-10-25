@@ -68,6 +68,8 @@ let TokenRepository = class TokenRepository {
                     expire_time: {
                         gt: new Date(),
                     },
+                }, include: {
+                    space: true
                 }
             });
             yield this.prismaClient.$disconnect();

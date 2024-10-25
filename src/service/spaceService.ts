@@ -19,14 +19,13 @@ export class SpaceService {
     ) {}
 
     createSpace = async (tokenData: any, spaceDTO: CreateSpaceDto) => {
-        let space: any = await this.spaceRepository.findSpaceById(tokenData.space_id);
+        let space: any = tokenData.space;
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
         if (space.status !== SpaceStatus.PENDING) {
             throw new HttpException(400, 'invalid Request');
         }
-        /// @todo temp comment to reduce api time for server problem
         // Check if the space with the company name already exists
         // if (spaceDTO.company_name) {
         //     const existingSpace: any = await this.spaceRepository.findSpaceByCompanyName(spaceDTO.company_name);
@@ -50,9 +49,9 @@ export class SpaceService {
             spaceDTO.links.map((link: string) => {
                 const spaceLink: any = {
                     link: link,
-                    space_id: space.id,
-                    created_by: space.id,
-                    updated_by: space.id
+                    space_id: tokenData.space_id,
+                    created_by: tokenData.space_id,
+                    updated_by: tokenData.space_id
                 }
                 spaceLinks.push(spaceLink)
             })
@@ -82,7 +81,7 @@ export class SpaceService {
 
     uploadDocuments = async (tokenData: any, req: Request, res: Response) => {
         const spaceId = tokenData.space_id;
-        const space = await this.spaceRepository.findSpaceById(spaceId);
+        let space: any = tokenData.space;
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
@@ -165,7 +164,7 @@ export class SpaceService {
     }
 
     addSpaceLinks = async (tokenData: any, link: string) => {
-        const space = await this.spaceRepository.findSpaceById(tokenData.space_id);
+        let space: any = tokenData.space;
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
@@ -181,7 +180,7 @@ export class SpaceService {
     }
 
     addLogo = async (tokenData: any, req: Request, res: Response) => {
-        const space = await this.spaceRepository.findSpaceById(tokenData.space_id);
+        let space: any = tokenData.space;
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
@@ -217,7 +216,7 @@ export class SpaceService {
     };
 
     addBanner = async (tokenData: any, req: Request, res: Response) => {
-        const space = await this.spaceRepository.findSpaceById(tokenData.space_id);
+        let space: any = tokenData.space;
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
@@ -271,11 +270,7 @@ export class SpaceService {
     }
 
     submitForm = async (tokenData: any) => {
-        let space: any = await this.spaceRepository.findSpaceById(tokenData.space_id);
-        if (!space) {
-            throw new HttpException(400, 'Space does not exist');
-        }
-
+        let space: any = tokenData.space;
         // Check if space is already submitted for review
         if (space.status === SpaceStatus.REVIEW) {
             throw new HttpException(409, 'Already Submitted');

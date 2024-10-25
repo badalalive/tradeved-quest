@@ -42,7 +42,7 @@ model Token {
   expire_time DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  Space       Space?    @relation("Token", fields: [space_id], references: [id])
+  space       Space?    @relation("Token", fields: [space_id], references: [id])
   space_id    String?
 }
 

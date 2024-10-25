@@ -34,14 +34,13 @@ let SpaceService = class SpaceService {
         this.spaceRepository = spaceRepository;
         this.tokenRepository = tokenRepository;
         this.createSpace = (tokenData, spaceDTO) => __awaiter(this, void 0, void 0, function* () {
-            let space = yield this.spaceRepository.findSpaceById(tokenData.space_id);
+            let space = tokenData.space;
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
             }
             if (space.status !== client_1.SpaceStatus.PENDING) {
                 throw new httpException_1.HttpException(400, 'invalid Request');
             }
-            /// @todo temp comment to reduce api time for server problem
             // Check if the space with the company name already exists
             // if (spaceDTO.company_name) {
             //     const existingSpace: any = await this.spaceRepository.findSpaceByCompanyName(spaceDTO.company_name);
@@ -62,9 +61,9 @@ let SpaceService = class SpaceService {
                 spaceDTO.links.map((link) => {
                     const spaceLink = {
                         link: link,
-                        space_id: space.id,
-                        created_by: space.id,
-                        updated_by: space.id
+                        space_id: tokenData.space_id,
+                        created_by: tokenData.space_id,
+                        updated_by: tokenData.space_id
                     };
                     spaceLinks.push(spaceLink);
                 });
@@ -92,7 +91,7 @@ let SpaceService = class SpaceService {
         });
         this.uploadDocuments = (tokenData, req, res) => __awaiter(this, void 0, void 0, function* () {
             const spaceId = tokenData.space_id;
-            const space = yield this.spaceRepository.findSpaceById(spaceId);
+            let space = tokenData.space;
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
             }
@@ -170,7 +169,7 @@ let SpaceService = class SpaceService {
             };
         });
         this.addSpaceLinks = (tokenData, link) => __awaiter(this, void 0, void 0, function* () {
-            const space = yield this.spaceRepository.findSpaceById(tokenData.space_id);
+            let space = tokenData.space;
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
             }
@@ -185,7 +184,7 @@ let SpaceService = class SpaceService {
             };
         });
         this.addLogo = (tokenData, req, res) => __awaiter(this, void 0, void 0, function* () {
-            const space = yield this.spaceRepository.findSpaceById(tokenData.space_id);
+            let space = tokenData.space;
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
             }
@@ -219,7 +218,7 @@ let SpaceService = class SpaceService {
             };
         });
         this.addBanner = (tokenData, req, res) => __awaiter(this, void 0, void 0, function* () {
-            const space = yield this.spaceRepository.findSpaceById(tokenData.space_id);
+            let space = tokenData.space;
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
             }
@@ -270,10 +269,7 @@ let SpaceService = class SpaceService {
             };
         });
         this.submitForm = (tokenData) => __awaiter(this, void 0, void 0, function* () {
-            let space = yield this.spaceRepository.findSpaceById(tokenData.space_id);
-            if (!space) {
-                throw new httpException_1.HttpException(400, 'Space does not exist');
-            }
+            let space = tokenData.space;
             // Check if space is already submitted for review
             if (space.status === client_1.SpaceStatus.REVIEW) {
                 throw new httpException_1.HttpException(409, 'Already Submitted');
