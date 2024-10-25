@@ -84,6 +84,9 @@ const extractErrorMessages = (errors) => {
 exports.extractErrorMessages = extractErrorMessages;
 // Convert an array to a formatted string
 const arrayToString = (array) => {
+    if (array.length === 0) {
+        return null;
+    }
     return `[${array.map(item => `"${item}"`).join(", ")}]`;
 };
 exports.arrayToString = arrayToString;

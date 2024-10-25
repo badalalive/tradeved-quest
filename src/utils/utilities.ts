@@ -70,7 +70,10 @@ export const extractErrorMessages = (errors: any[]): Record<string, string[]> =>
 };
 
 // Convert an array to a formatted string
-export const arrayToString = (array: string[]): string => {
+export const arrayToString = (array: string[]): string | null => {
+    if (array.length === 0) {
+        return null;
+    }
     return `[${array.map(item => `"${item}"`).join(", ")}]`;
 }
 
