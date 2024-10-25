@@ -58,7 +58,7 @@ export class SpaceService {
             const result = await this.spaceRepository.createSpaceLinks(spaceLinks);
         }
         space = await this.spaceRepository.findSpaceById(newSpace.id);
-        (space.category as any) = stringToArray(space.category || "");
+        (space.category as any) = stringToArray(space.category);
         return {
             message: 'Space Details Updated',
             data: space,
@@ -72,7 +72,7 @@ export class SpaceService {
             throw new HttpException(404, "Space does not exist");
         }
         // string of array category to array of category
-        (space.category as any) = stringToArray(space.category || "");
+        (space.category as any) = stringToArray(space.category);
         return {
             statusCode: 200,
             message: "Space Details Fetch Successfully",
@@ -155,7 +155,7 @@ export class SpaceService {
     verifySpaceLink = async (tokenData: any) => {
         const space: any = tokenData.space_id ? await this.spaceRepository.findSpaceById(tokenData.space_id) : {};
         // string of array category to array of category
-        space.category = stringToArray(space.category || "") as string[];
+        (space.category as any) = stringToArray(space.category);
         return {
             statusCode: 200,
             message: "Email Verified Successfully",

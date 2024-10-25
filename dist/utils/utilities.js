@@ -89,6 +89,9 @@ const arrayToString = (array) => {
 exports.arrayToString = arrayToString;
 // Convert a formatted string to an array
 const stringToArray = (str) => {
+    if (!str) {
+        return [];
+    }
     return str.slice(1, -1) // Remove the surrounding brackets
         .split(/,\s*/) // Split by comma and optional space
         .map(item => item.slice(1, -1)); // Remove quotes around each item

@@ -75,7 +75,10 @@ export const arrayToString = (array: string[]): string => {
 }
 
 // Convert a formatted string to an array
-export const stringToArray = (str: string): string[] => {
+export const stringToArray = (str: string | null): string[] => {
+    if(!str) {
+        return [];
+    }
     return str.slice(1, -1) // Remove the surrounding brackets
         .split(/,\s*/) // Split by comma and optional space
         .map(item => item.slice(1, -1)); // Remove quotes around each item

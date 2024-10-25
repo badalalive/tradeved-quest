@@ -70,7 +70,7 @@ let SpaceService = class SpaceService {
                 const result = yield this.spaceRepository.createSpaceLinks(spaceLinks);
             }
             space = yield this.spaceRepository.findSpaceById(newSpace.id);
-            space.category = (0, utilities_1.stringToArray)(space.category || "");
+            space.category = (0, utilities_1.stringToArray)(space.category);
             return {
                 message: 'Space Details Updated',
                 data: space,
@@ -83,7 +83,7 @@ let SpaceService = class SpaceService {
                 throw new httpException_1.HttpException(404, "Space does not exist");
             }
             // string of array category to array of category
-            space.category = (0, utilities_1.stringToArray)(space.category || "");
+            space.category = (0, utilities_1.stringToArray)(space.category);
             return {
                 statusCode: 200,
                 message: "Space Details Fetch Successfully",
@@ -161,7 +161,7 @@ let SpaceService = class SpaceService {
         this.verifySpaceLink = (tokenData) => __awaiter(this, void 0, void 0, function* () {
             const space = tokenData.space_id ? yield this.spaceRepository.findSpaceById(tokenData.space_id) : {};
             // string of array category to array of category
-            space.category = (0, utilities_1.stringToArray)(space.category || "");
+            space.category = (0, utilities_1.stringToArray)(space.category);
             return {
                 statusCode: 200,
                 message: "Email Verified Successfully",
