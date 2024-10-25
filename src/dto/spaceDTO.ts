@@ -44,6 +44,7 @@ export class CreateSpaceDto {
     @IsUrl()
     banner?: string;
 
+    @IsOptional()
     @IsArray()
     @IsUrl({}, { each: true })
     links?: string[];  // Ensure links are validated as an array of URLs
