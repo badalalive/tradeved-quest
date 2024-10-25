@@ -19,7 +19,7 @@ export class SpaceService {
     ) {}
 
     createSpace = async (tokenData: any, spaceDTO: CreateSpaceDto) => {
-        const space = await this.spaceRepository.findSpaceById(tokenData.space_id);
+        let space: any = await this.spaceRepository.findSpaceById(tokenData.space_id);
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
@@ -39,7 +39,7 @@ export class SpaceService {
                 throw new HttpException(409, 'Space with this space name already exists.');
             }
         }
-        const newSpace = await this.spaceRepository.updateSpaceById(
+        const newSpace: any = await this.spaceRepository.updateSpaceById(
             tokenData.space_id,
             spaceDTO
         );
@@ -57,10 +57,10 @@ export class SpaceService {
             })
             const result = await this.spaceRepository.createSpaceLinks(spaceLinks);
         }
-
+        space = await this.spaceRepository.findSpaceById(newSpace.id);
         return {
             message: 'Space Details Updated',
-            data: newSpace,
+            data: space,
             statusCode: 201,
         };
     };

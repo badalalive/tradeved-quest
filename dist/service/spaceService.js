@@ -34,7 +34,7 @@ let SpaceService = class SpaceService {
         this.spaceRepository = spaceRepository;
         this.tokenRepository = tokenRepository;
         this.createSpace = (tokenData, spaceDTO) => __awaiter(this, void 0, void 0, function* () {
-            const space = yield this.spaceRepository.findSpaceById(tokenData.space_id);
+            let space = yield this.spaceRepository.findSpaceById(tokenData.space_id);
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
             }
@@ -69,9 +69,10 @@ let SpaceService = class SpaceService {
                 });
                 const result = yield this.spaceRepository.createSpaceLinks(spaceLinks);
             }
+            space = yield this.spaceRepository.findSpaceById(newSpace.id);
             return {
                 message: 'Space Details Updated',
-                data: newSpace,
+                data: space,
                 statusCode: 201,
             };
         });
