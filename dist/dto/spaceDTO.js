@@ -60,9 +60,9 @@ __decorate([
     __metadata("design:type", Array)
 ], CreateSpaceDto.prototype, "links", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
 ], CreateSpaceDto.prototype, "category", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),

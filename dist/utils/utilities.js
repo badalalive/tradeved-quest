@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.extractErrorMessages = exports.sendEmail = exports.generateRandomToken = void 0;
+exports.stringToArray = exports.arrayToString = exports.extractErrorMessages = exports.sendEmail = exports.generateRandomToken = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const crypto_1 = require("crypto");
 const generateRandomToken = (length) => {
@@ -82,3 +82,15 @@ const extractErrorMessages = (errors) => {
     return errorMessages;
 };
 exports.extractErrorMessages = extractErrorMessages;
+// Convert an array to a formatted string
+const arrayToString = (array) => {
+    return `[${array.map(item => `"${item}"`).join(", ")}]`;
+};
+exports.arrayToString = arrayToString;
+// Convert a formatted string to an array
+const stringToArray = (str) => {
+    return str.slice(1, -1) // Remove the surrounding brackets
+        .split(/,\s*/) // Split by comma and optional space
+        .map(item => item.slice(1, -1)); // Remove quotes around each item
+};
+exports.stringToArray = stringToArray;

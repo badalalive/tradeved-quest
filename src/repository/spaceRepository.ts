@@ -1,6 +1,7 @@
 import {inject, injectable} from "tsyringe";
 import {PrismaClient, Space, SpaceDocuments, SpaceLinks, SpaceStatus} from "@prisma/client";
 import {CreateSpaceDto} from "../dto/spaceDTO";
+import {arrayToString} from "../utils/utilities";
 
 @injectable()
 export class SpaceRepository {
@@ -50,7 +51,7 @@ export class SpaceRepository {
             data: {
                 company_name: updateData.company_name,
                 name: updateData.name,
-                category: updateData.category,
+                category: arrayToString(updateData.category ?? []),
                 description: updateData.description,
                 updated_at: new Date(), // Automatically update the updated_at timestamp
             },

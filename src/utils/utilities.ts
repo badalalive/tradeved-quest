@@ -68,3 +68,15 @@ export const extractErrorMessages = (errors: any[]): Record<string, string[]> =>
 
     return errorMessages;
 };
+
+// Convert an array to a formatted string
+export const arrayToString = (array: string[]): string => {
+    return `[${array.map(item => `"${item}"`).join(", ")}]`;
+}
+
+// Convert a formatted string to an array
+export const stringToArray = (str: string): string[] => {
+    return str.slice(1, -1) // Remove the surrounding brackets
+        .split(/,\s*/) // Split by comma and optional space
+        .map(item => item.slice(1, -1)); // Remove quotes around each item
+}

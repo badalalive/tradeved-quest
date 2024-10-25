@@ -24,6 +24,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SpaceRepository = void 0;
 const tsyringe_1 = require("tsyringe");
 const client_1 = require("@prisma/client");
+const utilities_1 = require("../utils/utilities");
 let SpaceRepository = class SpaceRepository {
     constructor(prismaClient) {
         this.prismaClient = prismaClient;
@@ -58,13 +59,14 @@ let SpaceRepository = class SpaceRepository {
     // Update space by ID (for later use in the update functionality)
     updateSpaceById(id, updateData) {
         return __awaiter(this, void 0, void 0, function* () {
+            var _a;
             yield this.prismaClient.$connect();
             const updatedSpace = yield this.prismaClient.space.update({
                 where: { id: id },
                 data: {
                     company_name: updateData.company_name,
                     name: updateData.name,
-                    category: updateData.category,
+                    category: (0, utilities_1.arrayToString)((_a = updateData.category) !== null && _a !== void 0 ? _a : []),
                     description: updateData.description,
                     updated_at: new Date(), // Automatically update the updated_at timestamp
                 },

@@ -5,7 +5,7 @@ import {HttpException} from "../exceptions/httpException";
 import {Request, Response} from "express";
 import {uploadDocument, uploadImage} from "../config/multerConfig";
 import {verificationMailTemplate} from "../templates/mailTemplate";
-import {generateRandomToken, sendEmail} from "../utils/utilities";
+import {arrayToString, generateRandomToken, sendEmail, stringToArray} from "../utils/utilities";
 import {KeyStatus, Space, SpaceLinks, SpaceStatus} from "@prisma/client";
 import {TokenRepository} from "../repository/tokenRepository";
 
@@ -58,6 +58,7 @@ export class SpaceService {
             const result = await this.spaceRepository.createSpaceLinks(spaceLinks);
         }
         space = await this.spaceRepository.findSpaceById(newSpace.id);
+        (space.category as any) = stringToArray(space.category || "");
         return {
             message: 'Space Details Updated',
             data: space,
@@ -70,6 +71,8 @@ export class SpaceService {
         if(!space) {
             throw new HttpException(404, "Space does not exist");
         }
+        // string of array category to array of category
+        (space.category as any) = stringToArray(space.category || "");
         return {
             statusCode: 200,
             message: "Space Details Fetch Successfully",
@@ -150,8 +153,9 @@ export class SpaceService {
     }
 
     verifySpaceLink = async (tokenData: any) => {
-        const space = tokenData.space_id ? await this.spaceRepository.findSpaceById(tokenData.space_id) : {};
-
+        const space: any = tokenData.space_id ? await this.spaceRepository.findSpaceById(tokenData.space_id) : {};
+        // string of array category to array of category
+        space.category = stringToArray(space.category || "") as string[];
         return {
             statusCode: 200,
             message: "Email Verified Successfully",

@@ -49,9 +49,9 @@ export class CreateSpaceDto {
     @IsUrl({}, { each: true })
     links?: string[];  // Ensure links are validated as an array of URLs
 
-    @IsString()
     @IsOptional()
-    category?: string;
+    @IsArray()
+    category?: string[];
 
     @IsOptional()
     @IsString()
