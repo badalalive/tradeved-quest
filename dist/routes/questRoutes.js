@@ -5,4 +5,5 @@ const express_1 = require("express");
 const questController_1 = require("../controllers/questController");
 const questController = tsyringe_1.container.resolve(questController_1.QuestController);
 const questRoutes = (0, express_1.Router)();
+// questRoutes.post("/create", questController.create);
 exports.default = questRoutes;
