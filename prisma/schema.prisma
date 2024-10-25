@@ -67,6 +67,7 @@ model SpaceDocuments {
   space_id   String
   space      Space    @relation("SpaceToDocuments", fields: [space_id], references: [id])
   path       String
+  filename   String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   created_by String

@@ -120,6 +120,7 @@ let SpaceService = class SpaceService {
             //         const spaceDocument: any = {
             //             space_id: spaceId,
             //             path: f.path,
+            //             filename: f.filename,
             //             created_by: spaceId,
             //             updated_by: spaceId,
             //         }
