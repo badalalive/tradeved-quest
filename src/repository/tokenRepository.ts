@@ -48,7 +48,13 @@ export class TokenRepository {
                     gt: new Date(),
                 },
             }, include: {
-                space: true
+                space: {
+                    include: {
+                        links: true,
+                        documents: true,
+                        quests: true
+                    }
+                }
             }
         })
         await this.prismaClient.$disconnect();

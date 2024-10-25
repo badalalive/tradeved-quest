@@ -69,7 +69,13 @@ let TokenRepository = class TokenRepository {
                         gt: new Date(),
                     },
                 }, include: {
-                    space: true
+                    space: {
+                        include: {
+                            links: true,
+                            documents: true,
+                            quests: true
+                        }
+                    }
                 }
             });
             yield this.prismaClient.$disconnect();
