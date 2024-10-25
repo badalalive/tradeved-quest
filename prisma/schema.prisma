@@ -91,6 +91,8 @@ model Quest {
   updated_at          DateTime              @updatedAt
   created_by          String
   updated_by          String
+  approval_status     QuestApprovalStatus   @default(INITIATED)
+  reject_reason       String?
   space               Space                 @relation("SpaceToQuest", fields: [space_id], references: [id])
   template            QuestTemplate         @relation(fields: [template_id], references: [id])
   template_id         String                @unique
@@ -234,9 +236,15 @@ enum SpaceStatus {
   REJECTED
 }
 
+enum QuestApprovalStatus {
+  REVIEW
+  APPROVED
+  REJECTED
+  INITIATED
+}
+
 enum QuestStatus {
   DRAFTED
-  INITIATED
   SCHEDULED
   PAUSED
   RUNNING

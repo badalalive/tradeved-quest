@@ -21,117 +21,131 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.QuestRepository = void 0;
+exports.QuestModuleRepository = void 0;
 const tsyringe_1 = require("tsyringe");
 const client_1 = require("@prisma/client");
-let QuestRepository = class QuestRepository {
+let QuestModuleRepository = class QuestModuleRepository {
     constructor(prismaClient) {
         this.prismaClient = prismaClient;
     }
-    // Find a quest by its ID
-    findQuestById(questId) {
+    // create quest module
+    createModule(data) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
-            const quest = yield this.prismaClient.quest.findUnique({
-                where: { id: questId },
-                include: {
-                    space: true,
-                    template: true,
-                    questParticipant: true,
-                    questVote: true,
-                    questVoteDiscussion: true,
-                    moduleQuests: {
-                        include: {
-                            module: true
-                        }
-                    }
-                }
-            });
-            yield this.prismaClient.$disconnect();
-            return quest;
-        });
-    }
-    // Create a new quest
-    createQuest(data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.prismaClient.$connect();
-            const newQuest = yield this.prismaClient.quest.create({
+            const newModule = yield this.prismaClient.module.create({
                 data: {
                     title: data.title,
                     description: data.description,
-                    space_id: data.space_id,
-                    participant_limit: data.participant_limit,
-                    max_reward_point: data.max_reward_point,
-                    end_date: data.end_date,
-                    reattempt: data.reattempt,
-                    status: data.status,
-                    category: data.category,
-                    quest_time: data.quest_time,
-                    created_by: data.space_id,
-                    updated_by: data.space_id,
-                    template_id: data.template_id
+                    background_color: data.background_color,
+                    image_url: data.image_url,
+                    created_by: data.created_by,
+                    updated_by: data.updated_by,
                 },
             });
             yield this.prismaClient.$disconnect();
-            return newQuest;
+            return newModule;
         });
     }
-    // Update an existing quest by its ID
-    updateQuestById(questId, updateData) {
+    // update quest module
+    updateModule(moduleId, updateData) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
-            const updatedQuest = yield this.prismaClient.quest.update({
-                where: { id: questId },
-                data: Object.assign(Object.assign({}, updateData), { updated_at: new Date() // Update the updated_at timestamp
-                 })
+            const updatedModule = yield this.prismaClient.module.update({
+                where: { id: moduleId },
+                data: Object.assign(Object.assign({}, updateData), { updated_at: new Date() }),
             });
             yield this.prismaClient.$disconnect();
-            return updatedQuest;
+            return updatedModule;
         });
     }
-    // Find all quests for a specific space
-    findQuestsBySpace(spaceId) {
+    // find all quest module
+    findModulesWithQuests() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const modules = yield this.prismaClient.module.findMany({
+                include: {
+                    moduleQuests: {
+                        include: {
+                            quest: true,
+                        },
+                    },
+                },
+            });
+            yield this.prismaClient.$disconnect();
+            return modules;
+        });
+    }
+    // Add a quest to a module
+    addQuestToModule(questId, moduleId, order) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const moduleQuest = yield this.prismaClient.moduleQuest.create({
+                data: {
+                    quest_id: questId,
+                    module_id: moduleId,
+                    order: order,
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return moduleQuest;
+        });
+    }
+    // Remove a quest from a module
+    removeQuestFromModule(questId, moduleId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const deleteModuleQuest = yield this.prismaClient.moduleQuest.deleteMany({
+                where: {
+                    quest_id: questId,
+                    module_id: moduleId
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return deleteModuleQuest.count > 0;
+        });
+    }
+    // Find all quests that belong to a module
+    findQuestsByModule(moduleId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const quests = yield this.prismaClient.quest.findMany({
-                where: { space_id: spaceId },
+                where: {
+                    moduleQuests: {
+                        some: {
+                            module_id: moduleId
+                        }
+                    }
+                },
                 include: {
-                    moduleQuests: true,
-                    questParticipant: true
+                    moduleQuests: true
                 }
             });
             yield this.prismaClient.$disconnect();
             return quests;
         });
     }
-    // Delete a quest by its ID
-    deleteQuestById(questId) {
+    // find module by quest
+    findModulesByQuest(questId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
-            const deleteQuest = yield this.prismaClient.quest.delete({
-                where: { id: questId },
-            });
-            yield this.prismaClient.$disconnect();
-            return !!deleteQuest;
-        });
-    }
-    findQuestsWithTemplate(spaceId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.prismaClient.$connect();
-            const quests = yield this.prismaClient.quest.findMany({
-                where: { space_id: spaceId },
+            const modules = yield this.prismaClient.module.findMany({
+                where: {
+                    moduleQuests: {
+                        some: { quest_id: questId },
+                    },
+                },
                 include: {
-                    template: true,
+                    moduleQuests: true,
                 },
             });
             yield this.prismaClient.$disconnect();
-            return quests;
+            return modules;
         });
     }
 };
-exports.QuestRepository = QuestRepository;
-exports.QuestRepository = QuestRepository = __decorate([
+exports.QuestModuleRepository = QuestModuleRepository;
+exports.QuestModuleRepository = QuestModuleRepository = __decorate([
     (0, tsyringe_1.injectable)(),
     __param(0, (0, tsyringe_1.inject)("PrismaClient")),
     __metadata("design:paramtypes", [client_1.PrismaClient])
-], QuestRepository);
+], QuestModuleRepository);

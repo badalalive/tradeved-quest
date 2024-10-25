@@ -127,6 +127,15 @@ let SpaceService = class SpaceService {
             //     })
             //     await this.spaceRepository.createSpaceDocuments(spaceDocuments)
             // }
+            yield this.spaceRepository.createSpaceDocuments([
+                {
+                    space_id: spaceId,
+                    path: "https://your-server.com/uploads/documents/example.pdf",
+                    filename: "example.pdf",
+                    created_by: spaceId,
+                    updated_by: spaceId,
+                }
+            ]);
             return {
                 statusCode: 200,
                 message: "File(s) uploaded successfully!",
@@ -210,7 +219,7 @@ let SpaceService = class SpaceService {
             //     filename: req.file?.originalname,
             //     path: `${process.env.SERVER_URL}${req.file?.destination}${req.file?.filename}`,
             // };
-            yield this.spaceRepository.createSpaceLogo(tokenData.space_id, "\"https://yourserver.com/uploads/images/logo.png");
+            yield this.spaceRepository.createSpaceLogo(tokenData.space_id, "https://yourserver.com/uploads/images/logo.png");
             return {
                 statusCode: 200,
                 message: "Logo uploaded successfully!",
