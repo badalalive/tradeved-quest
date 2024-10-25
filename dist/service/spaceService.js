@@ -41,19 +41,20 @@ let SpaceService = class SpaceService {
             if (space.status !== client_1.SpaceStatus.PENDING) {
                 throw new httpException_1.HttpException(400, 'invalid Request');
             }
+            /// @todo temp comment to reduce api time for server problem
             // Check if the space with the company name already exists
-            if (spaceDTO.company_name) {
-                const existingSpace = yield this.spaceRepository.findSpaceByCompanyName(spaceDTO.company_name);
-                if (existingSpace && existingSpace.id !== tokenData.space_id) {
-                    throw new httpException_1.HttpException(409, 'Space with this company name already exists.');
-                }
-            }
-            if (spaceDTO.name) {
-                const existingSpace = yield this.spaceRepository.findSpaceByName(spaceDTO.name);
-                if (existingSpace && existingSpace.id !== tokenData.space_id) {
-                    throw new httpException_1.HttpException(409, 'Space with this space name already exists.');
-                }
-            }
+            // if (spaceDTO.company_name) {
+            //     const existingSpace: any = await this.spaceRepository.findSpaceByCompanyName(spaceDTO.company_name);
+            //     if (existingSpace && existingSpace.id !== tokenData.space_id) {
+            //         throw new HttpException(409, 'Space with this company name already exists.');
+            //     }
+            // }
+            // if (spaceDTO.name) {
+            //     const existingSpace: any = await this.spaceRepository.findSpaceByName(spaceDTO.name);
+            //     if (existingSpace && existingSpace.id !== tokenData.space_id) {
+            //         throw new HttpException(409, 'Space with this space name already exists.');
+            //     }
+            // }
             const newSpace = yield this.spaceRepository.updateSpaceById(tokenData.space_id, spaceDTO);
             // if link is present then perform the query
             if (spaceDTO.links && spaceDTO.links.length > 0) {

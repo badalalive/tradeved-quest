@@ -26,19 +26,20 @@ export class SpaceService {
         if (space.status !== SpaceStatus.PENDING) {
             throw new HttpException(400, 'invalid Request');
         }
+        /// @todo temp comment to reduce api time for server problem
         // Check if the space with the company name already exists
-        if (spaceDTO.company_name) {
-            const existingSpace: any = await this.spaceRepository.findSpaceByCompanyName(spaceDTO.company_name);
-            if (existingSpace && existingSpace.id !== tokenData.space_id) {
-                throw new HttpException(409, 'Space with this company name already exists.');
-            }
-        }
-        if (spaceDTO.name) {
-            const existingSpace: any = await this.spaceRepository.findSpaceByName(spaceDTO.name);
-            if (existingSpace && existingSpace.id !== tokenData.space_id) {
-                throw new HttpException(409, 'Space with this space name already exists.');
-            }
-        }
+        // if (spaceDTO.company_name) {
+        //     const existingSpace: any = await this.spaceRepository.findSpaceByCompanyName(spaceDTO.company_name);
+        //     if (existingSpace && existingSpace.id !== tokenData.space_id) {
+        //         throw new HttpException(409, 'Space with this company name already exists.');
+        //     }
+        // }
+        // if (spaceDTO.name) {
+        //     const existingSpace: any = await this.spaceRepository.findSpaceByName(spaceDTO.name);
+        //     if (existingSpace && existingSpace.id !== tokenData.space_id) {
+        //         throw new HttpException(409, 'Space with this space name already exists.');
+        //     }
+        // }
         const newSpace: any = await this.spaceRepository.updateSpaceById(
             tokenData.space_id,
             spaceDTO
