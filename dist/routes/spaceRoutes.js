@@ -41,8 +41,8 @@ const spaceRoutes = (0, express_1.Router)();
  *                 type: array
  *                 example: ["https://goggle.com"]
  *               category:
- *                 type: string
- *                 example: "Technology"
+ *                 type: array
+ *                 example: ["Edu", "Technology"]
  *               created_by:
  *                 type: string
  *                 example: "admin"
