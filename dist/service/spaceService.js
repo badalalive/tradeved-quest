@@ -207,7 +207,7 @@ let SpaceService = class SpaceService {
             //     filename: req.file?.originalname,
             //     path: `${process.env.SERVER_URL}${req.file?.destination}${req.file?.filename}`,
             // };
-            // await this.spaceRepository.createSpaceLogo(tokenData.space_id, fileInfo.path)
+            yield this.spaceRepository.createSpaceLogo(tokenData.space_id, "\"https://yourserver.com/uploads/images/logo.png");
             return {
                 statusCode: 200,
                 message: "Logo uploaded successfully!",
