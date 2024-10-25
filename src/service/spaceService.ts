@@ -154,6 +154,9 @@ export class SpaceService {
 
     verifySpaceLink = async (tokenData: any) => {
         const space: any = tokenData.space_id ? await this.spaceRepository.findSpaceById(tokenData.space_id) : {};
+        if (space.status !== SpaceStatus.PENDING) {
+            throw new HttpException(400, 'invalid Request');
+        }
         // string of array category to array of category
         (space.category as any) = stringToArray(space.category);
         return {

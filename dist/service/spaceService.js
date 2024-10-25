@@ -160,6 +160,9 @@ let SpaceService = class SpaceService {
         });
         this.verifySpaceLink = (tokenData) => __awaiter(this, void 0, void 0, function* () {
             const space = tokenData.space_id ? yield this.spaceRepository.findSpaceById(tokenData.space_id) : {};
+            if (space.status !== client_1.SpaceStatus.PENDING) {
+                throw new httpException_1.HttpException(400, 'invalid Request');
+            }
             // string of array category to array of category
             space.category = (0, utilities_1.stringToArray)(space.category);
             return {
