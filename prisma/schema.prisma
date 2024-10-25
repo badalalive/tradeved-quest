@@ -95,7 +95,7 @@ model Quest {
   template_id         String                @unique
   moduleQuests        ModuleQuest[]
   questParticipant    QuestParticipant[]
-  QuestVote           QuestVote[]
+  questVote           QuestVote[]
   questVoteDiscussion QuestVoteDiscussion[]
 }
 
