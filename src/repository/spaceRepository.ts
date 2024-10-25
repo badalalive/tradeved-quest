@@ -55,6 +55,11 @@ export class SpaceRepository {
                 description: updateData.description,
                 updated_at: new Date(), // Automatically update the updated_at timestamp
             },
+            include: {
+                links: true,
+                documents: true,
+                quests: true
+            }
         });
 
         await this.prismaClient.$disconnect();

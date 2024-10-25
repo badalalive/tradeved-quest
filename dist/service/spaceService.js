@@ -69,11 +69,10 @@ let SpaceService = class SpaceService {
                 });
                 const result = yield this.spaceRepository.createSpaceLinks(spaceLinks);
             }
-            space = yield this.spaceRepository.findSpaceById(newSpace.id);
-            space.category = (0, utilities_1.stringToArray)(space.category);
+            newSpace.category = (0, utilities_1.stringToArray)(newSpace.category);
             return {
                 message: 'Space Details Updated',
-                data: space,
+                data: newSpace,
                 statusCode: 201,
             };
         });

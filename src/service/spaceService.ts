@@ -57,11 +57,10 @@ export class SpaceService {
             })
             const result = await this.spaceRepository.createSpaceLinks(spaceLinks);
         }
-        space = await this.spaceRepository.findSpaceById(newSpace.id);
-        (space.category as any) = stringToArray(space.category);
+        (newSpace.category as any) = stringToArray(newSpace.category);
         return {
             message: 'Space Details Updated',
-            data: space,
+            data: newSpace,
             statusCode: 201,
         };
     };
