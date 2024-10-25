@@ -298,6 +298,8 @@ let SpaceService = class SpaceService {
             }
             // Update the space status to "REVIEW" if validation passes
             space = yield this.spaceRepository.updateSpaceStatus(space.id, client_1.SpaceStatus.REVIEW, "");
+            const emailContent = (0, mailTemplate_1.spaceFormSubmissionMailTemplate)();
+            yield (0, utilities_1.sendEmail)(space.email, "Space Form Submission", emailContent);
             // Return the success response
             return {
                 data: space,

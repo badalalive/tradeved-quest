@@ -74,3 +74,63 @@ export const verificationMailTemplate = (link: string) => {
 </html>
 `;
 }
+
+export const spaceFormSubmissionMailTemplate = () => {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Form Submission Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            background-color: #1a1a1a;
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #9BEC00;
+        }
+        p {
+            font-size: 16px;
+            color: #CCCCCC;
+            line-height: 1.6;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <h1>Form Submission Received!</h1>
+            <p>Thank you for submitting the form for your space. We have successfully received your request.</p>
+            <p>Our team is currently reviewing your submission and will get back to you shortly. You can expect a response within 24 hours.</p>
+            <p>If you have any additional questions or need further assistance, please do not hesitate to reach out to our support team.</p>
+            <div class="footer">
+                <p>If you did not submit this form, please contact our support team immediately.</p>
+                <p>&copy; 2024 Your Company. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+`;
+}

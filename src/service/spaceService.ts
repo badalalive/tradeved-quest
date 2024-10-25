@@ -4,7 +4,7 @@ import {CreateSpaceDto} from "../dto/spaceDTO";
 import {HttpException} from "../exceptions/httpException";
 import {Request, Response} from "express";
 import {uploadDocument, uploadImage} from "../config/multerConfig";
-import {verificationMailTemplate} from "../templates/mailTemplate";
+import {spaceFormSubmissionMailTemplate, verificationMailTemplate} from "../templates/mailTemplate";
 import {arrayToString, generateRandomToken, sendEmail, stringToArray} from "../utils/utilities";
 import {KeyStatus, Space, SpaceLinks, SpaceStatus} from "@prisma/client";
 import {TokenRepository} from "../repository/tokenRepository";
@@ -305,6 +305,9 @@ export class SpaceService {
 
         // Update the space status to "REVIEW" if validation passes
         space = await this.spaceRepository.updateSpaceStatus(space.id, SpaceStatus.REVIEW, "");
+
+        const emailContent = spaceFormSubmissionMailTemplate();
+        await sendEmail(space.email, "Space Form Submission", emailContent)
 
         // Return the success response
         return {
