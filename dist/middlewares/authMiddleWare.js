@@ -16,7 +16,9 @@ exports.validateTokenMiddleware = exports.verifyTokenAndRolesMiddleware = void 0
 const httpException_1 = require("../exceptions/httpException");
 const axios_1 = __importDefault(require("axios"));
 const tsyringe_1 = require("tsyringe");
-const tokenRepository_1 = require("../repository/tokenRepository"); // To make HTTP requests to the other microservice
+const tokenRepository_1 = require("../repository/tokenRepository");
+const client_1 = require("@prisma/client"); // To make HTTP requests to the other microservice
+const prisma = new client_1.PrismaClient();
 const verifyTokenAndRolesMiddleware = (allowedRoles) => {
     return (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         const token = req.headers['authorization'];
@@ -41,7 +43,15 @@ const verifyTokenAndRolesMiddleware = (allowedRoles) => {
             if (!hasRole) {
                 return next(new httpException_1.HttpException(403, 'Access denied.'));
             }
+            const space = yield prisma.space.findUnique({
+                where: { user_id: user.id }, include: {
+                    links: true,
+                    documents: true,
+                    quests: true
+                },
+            });
             req.user = user; // Attach user to request
+            req.space = space; // Attach space to request
             next();
         }
         catch (err) {

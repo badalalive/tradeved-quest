@@ -23,6 +23,6 @@ const options = {
             },
         ],
     },
-    apis: ["./dist/routes/*.js", "./dist/controllers/*.js", "./dist/dto/*.js"], // Files containing annotations
+    apis: ["./dist/routes/*.js", "./dist/controllers/*.js", "./dist/dto/*.js", "./dist/docs/*.js"], // Files containing annotations
 };
 exports.default = options;

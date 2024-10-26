@@ -25,6 +25,7 @@ model Space {
   logo_url      String?          @db.VarChar(255)
   banner        String?          @db.VarChar(255)
   category      String?
+  user_id       String?          @unique // after approval make user relation
   created_at    DateTime         @default(now())
   updated_at    DateTime         @updatedAt
   created_by    String

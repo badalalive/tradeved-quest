@@ -110,6 +110,21 @@ let SpaceRepository = class SpaceRepository {
             return space;
         });
     }
+    // find space by user id
+    findSpaceByUserId(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const space = yield this.prismaClient.space.findUnique({
+                where: { user_id: userId }, include: {
+                    links: true,
+                    documents: true,
+                    quests: true
+                },
+            });
+            yield this.prismaClient.$disconnect();
+            return space;
+        });
+    }
     findSpaceByName(name) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
