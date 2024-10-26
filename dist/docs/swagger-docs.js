@@ -1,4 +1,5 @@
 "use strict";
+// space
 /**
  * @swagger
  * /space/create/{token}:
@@ -815,4 +816,489 @@
  *                 message:
  *                   type: string
  *                   example: "Internal server error."
- */ 
+ */
+/**
+ * @swagger
+ * /space/all:
+ *   get:
+ *     summary: Retrieve all spaces
+ *     description: Fetches a list of all spaces in the system.
+ *     tags:
+ *       - Space
+ *     responses:
+ *       200:
+ *         description: A list of spaces retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Spaces retrieved successfully"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "space-id-123"
+ *                       company_name:
+ *                         type: string
+ *                         example: "Awesome Inc."
+ *                       name:
+ *                         type: string
+ *                         example: "Awesome Space"
+ *                       email:
+ *                         type: string
+ *                         example: "admin@awesomeinc.com"
+ *                       description:
+ *                         type: string
+ *                         example: "This is an awesome space"
+ *                       category:
+ *                         type: string
+ *                         example: "Technology"
+ *                       created_by:
+ *                         type: string
+ *                         example: "admin"
+ *                       updated_by:
+ *                         type: string
+ *                         example: "admin"
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-10-14T12:34:56.789Z"
+ *                       updated_at:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-10-14T12:34:56.789Z"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+// quests
+/**
+ * @swagger
+ * /quest/create/{spaceId}:
+ *   post:
+ *     summary: Create a new quest
+ *     description: Creates a new quest in the specified space.
+ *     tags:
+ *       - Quest
+ *     parameters:
+ *       - in: path
+ *         name: spaceId
+ *         required: true
+ *         description: The ID of the space where the quest will be created.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Epic Adventure"
+ *               description:
+ *                 type: string
+ *                 example: "A thrilling quest to find the lost treasure."
+ *               participant_limit:
+ *                 type: integer
+ *                 example: 10
+ *               max_reward_point:
+ *                 type: integer
+ *                 example: 100
+ *               end_date:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2024-12-31T23:59:59.999Z"
+ *               reattempt:
+ *                 type: integer
+ *                 example: 0
+ *               status:
+ *                 type: string
+ *                 enum: [DRAFTED, SCHEDULED, PAUSED, RUNNING, ENDED]
+ *                 example: "DRAFTED"
+ *               category:
+ *                 type: string
+ *                 enum: [GENERAL, TIMED, MINI_GAMES, DAILY]
+ *                 example: "GENERAL"
+ *               quest_time:
+ *                 type: integer
+ *                 example: 3600
+ *               template_id:
+ *                 type: string
+ *                 example: "ckllcbsyh0001ap5s4x83do89"
+ *     responses:
+ *       201:
+ *         description: Quest created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest created successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "quest-id-123"
+ *       400:
+ *         description: Invalid input data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid input data"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+/**
+ * @swagger
+ * /quest/update/{id}:
+ *   put:
+ *     summary: Update a quest by ID
+ *     description: Updates the details of an existing quest.
+ *     tags:
+ *       - Quest
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the quest to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Updated Epic Adventure"
+ *               description:
+ *                 type: string
+ *                 example: "An updated description for the quest."
+ *     responses:
+ *       200:
+ *         description: Quest updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest updated successfully"
+ *       400:
+ *         description: Invalid quest ID or input data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid quest ID or input data"
+ *       404:
+ *         description: Quest not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+/**
+ * @swagger
+ * /quest/get/{id}:
+ *   get:
+ *     summary: Get a quest by ID
+ *     description: Retrieves a quest by its ID.
+ *     tags:
+ *       - Quest
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the quest to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Quest retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest retrieved successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "quest-id-123"
+ *                     title:
+ *                       type: string
+ *                       example: "Epic Adventure"
+ *       404:
+ *         description: Quest not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+/**
+ * @swagger
+ * /quest/get-all/{spaceId}:
+ *   get:
+ *     summary: Get all quests by space ID
+ *     description: Retrieves all quests associated with a specific space.
+ *     tags:
+ *       - Quest
+ *     parameters:
+ *       - in: path
+ *         name: spaceId
+ *         required: true
+ *         description: The ID of the space to retrieve quests for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Quests retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quests retrieved successfully"
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "quest-id-123"
+ *                       title:
+ *                         type: string
+ *                         example: "Epic Adventure"
+ *       404:
+ *         description: No quests found for the space
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No quests found for this space"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+/**
+ * @swagger
+ * /quest/update-status/{id}:
+ *   put:
+ *     summary: Update quest status
+ *     description: Updates the status of a quest.
+ *     tags:
+ *       - Quest
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the quest to update status
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 example: "COMPLETED"
+ *     responses:
+ *       200:
+ *         description: Quest status updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest status updated successfully"
+ *       400:
+ *         description: Invalid quest ID or status
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid quest ID or status"
+ *       404:
+ *         description: Quest not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+/**
+ * @swagger
+ * /quest/approval-status/{id}:
+ *   post:
+ *     summary: Submit quest for approval
+ *     description: Submits a quest for approval or rejection.
+ *     tags:
+ *       - Quest
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the quest to submit for approval
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               reject_reason:
+ *                 type: string
+ *                 example: "Insufficient details"
+ *     responses:
+ *       200:
+ *         description: Quest submitted for approval successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest submitted for approval successfully"
+ *       400:
+ *         description: Invalid quest ID or approval type
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid quest ID or approval type"
+ *       404:
+ *         description: Quest not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */

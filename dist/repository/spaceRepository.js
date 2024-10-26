@@ -29,7 +29,7 @@ let SpaceRepository = class SpaceRepository {
     constructor(prismaClient) {
         this.prismaClient = prismaClient;
     }
-    // Find space by email
+    // Find space by company name
     findSpaceByCompanyName(companyName) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
@@ -95,7 +95,22 @@ let SpaceRepository = class SpaceRepository {
             return space;
         });
     }
-    // Find space by Email (for updating or retrieving details)
+    // Find All Spaces
+    findAllSpace() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const spaces = yield this.prismaClient.space.findMany({
+                include: {
+                    links: true,
+                    documents: true,
+                    quests: true,
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return spaces;
+        });
+    }
+    // Find space by email
     findSpaceByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();

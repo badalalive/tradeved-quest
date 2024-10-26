@@ -84,7 +84,7 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateQuestDTO.prototype, "quest_time", void 0);
 __decorate([
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateQuestDTO.prototype, "template_id", void 0);

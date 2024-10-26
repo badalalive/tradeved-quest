@@ -7,7 +7,7 @@ const authMiddleWare_1 = require("../middlewares/authMiddleWare");
 const userRole_1 = require("../utils/userRole");
 const questController = tsyringe_1.container.resolve(questController_1.QuestController);
 const questRoutes = (0, express_1.Router)();
-questRoutes.post("/create", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.createQuest);
+questRoutes.post("/create/:spaceId", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.createQuest);
 questRoutes.put("/update/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.updateQuest);
 questRoutes.get("/get/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.getQuest);
 questRoutes.get("/get-all/:spaceId", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.findQuestsBySpace);

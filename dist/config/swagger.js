@@ -4,9 +4,9 @@ const options = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "Spedit Quest",
+            title: "Tradved Quest",
             version: "1.0.0",
-            description: "Spedit Quest",
+            description: "Tradved Quest",
         },
         components: {
             securitySchemes: {

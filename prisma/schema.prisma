@@ -86,6 +86,7 @@ model Quest {
   end_date            DateTime
   reattempt           Int
   status              QuestStatus
+  view_status         QuestViewStatus       @default(PUBLIC)
   category            QuestCategory
   quest_time          Int? // quest time in seconds
   created_at          DateTime              @default(now())
@@ -250,6 +251,11 @@ enum QuestStatus {
   PAUSED
   RUNNING
   ENDED
+}
+
+enum QuestViewStatus {
+  PRIVATE
+  PUBLIC
 }
 
 enum QuestCategory {

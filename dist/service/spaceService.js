@@ -89,6 +89,16 @@ let SpaceService = class SpaceService {
                 data: space
             };
         });
+        this.getAll = () => __awaiter(this, void 0, void 0, function* () {
+            const spaces = yield this.spaceRepository.findAllSpace();
+            // string of array category to array of category
+            spaces.map((space) => space.category = (0, utilities_1.stringToArray)(space.category));
+            return {
+                statusCode: 200,
+                message: "Fetch All Spaces",
+                data: spaces
+            };
+        });
         this.uploadDocuments = (tokenData, req, res) => __awaiter(this, void 0, void 0, function* () {
             const spaceId = tokenData.space_id;
             let space = tokenData.space;

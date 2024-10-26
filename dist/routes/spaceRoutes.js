@@ -8,6 +8,7 @@ const spaceController = tsyringe_1.container.resolve(spaceController_1.SpaceCont
 const spaceRoutes = (0, express_1.Router)();
 spaceRoutes.post("/create/:token", authMiddleWare_1.validateTokenMiddleware, spaceController.create);
 spaceRoutes.get("/details/:id", spaceController.getSpace);
+spaceRoutes.get("/all", spaceController.getAll);
 spaceRoutes.put("/upload-documents/:token", authMiddleWare_1.validateTokenMiddleware, spaceController.uploadDocuments);
 spaceRoutes.post("/space-creation-link", spaceController.sentSpaceCreationLink);
 spaceRoutes.post("/verify-space-link/:token", authMiddleWare_1.validateTokenMiddleware, spaceController.verifySpaceLink);
