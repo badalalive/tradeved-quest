@@ -279,7 +279,7 @@ let SpaceService = class SpaceService {
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
             }
-            if (space.status !== 'PENDING') {
+            if (space.status !== client_1.SpaceStatus.INITIATED) {
                 throw new httpException_1.HttpException(400, 'invalid action');
             }
             const status = client_1.SpaceStatus[type];

@@ -278,7 +278,7 @@ export class SpaceService {
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
-        if (space.status !== 'PENDING') {
+        if (space.status !== SpaceStatus.INITIATED) {
             throw new HttpException(400, 'invalid action');
         }
         const status = SpaceStatus[type as keyof typeof SpaceStatus];
