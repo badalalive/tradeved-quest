@@ -66,7 +66,11 @@ let SpaceRepository = class SpaceRepository {
                 where: { id: id },
                 data: updateObject,
                 include: {
-                    links: true,
+                    links: {
+                        select: {
+                            link: true
+                        }
+                    },
                     documents: true,
                     quests: true
                 }
@@ -81,7 +85,11 @@ let SpaceRepository = class SpaceRepository {
             yield this.prismaClient.$connect();
             const space = yield this.prismaClient.space.findUnique({
                 where: { id: id }, include: {
-                    links: true,
+                    links: {
+                        select: {
+                            link: true
+                        }
+                    },
                     documents: true,
                     quests: true
                 },
@@ -96,7 +104,11 @@ let SpaceRepository = class SpaceRepository {
             yield this.prismaClient.$connect();
             const spaces = yield this.prismaClient.space.findMany({
                 include: {
-                    links: true,
+                    links: {
+                        select: {
+                            link: true
+                        }
+                    },
                     documents: true,
                     quests: true,
                 }
@@ -111,7 +123,11 @@ let SpaceRepository = class SpaceRepository {
             yield this.prismaClient.$connect();
             const space = yield this.prismaClient.space.findUnique({
                 where: { email: email }, include: {
-                    links: true,
+                    links: {
+                        select: {
+                            link: true
+                        }
+                    },
                     documents: true,
                     quests: true
                 },
@@ -126,7 +142,11 @@ let SpaceRepository = class SpaceRepository {
             yield this.prismaClient.$connect();
             const space = yield this.prismaClient.space.findUnique({
                 where: { user_id: userId }, include: {
-                    links: true,
+                    links: {
+                        select: {
+                            link: true
+                        }
+                    },
                     documents: true,
                     quests: true
                 },
@@ -198,7 +218,7 @@ let SpaceRepository = class SpaceRepository {
                     skipDuplicates: true
                 });
                 yield this.prismaClient.$disconnect();
-                return insertedLinks;
+                return newLinks;
             }
             yield this.prismaClient.$disconnect();
             return null; // Return null or a custom message if no new links were inserted

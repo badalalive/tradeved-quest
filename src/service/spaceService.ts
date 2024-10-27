@@ -3,10 +3,9 @@ import {SpaceRepository} from "../repository/spaceRepository";
 import {CreateSpaceDto} from "../dto/spaceDTO";
 import {HttpException} from "../exceptions/httpException";
 import {Request, Response} from "express";
-import {uploadDocument, uploadImage} from "../config/multerConfig";
 import {spaceFormSubmissionMailTemplate, verificationMailTemplate} from "../templates/mailTemplate";
-import {arrayToString, generateRandomToken, sendEmail, stringToArray} from "../utils/utilities";
-import {KeyStatus, Space, SpaceLinks, SpaceStatus} from "@prisma/client";
+import {sendEmail, stringToArray} from "../utils/utilities";
+import {SpaceStatus} from "@prisma/client";
 import {TokenRepository} from "../repository/tokenRepository";
 
 @injectable()
@@ -55,7 +54,7 @@ export class SpaceService {
                 }
                 spaceLinks.push(spaceLink)
             })
-            await this.spaceRepository.createSpaceLinks(spaceLinks);
+            newSpace.links = await this.spaceRepository.createSpaceLinks(spaceLinks);
         }
         (newSpace.category as any) = stringToArray(newSpace.category);
         return {

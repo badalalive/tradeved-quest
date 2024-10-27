@@ -50,8 +50,17 @@ export class TokenRepository {
             }, include: {
                 space: {
                     include: {
-                        links: true,
-                        documents: true,
+                        links: {
+                            select: {
+                                link: true
+                            }
+                        },
+                        documents: {
+                            select: {
+                                path: true,
+                                filename: true
+                            }
+                        },
                         quests: true
                     }
                 }

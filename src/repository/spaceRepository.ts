@@ -56,7 +56,11 @@ export class SpaceRepository {
             where: { id: id },
             data: updateObject,
             include: {
-                links: true,
+                links: {
+                            select: {
+                                link: true
+                            }
+                        },
                 documents: true,
                 quests: true
             }
@@ -73,7 +77,11 @@ export class SpaceRepository {
 
         const space = await this.prismaClient.space.findUnique({
             where: { id: id }, include: {
-                links: true,
+                links: {
+                            select: {
+                                link: true
+                            }
+                        },
                 documents: true,
                 quests: true
             },
@@ -89,7 +97,11 @@ export class SpaceRepository {
         await this.prismaClient.$connect();
         const spaces = await this.prismaClient.space.findMany({
             include: {
-                links: true,
+                links: {
+                            select: {
+                                link: true
+                            }
+                        },
                 documents: true,
                 quests: true,
             }
@@ -104,7 +116,11 @@ export class SpaceRepository {
 
         const space = await this.prismaClient.space.findUnique({
             where: { email: email }, include: {
-                links: true,
+                links: {
+                            select: {
+                                link: true
+                            }
+                        },
                 documents: true,
                 quests: true
             },
@@ -120,7 +136,11 @@ export class SpaceRepository {
         await this.prismaClient.$connect();
         const space = await this.prismaClient.space.findUnique({
             where: { user_id: userId }, include: {
-                links: true,
+                links: {
+                    select: {
+                        link: true
+                    }
+                    },
                 documents: true,
                 quests: true
             },
@@ -197,7 +217,7 @@ export class SpaceRepository {
             });
 
             await this.prismaClient.$disconnect();
-            return insertedLinks;
+            return newLinks;
         }
 
         await this.prismaClient.$disconnect();
