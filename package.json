@@ -10,16 +10,11 @@
     "add-build": "git add dist",
     "prettier": "prettier --write .",
     "dev": "nodemon --watch src --exec ts-node src/index.ts",
-    "build": "rimraf dist && tsc",
+    "build": "tsc",
     "serve": "nodemon dist/index.js",
     "prisma:migrate": "prisma migrate dev --preview-feature --name migration",
     "prisma:generate": "prisma generate"
   },
-  "pre-commit": [
-    "ts.check",
-    "build",
-    "add-build"
-  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
