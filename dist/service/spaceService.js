@@ -38,7 +38,7 @@ let SpaceService = class SpaceService {
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
             }
-            if (space.status !== client_1.SpaceStatus.PENDING) {
+            if (space.status !== client_1.SpaceStatus.INITIATED) {
                 throw new httpException_1.HttpException(400, 'invalid Request');
             }
             // Check if the space with the company name already exists
@@ -105,7 +105,7 @@ let SpaceService = class SpaceService {
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
             }
-            if (space.status !== client_1.SpaceStatus.PENDING) {
+            if (space.status !== client_1.SpaceStatus.INITIATED) {
                 throw new httpException_1.HttpException(400, 'invalid Request');
             }
             // await new Promise<void>((resolve, reject) => {
@@ -163,7 +163,7 @@ let SpaceService = class SpaceService {
             if (!space) {
                 space = yield this.spaceRepository.create(email);
             }
-            if (space.status !== client_1.SpaceStatus.PENDING) {
+            if (space.status !== client_1.SpaceStatus.INITIATED) {
                 throw new httpException_1.HttpException(400, 'invalid Request');
             }
             // save email verification token
@@ -179,7 +179,7 @@ let SpaceService = class SpaceService {
         });
         this.verifySpaceLink = (tokenData) => __awaiter(this, void 0, void 0, function* () {
             const space = tokenData.space_id ? yield this.spaceRepository.findSpaceById(tokenData.space_id) : {};
-            if (space.status !== client_1.SpaceStatus.PENDING) {
+            if (space.status !== client_1.SpaceStatus.INITIATED) {
                 throw new httpException_1.HttpException(400, 'invalid Request');
             }
             // string of array category to array of category
@@ -195,7 +195,7 @@ let SpaceService = class SpaceService {
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
             }
-            if (space.status !== client_1.SpaceStatus.PENDING) {
+            if (space.status !== client_1.SpaceStatus.INITIATED) {
                 throw new httpException_1.HttpException(400, 'invalid Request');
             }
             const spaceLink = yield this.spaceRepository.createSpaceLink(tokenData.space_id, link);
@@ -210,7 +210,7 @@ let SpaceService = class SpaceService {
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
             }
-            if (space.status !== client_1.SpaceStatus.PENDING) {
+            if (space.status !== client_1.SpaceStatus.INITIATED) {
                 throw new httpException_1.HttpException(400, 'invalid Request');
             }
             // Use the `uploadImage` middleware for single image upload
@@ -244,7 +244,7 @@ let SpaceService = class SpaceService {
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
             }
-            if (space.status !== client_1.SpaceStatus.PENDING) {
+            if (space.status !== client_1.SpaceStatus.INITIATED) {
                 throw new httpException_1.HttpException(400, 'invalid Request');
             }
             // Use the `uploadImage` middleware for single image upload
@@ -297,7 +297,7 @@ let SpaceService = class SpaceService {
                 throw new httpException_1.HttpException(409, 'Already Submitted');
             }
             // Check if the request is valid based on the current status
-            if (space.status !== client_1.SpaceStatus.PENDING) {
+            if (space.status !== client_1.SpaceStatus.INITIATED) {
                 throw new httpException_1.HttpException(400, 'Invalid Request');
             }
             // Validate that all required fields are filled
