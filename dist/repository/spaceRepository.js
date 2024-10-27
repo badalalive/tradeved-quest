@@ -71,7 +71,12 @@ let SpaceRepository = class SpaceRepository {
                             link: true
                         }
                     },
-                    documents: true,
+                    documents: {
+                        select: {
+                            path: true,
+                            filename: true
+                        }
+                    },
                     quests: true
                 }
             });
@@ -90,7 +95,12 @@ let SpaceRepository = class SpaceRepository {
                             link: true
                         }
                     },
-                    documents: true,
+                    documents: {
+                        select: {
+                            path: true,
+                            filename: true
+                        }
+                    },
                     quests: true
                 },
             });
@@ -109,7 +119,12 @@ let SpaceRepository = class SpaceRepository {
                             link: true
                         }
                     },
-                    documents: true,
+                    documents: {
+                        select: {
+                            path: true,
+                            filename: true
+                        }
+                    },
                     quests: true,
                 }
             });
@@ -128,7 +143,12 @@ let SpaceRepository = class SpaceRepository {
                             link: true
                         }
                     },
-                    documents: true,
+                    documents: {
+                        select: {
+                            path: true,
+                            filename: true
+                        }
+                    },
                     quests: true
                 },
             });
@@ -147,7 +167,12 @@ let SpaceRepository = class SpaceRepository {
                             link: true
                         }
                     },
-                    documents: true,
+                    documents: {
+                        select: {
+                            path: true,
+                            filename: true
+                        }
+                    },
                     quests: true
                 },
             });
