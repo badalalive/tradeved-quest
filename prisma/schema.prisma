@@ -87,6 +87,7 @@ model Quest {
   reattempt           Int
   status              QuestStatus
   view_status         QuestViewStatus       @default(PUBLIC)
+  is_lock             Boolean               @default(false)
   category            QuestCategory
   quest_time          Int? // quest time in seconds
   created_at          DateTime              @default(now())
