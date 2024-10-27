@@ -59,17 +59,12 @@ let SpaceRepository = class SpaceRepository {
     // Update space by ID (for later use in the update functionality)
     updateSpaceById(id, updateData) {
         return __awaiter(this, void 0, void 0, function* () {
-            var _a;
             yield this.prismaClient.$connect();
+            console.log(updateData);
+            const updateObject = Object.assign(Object.assign(Object.assign(Object.assign({}, (updateData.company_name && { company_name: updateData.company_name })), (updateData.name && { name: updateData.name })), (updateData.category && { category: (0, utilities_1.arrayToString)(updateData.category) })), (updateData.description && { description: updateData.description }));
             const updatedSpace = yield this.prismaClient.space.update({
                 where: { id: id },
-                data: {
-                    company_name: updateData.company_name,
-                    name: updateData.name,
-                    category: (0, utilities_1.arrayToString)((_a = updateData.category) !== null && _a !== void 0 ? _a : []),
-                    description: updateData.description,
-                    updated_at: new Date(), // Automatically update the updated_at timestamp
-                },
+                data: updateObject,
                 include: {
                     links: true,
                     documents: true,
@@ -185,7 +180,8 @@ let SpaceRepository = class SpaceRepository {
                 where: {
                     link: {
                         in: linksToInsert
-                    }
+                    },
+                    space_id: spaceLinks[0].space_id
                 },
                 select: {
                     link: true

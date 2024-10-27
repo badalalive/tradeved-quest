@@ -67,7 +67,7 @@ let SpaceService = class SpaceService {
                     };
                     spaceLinks.push(spaceLink);
                 });
-                const result = yield this.spaceRepository.createSpaceLinks(spaceLinks);
+                yield this.spaceRepository.createSpaceLinks(spaceLinks);
             }
             newSpace.category = (0, utilities_1.stringToArray)(newSpace.category);
             return {

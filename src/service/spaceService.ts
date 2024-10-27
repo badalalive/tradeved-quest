@@ -55,7 +55,7 @@ export class SpaceService {
                 }
                 spaceLinks.push(spaceLink)
             })
-            const result = await this.spaceRepository.createSpaceLinks(spaceLinks);
+            await this.spaceRepository.createSpaceLinks(spaceLinks);
         }
         (newSpace.category as any) = stringToArray(newSpace.category);
         return {

@@ -11,7 +11,7 @@ export class SpaceRepository {
     ) {
     }
 
-    // Find space by email
+    // Find space by company name
     async findSpaceByCompanyName(companyName: string): Promise<Space | null> {
         await this.prismaClient.$connect();
 
@@ -45,16 +45,16 @@ export class SpaceRepository {
     // Update space by ID (for later use in the update functionality)
     async updateSpaceById(id: string, updateData: Partial<CreateSpaceDto>): Promise<Space | null> {
         await this.prismaClient.$connect();
-
+        console.log(updateData);
+        const updateObject: any = {
+            ...(updateData.company_name && { company_name: updateData.company_name }),
+            ...(updateData.name && { name: updateData.name }),
+            ...(updateData.category && { category: arrayToString(updateData.category) }),
+            ...(updateData.description && { description: updateData.description }),
+        };
         const updatedSpace = await this.prismaClient.space.update({
             where: { id: id },
-            data: {
-                company_name: updateData.company_name,
-                name: updateData.name,
-                category: arrayToString(updateData.category ?? []),
-                description: updateData.description,
-                updated_at: new Date(), // Automatically update the updated_at timestamp
-            },
+            data: updateObject,
             include: {
                 links: true,
                 documents: true,
@@ -83,8 +83,22 @@ export class SpaceRepository {
 
         return space;
     }
-    // Find space by Email (for updating or retrieving details)
 
+    // Find All Spaces
+    async findAllSpace(): Promise<Space[]> {
+        await this.prismaClient.$connect();
+        const spaces = await this.prismaClient.space.findMany({
+            include: {
+                links: true,
+                documents: true,
+                quests: true,
+            }
+        });
+        await this.prismaClient.$disconnect();
+        return spaces;
+    }
+
+    // Find space by email
     async findSpaceByEmail(email: string): Promise<Space | null> {
         await this.prismaClient.$connect();
 
@@ -98,6 +112,20 @@ export class SpaceRepository {
 
         await this.prismaClient.$disconnect();
 
+        return space;
+    }
+
+    // find space by user id
+    async findSpaceByUserId(userId: string): Promise<Space | null> {
+        await this.prismaClient.$connect();
+        const space = await this.prismaClient.space.findUnique({
+            where: { user_id: userId }, include: {
+                links: true,
+                documents: true,
+                quests: true
+            },
+        });
+        await this.prismaClient.$disconnect();
         return space;
     }
 
@@ -147,7 +175,8 @@ export class SpaceRepository {
             where: {
                 link: {
                     in: linksToInsert
-                }
+                },
+                space_id: spaceLinks[0].space_id
             },
             select: {
                 link: true

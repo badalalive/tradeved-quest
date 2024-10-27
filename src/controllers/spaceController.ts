@@ -54,6 +54,15 @@ export class SpaceController {
         }
     }
 
+    getAll = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const {data, message, statusCode} = await this.spaceService.getAll();
+            res.status(statusCode).send({ data, message})
+        } catch(error: any) {
+            next(error)
+        }
+    }
+
     uploadDocuments = async (req: RequestWithTokenData, res: Response, next: NextFunction) => {
         try {
             const {data, message, statusCode} = await this.spaceService.uploadDocuments(req.tokenData, req, res);
