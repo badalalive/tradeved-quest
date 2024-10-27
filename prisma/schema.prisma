@@ -20,7 +20,7 @@ model Space {
   name          String?          @db.VarChar(255)
   description   String?          @db.VarChar(1000)
   email         String           @unique @db.VarChar(255)
-  status        SpaceStatus      @default(PENDING)
+  status        SpaceStatus      @default(INITIATED)
   reject_reason String?
   logo_url      String?          @db.VarChar(255)
   banner        String?          @db.VarChar(255)
@@ -233,7 +233,7 @@ model QuestVoteDiscussion {
 
 // enums
 enum SpaceStatus {
-  PENDING
+  INITIATED
   REVIEW
   APPROVED
   REJECTED

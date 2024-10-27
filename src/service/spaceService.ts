@@ -23,7 +23,7 @@ export class SpaceService {
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
-        if (space.status !== SpaceStatus.PENDING) {
+        if (space.status !== SpaceStatus.INITIATED) {
             throw new HttpException(400, 'invalid Request');
         }
         // Check if the space with the company name already exists
@@ -79,13 +79,24 @@ export class SpaceService {
         }
     }
 
+    getAll = async () => {
+        const spaces = await this.spaceRepository.findAllSpace();
+        // string of array category to array of category
+        spaces.map((space) => (space.category as any) = stringToArray(space.category));
+        return {
+            statusCode: 200,
+            message: "Fetch All Spaces",
+            data: spaces
+        }
+    }
+
     uploadDocuments = async (tokenData: any, req: Request, res: Response) => {
         const spaceId = tokenData.space_id;
         let space: any = tokenData.space;
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
-        if (space.status !== SpaceStatus.PENDING) {
+        if (space.status !== SpaceStatus.INITIATED) {
             throw new HttpException(400, 'invalid Request');
         }
         // await new Promise<void>((resolve, reject) => {
@@ -145,7 +156,7 @@ export class SpaceService {
         if(!space) {
             space = await this.spaceRepository.create(email);
         }
-        if (space.status !== SpaceStatus.PENDING) {
+        if (space.status !== SpaceStatus.INITIATED) {
             throw new HttpException(400, 'invalid Request');
         }
         // save email verification token
@@ -162,7 +173,7 @@ export class SpaceService {
 
     verifySpaceLink = async (tokenData: any) => {
         const space: any = tokenData.space_id ? await this.spaceRepository.findSpaceById(tokenData.space_id) : {};
-        if (space.status !== SpaceStatus.PENDING) {
+        if (space.status !== SpaceStatus.INITIATED) {
             throw new HttpException(400, 'invalid Request');
         }
         // string of array category to array of category
@@ -179,7 +190,7 @@ export class SpaceService {
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
-        if (space.status !== SpaceStatus.PENDING) {
+        if (space.status !== SpaceStatus.INITIATED) {
             throw new HttpException(400, 'invalid Request');
         }
         const spaceLink = await this.spaceRepository.createSpaceLink(tokenData.space_id, link)
@@ -195,7 +206,7 @@ export class SpaceService {
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
-        if (space.status !== SpaceStatus.PENDING) {
+        if (space.status !== SpaceStatus.INITIATED) {
             throw new HttpException(400, 'invalid Request');
         }
         // Use the `uploadImage` middleware for single image upload
@@ -231,7 +242,7 @@ export class SpaceService {
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
-        if (space.status !== SpaceStatus.PENDING) {
+        if (space.status !== SpaceStatus.INITIATED) {
             throw new HttpException(400, 'invalid Request');
         }
         // Use the `uploadImage` middleware for single image upload
@@ -288,7 +299,7 @@ export class SpaceService {
         }
 
         // Check if the request is valid based on the current status
-        if (space.status !== SpaceStatus.PENDING) {
+        if (space.status !== SpaceStatus.INITIATED) {
             throw new HttpException(400, 'Invalid Request');
         }
 
