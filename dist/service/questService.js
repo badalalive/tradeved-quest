@@ -26,6 +26,7 @@ const tsyringe_1 = require("tsyringe");
 const questRepository_1 = require("../repository/questRepository");
 const httpException_1 = require("../exceptions/httpException");
 const client_1 = require("@prisma/client");
+const multerConfig_1 = require("../config/multerConfig");
 let QuestService = class QuestService {
     constructor(questRepository) {
         this.questRepository = questRepository;
@@ -152,6 +153,31 @@ let QuestService = class QuestService {
                 statusCode: 200,
                 message: `toggle to ${updateQuest.view_status}`,
                 data: updateQuest,
+            };
+        });
+        this.uploadMedia = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            var _a, _b, _c;
+            yield new Promise((resolve, reject) => {
+                // Using multer middleware to handle single file upload
+                multerConfig_1.uploadFile.single('file')(req, res, (err) => {
+                    if (err) {
+                        return reject(new httpException_1.HttpException(500, 'Server error during file upload'));
+                    }
+                    if (!req.file) {
+                        return reject(new httpException_1.HttpException(400, 'No file uploaded'));
+                    }
+                    resolve();
+                });
+            });
+            // Extract file information from req.file
+            const fileInfo = {
+                filename: (_a = req.file) === null || _a === void 0 ? void 0 : _a.originalname,
+                path: `${process.env.SERVER_URL}${(_b = req.file) === null || _b === void 0 ? void 0 : _b.destination}${(_c = req.file) === null || _c === void 0 ? void 0 : _c.filename}`,
+            };
+            return {
+                statusCode: 200,
+                message: 'File uploaded successfully',
+                data: fileInfo,
             };
         });
     }

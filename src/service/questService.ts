@@ -6,6 +6,10 @@ import { HttpException } from "../exceptions/httpException";
 import {QuestStatus, Quest, QuestApprovalStatus, SpaceStatus, QuestViewStatus} from "@prisma/client";
 import { RequestWithTokenData } from "../interfaces/auth.interface";
 import { stringToArray } from "../utils/utilities";
+import {Request, Response} from "express";
+import multer from "multer";
+import {uploadFile} from "../config/multerConfig";
+
 
 @injectable()
 export class QuestService {
@@ -167,4 +171,30 @@ export class QuestService {
         };
     }
 
+    uploadMedia = async (req: Request, res: Response) => {
+        // await new Promise<void>((resolve, reject) => {
+        //     // Using multer middleware to handle single file upload
+        //     uploadFile.single('file')(req, res, (err: any) => {
+        //         if (err) {
+        //             return reject(new HttpException(500, 'Server error during file upload'));
+        //         }
+        //         if (!req.file) {
+        //             return reject(new HttpException(400, 'No file uploaded'));
+        //         }
+        //         resolve();
+        //     });
+        // });
+
+        // Extract file information from req.file
+        const fileInfo = {
+            filename: req.file?.originalname,
+            path: `${process.env.SERVER_URL}${req.file?.destination}${req.file?.filename}`,
+        };
+
+        return {
+            statusCode: 200,
+            message: 'File uploaded successfully',
+            data: fileInfo,
+        };
+    }
 }

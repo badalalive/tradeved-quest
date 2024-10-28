@@ -20,6 +20,7 @@ questRoutes.get("/get-all/:spaceId", verifyTokenAndRolesMiddleware([UserRole.SPA
 questRoutes.put("/update-status/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.updateQuestStatus);
 questRoutes.post("/approval-status/:id", verifyTokenAndRolesMiddleware([UserRole.SUPER_ADMIN]), questController.submitQuestForApproval);
 questRoutes.post("/toggle-view/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.toggleView);
+questRoutes.post("/upload-media", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.uploadMedia);
 
 // quest module related api
 questRoutes.post("/module", questModuleController.create);

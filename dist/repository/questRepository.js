@@ -36,7 +36,6 @@ let QuestRepository = class QuestRepository {
                 where: { id: questId },
                 include: {
                     space: true,
-                    template: true,
                     questParticipant: true,
                     questVote: true,
                     questVoteDiscussion: true,
@@ -69,7 +68,9 @@ let QuestRepository = class QuestRepository {
                     quest_time: data.quest_time,
                     created_by: data.space_id,
                     updated_by: data.space_id,
-                    template_id: data.template_id
+                    template: data.template,
+                    content: data.content,
+                    content_type: data.content_type
                 },
             });
             yield this.prismaClient.$disconnect();

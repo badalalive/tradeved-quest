@@ -13,9 +13,11 @@ exports.CreateQuestDTO = void 0;
 const class_validator_1 = require("class-validator");
 const client_1 = require("@prisma/client"); // Assuming you have enums for QuestStatus and QuestCategory
 class CreateQuestDTO {
-    constructor(title, description, space_id, participant_limit, max_reward_point, end_date, reattempt, status, category, template_id, quest_time, created_by, updated_by) {
+    constructor(title, description, content, content_type, space_id, participant_limit, max_reward_point, end_date, reattempt, status, category, template, quest_time, created_by, updated_by) {
         this.title = title;
         this.description = description;
+        this.content = content;
+        this.content_type = content_type;
         this.space_id = space_id;
         this.participant_limit = participant_limit;
         this.max_reward_point = max_reward_point;
@@ -23,7 +25,7 @@ class CreateQuestDTO {
         this.reattempt = reattempt;
         this.status = status;
         this.category = category;
-        this.template_id = template_id;
+        this.template = template;
         this.quest_time = quest_time;
         this.created_by = created_by;
         this.updated_by = updated_by;
@@ -42,6 +44,16 @@ __decorate([
     (0, class_validator_1.MaxLength)(1000),
     __metadata("design:type", String)
 ], CreateQuestDTO.prototype, "description", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateQuestDTO.prototype, "content", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(client_1.QuestContentType),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateQuestDTO.prototype, "content_type", void 0);
 __decorate([
     (0, class_validator_1.IsUUID)(),
     (0, class_validator_1.IsNotEmpty)(),
@@ -84,10 +96,10 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateQuestDTO.prototype, "quest_time", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsEnum)(client_1.QuestTemplate),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], CreateQuestDTO.prototype, "template_id", void 0);
+], CreateQuestDTO.prototype, "template", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),

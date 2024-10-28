@@ -33,7 +33,7 @@ const imageFileFilter = (req: Express.Request, file: Express.Multer.File, cb: mu
 export const uploadImage = multer({
     storage: imageStorage,
     limits: {
-        fileSize: 1024 * 1024 * Number(process.env.IMAGE_MAX_SIZE) // Limit image size to 5MB
+        fileSize: 1024 * 1024 * Number(process.env.IMAGE_MAX_SIZE) // Limit image size to specified MB
     },
     fileFilter: imageFileFilter
 });
@@ -78,7 +78,38 @@ const documentFileFilter = (req: Express.Request, file: Express.Multer.File, cb:
 export const uploadDocument = multer({
     storage: documentStorage,
     limits: {
-        fileSize: 1024 * 1024 * Number(process.env.DOCUMENT_MAX_SIZE) // Limit document size to 10MB
+        fileSize: 1024 * 1024 * Number(process.env.DOCUMENT_MAX_SIZE) // Limit document size to specified MB
     },
     fileFilter: documentFileFilter
+});
+
+// Common storage configuration for all file uploads
+const commonStorage: StorageEngine = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const folder = 'uploads/files/'; // Common folder for all uploads
+        fs.mkdir(folder, { recursive: true }, (err) => {
+            if (err) {
+                return cb(err, folder);
+            }
+            cb(null, folder);
+        });
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+// Common file filter (allows any file type)
+const commonFileFilter = (req: Express.Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    cb(null, true); // Accept all file types
+};
+
+// Multer middleware for general file uploads
+export const uploadFile = multer({
+    storage: commonStorage,
+    limits: {
+        fileSize: 1024 * 1024 * Number(process.env.GENERAL_MAX_SIZE || 100) // Limit file size, default to 100MB if not set
+    },
+    fileFilter: commonFileFilter
 });

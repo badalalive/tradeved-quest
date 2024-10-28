@@ -18,14 +18,13 @@ export const verifyTokenAndRolesMiddleware = (allowedRoles: string[]) => {
 
         try {
             // Send a request to the 'get-user' API of the Auth microservice
-            const response = await axios.get(`${process.env.AUTH_API_END_POINT}auth/get-user`, {
+            const response = await axios.get(`${process.env.AUTH_API_END_POINT}/get-user`, {
                 headers: {
                     'Authorization': token,
                 },
             });
 
             const user: any = response.data.data;
-            console.log("user =>", JSON.stringify(user))
             if (!user) {
                 return next(new HttpException(404, 'User not found.'));
             }

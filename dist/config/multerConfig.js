@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadDocument = exports.uploadImage = void 0;
+exports.uploadFile = exports.uploadDocument = exports.uploadImage = void 0;
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const fs = __importStar(require("fs"));
@@ -60,7 +60,7 @@ const imageFileFilter = (req, file, cb) => {
 exports.uploadImage = (0, multer_1.default)({
     storage: imageStorage,
     limits: {
-        fileSize: 1024 * 1024 * Number(process.env.IMAGE_MAX_SIZE) // Limit image size to 5MB
+        fileSize: 1024 * 1024 * Number(process.env.IMAGE_MAX_SIZE) // Limit image size to specified MB
     },
     fileFilter: imageFileFilter
 });
@@ -102,7 +102,35 @@ const documentFileFilter = (req, file, cb) => {
 exports.uploadDocument = (0, multer_1.default)({
     storage: documentStorage,
     limits: {
-        fileSize: 1024 * 1024 * Number(process.env.DOCUMENT_MAX_SIZE) // Limit document size to 10MB
+        fileSize: 1024 * 1024 * Number(process.env.DOCUMENT_MAX_SIZE) // Limit document size to specified MB
     },
     fileFilter: documentFileFilter
+});
+// Common storage configuration for all file uploads
+const commonStorage = multer_1.default.diskStorage({
+    destination: function (req, file, cb) {
+        const folder = 'uploads/files/'; // Common folder for all uploads
+        fs.mkdir(folder, { recursive: true }, (err) => {
+            if (err) {
+                return cb(err, folder);
+            }
+            cb(null, folder);
+        });
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, uniqueSuffix + path_1.default.extname(file.originalname));
+    }
+});
+// Common file filter (allows any file type)
+const commonFileFilter = (req, file, cb) => {
+    cb(null, true); // Accept all file types
+};
+// Multer middleware for general file uploads
+exports.uploadFile = (0, multer_1.default)({
+    storage: commonStorage,
+    limits: {
+        fileSize: 1024 * 1024 * Number(process.env.GENERAL_MAX_SIZE || 100) // Limit file size, default to 100MB if not set
+    },
+    fileFilter: commonFileFilter
 });

@@ -1368,3 +1368,65 @@
  *                   type: string
  *                   example: "Internal server error"
  */
+/**
+ * @swagger
+ * /quest/upload-media:
+ *   post:
+ *     summary: Upload a media file for a quest
+ *     description: Uploads a single media file related to a quest. Only specific file types are allowed.
+ *     tags:
+ *       - Quest
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: The file to upload
+ *     responses:
+ *       200:
+ *         description: File uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "uploaded"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     filename:
+ *                       type: string
+ *                       example: "uploaded-file.jpg"
+ *                     path:
+ *                       type: string
+ *                       example: "http://yourserver.com/uploads/images/uploaded-file.jpg"
+ *       400:
+ *         description: No file uploaded or invalid file type
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "No file uploaded or invalid file type"
+ *       500:
+ *         description: Internal server error during file upload
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error during file upload"
+ */

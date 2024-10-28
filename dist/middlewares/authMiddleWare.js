@@ -27,7 +27,7 @@ const verifyTokenAndRolesMiddleware = (allowedRoles) => {
         }
         try {
             // Send a request to the 'get-user' API of the Auth microservice
-            const response = yield axios_1.default.get(`${process.env.AUTH_API_END_POINT}auth/get-user`, {
+            const response = yield axios_1.default.get(`${process.env.AUTH_API_END_POINT}/get-user`, {
                 headers: {
                     'Authorization': token,
                 },

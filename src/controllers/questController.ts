@@ -129,4 +129,13 @@ export class QuestController {
         }
     }
 
+    uploadMedia = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const {data, message, statusCode} = await this.questService.uploadMedia(req, res);
+            res.status(statusCode).send({ data, message})
+        } catch (error: any) {
+            next(error);
+        }
+    }
+
 }

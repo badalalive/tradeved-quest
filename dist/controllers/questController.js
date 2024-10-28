@@ -143,6 +143,15 @@ let QuestController = class QuestController {
                 next(error);
             }
         });
+        this.uploadMedia = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { data, message, statusCode } = yield this.questService.uploadMedia(req, res);
+                res.status(statusCode).send({ data, message });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
     }
 };
 exports.QuestController = QuestController;
