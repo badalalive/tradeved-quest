@@ -7,7 +7,9 @@ import {EmailDto} from "../dto/emailDTO";
 import { plainToInstance  } from "class-transformer";
 import { validate } from "class-validator";
 import {extractErrorMessages} from "../utils/utilities";
-import {RequestWithTokenData} from "../interfaces/auth.interface"; // for manual validation
+import {RequestWithTokenData} from "../interfaces/auth.interface";
+import axios from "axios";
+import {encryptData} from "../config/rsaEncryption"; // for manual validation
 
 @injectable()
 export class SpaceController {
@@ -83,6 +85,12 @@ export class SpaceController {
                 // Extract error messages for all fields
                 const errorMessages = extractErrorMessages(validationErrors);
                 return next(new HttpException(400, errorMessages));
+            }
+            const response  = await axios.post(`${process.env.AUTH_API_END_POINT}/check-email`, {
+                data: encryptData(emailDTO.email)
+            })
+            if(response.data.data) {
+                next(new HttpException(400, "email already used"))
             }
             const {data, message, statusCode} = await this.spaceService.sentSpaceCreationLink(emailDTO.email);
             res.status(statusCode).send({ data, message})

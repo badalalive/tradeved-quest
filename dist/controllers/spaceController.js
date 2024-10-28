@@ -20,6 +20,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SpaceController = void 0;
 const tsyringe_1 = require("tsyringe");
@@ -30,6 +33,8 @@ const emailDTO_1 = require("../dto/emailDTO");
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 const utilities_1 = require("../utils/utilities");
+const axios_1 = __importDefault(require("axios"));
+const rsaEncryption_1 = require("../config/rsaEncryption"); // for manual validation
 let SpaceController = class SpaceController {
     constructor(spaceService) {
         this.spaceService = spaceService;
@@ -94,6 +99,13 @@ let SpaceController = class SpaceController {
                     // Extract error messages for all fields
                     const errorMessages = (0, utilities_1.extractErrorMessages)(validationErrors);
                     return next(new httpException_1.HttpException(400, errorMessages));
+                }
+                const response = yield axios_1.default.post(`${process.env.AUTH_API_END_POINT}/check-email`, {
+                    data: (0, rsaEncryption_1.encryptData)(emailDTO.email)
+                });
+                console.log(response.data);
+                if (response.data.data) {
+                    next(new httpException_1.HttpException(400, "email already used"));
                 }
                 const { data, message, statusCode } = yield this.spaceService.sentSpaceCreationLink(emailDTO.email);
                 res.status(statusCode).send({ data, message });
