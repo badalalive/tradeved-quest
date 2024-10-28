@@ -81,6 +81,19 @@ export class QuestController {
         }
     };
 
+    findAll = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const page = parseInt(req.query.page as string, 10) || 1;
+            const pageSize = parseInt(req.query.pageSize as string, 10) || 10;
+            const sortBy = (req.query.sortBy as string) || 'created_at';
+            const sortOrder = (req.query.sortOrder as 'asc' | 'desc') || 'desc';
+            const { data, message, statusCode, meta } = await this.questService.findAllQuests(page, pageSize, sortBy, sortOrder);
+            res.status(statusCode).send({ data, message, meta });
+        } catch (error: any) {
+            next(error)
+        }
+    }
+
 
     // Update quest status
     updateQuestStatus = async (req: Request, res: Response, next: NextFunction) => {

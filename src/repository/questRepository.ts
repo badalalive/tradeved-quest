@@ -32,6 +32,27 @@ export class QuestRepository {
         await this.prismaClient.$disconnect();
         return quest;
     }
+    async findQuestByIdAndViewStatus(questId: string, view_status: QuestViewStatus): Promise<Quest | null> {
+        await this.prismaClient.$connect();
+
+        const quest = await this.prismaClient.quest.findUnique({
+            where: { id: questId, view_status},
+            include: {
+                space: true,
+                questParticipant: true,
+                questVote: true,
+                questVoteDiscussion: true,
+                moduleQuests: {
+                    include: {
+                        module: true
+                    }
+                }
+            }
+        });
+
+        await this.prismaClient.$disconnect();
+        return quest;
+    }
 
     // Create a new quest
     async createQuest(data: CreateQuestDTO): Promise<Quest | null> {
@@ -106,7 +127,41 @@ export class QuestRepository {
         await this.prismaClient.$disconnect();
         return quests;
     }
+    async findQuestsBySpaceAndQuestViewStatus(spaceId: string, view_status: QuestViewStatus): Promise<Quest[] | null> {
+        await this.prismaClient.$connect();
 
+        const quests = await this.prismaClient.quest.findMany({
+            where: { space_id: spaceId, view_status: view_status },
+            include: {
+                moduleQuests: true,
+                questParticipant: true
+            }
+        });
+
+        await this.prismaClient.$disconnect();
+        return quests;
+    }
+
+    // Find All quests
+    async findAll(page: number, pageSize: number, sortBy: string, sortOrder: 'asc' | 'desc'): Promise<{ quests: Quest[], totalCount: number }> {
+        await this.prismaClient.$connect();
+
+        // Fetch total count of records for pagination calculation
+        const totalCount = await this.prismaClient.quest.count();
+
+        // Fetch paginated data with dynamic sorting
+        const quests = await this.prismaClient.quest.findMany({
+            orderBy: {
+                [sortBy]: sortOrder,
+            },
+            skip: (page - 1) * pageSize,
+            take: pageSize,
+        });
+
+        await this.prismaClient.$disconnect();
+
+        return { quests, totalCount };
+    }
     // Delete a quest by its ID
     async deleteQuestById(questId: string): Promise<boolean> {
         await this.prismaClient.$connect();

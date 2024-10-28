@@ -46,7 +46,7 @@ export class QuestService {
 
     // Fetch a quest by its ID
     getQuest = async (questId: string) => {
-        const quest = await this.questRepository.findQuestById(questId);
+        const quest = await this.questRepository.findQuestByIdAndViewStatus(questId, QuestViewStatus.PUBLIC);
         if (!quest) {
             throw new HttpException(404, "Quest not found");
         }
@@ -96,7 +96,7 @@ export class QuestService {
 
     // Find all quests for a specific space
     findQuestsBySpace = async (spaceId: string) => {
-        const quests = await this.questRepository.findQuestsBySpace(spaceId);
+        const quests = await this.questRepository.findQuestsBySpaceAndQuestViewStatus(spaceId, QuestViewStatus.PUBLIC);
         if (!quests) {
             throw new HttpException(404, "No quests found for the specified space");
         }
@@ -108,6 +108,23 @@ export class QuestService {
         };
     };
 
+    findAllQuests = async (page = 1, pageSize = 10, sortBy = 'created_at', sortOrder: 'asc' | 'desc' = 'desc') => {
+        const { quests, totalCount } = await this.questRepository.findAll(page, pageSize, sortBy, sortOrder);
+
+        const totalPages = Math.ceil(totalCount / pageSize);
+
+        return {
+            statusCode: 200,
+            message: "Quests fetched successfully",
+            data: quests,
+            meta: {
+                page,
+                pageSize,
+                totalCount,
+                totalPages,
+            },
+        };
+    }
 
     // Update quest status
     updateQuestStatus = async (questId: string, status: QuestStatus) => {

@@ -26,7 +26,6 @@ const tsyringe_1 = require("tsyringe");
 const questRepository_1 = require("../repository/questRepository");
 const httpException_1 = require("../exceptions/httpException");
 const client_1 = require("@prisma/client");
-const multerConfig_1 = require("../config/multerConfig");
 let QuestService = class QuestService {
     constructor(questRepository) {
         this.questRepository = questRepository;
@@ -50,7 +49,7 @@ let QuestService = class QuestService {
         });
         // Fetch a quest by its ID
         this.getQuest = (questId) => __awaiter(this, void 0, void 0, function* () {
-            const quest = yield this.questRepository.findQuestById(questId);
+            const quest = yield this.questRepository.findQuestByIdAndViewStatus(questId, client_1.QuestViewStatus.PUBLIC);
             if (!quest) {
                 throw new httpException_1.HttpException(404, "Quest not found");
             }
@@ -91,7 +90,7 @@ let QuestService = class QuestService {
         });
         // Find all quests for a specific space
         this.findQuestsBySpace = (spaceId) => __awaiter(this, void 0, void 0, function* () {
-            const quests = yield this.questRepository.findQuestsBySpace(spaceId);
+            const quests = yield this.questRepository.findQuestsBySpaceAndQuestViewStatus(spaceId, client_1.QuestViewStatus.PUBLIC);
             if (!quests) {
                 throw new httpException_1.HttpException(404, "No quests found for the specified space");
             }
@@ -99,6 +98,21 @@ let QuestService = class QuestService {
                 statusCode: 200,
                 message: "Quests fetched successfully",
                 data: quests,
+            };
+        });
+        this.findAllQuests = (...args_1) => __awaiter(this, [...args_1], void 0, function* (page = 1, pageSize = 10, sortBy = 'created_at', sortOrder = 'desc') {
+            const { quests, totalCount } = yield this.questRepository.findAll(page, pageSize, sortBy, sortOrder);
+            const totalPages = Math.ceil(totalCount / pageSize);
+            return {
+                statusCode: 200,
+                message: "Quests fetched successfully",
+                data: quests,
+                meta: {
+                    page,
+                    pageSize,
+                    totalCount,
+                    totalPages,
+                },
             };
         });
         // Update quest status
@@ -156,19 +170,19 @@ let QuestService = class QuestService {
             };
         });
         this.uploadMedia = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            // await new Promise<void>((resolve, reject) => {
+            //     // Using multer middleware to handle single file upload
+            //     uploadFile.single('file')(req, res, (err: any) => {
+            //         if (err) {
+            //             return reject(new HttpException(500, 'Server error during file upload'));
+            //         }
+            //         if (!req.file) {
+            //             return reject(new HttpException(400, 'No file uploaded'));
+            //         }
+            //         resolve();
+            //     });
+            // });
             var _a, _b, _c;
-            yield new Promise((resolve, reject) => {
-                // Using multer middleware to handle single file upload
-                multerConfig_1.uploadFile.single('file')(req, res, (err) => {
-                    if (err) {
-                        return reject(new httpException_1.HttpException(500, 'Server error during file upload'));
-                    }
-                    if (!req.file) {
-                        return reject(new httpException_1.HttpException(400, 'No file uploaded'));
-                    }
-                    resolve();
-                });
-            });
             // Extract file information from req.file
             const fileInfo = {
                 filename: (_a = req.file) === null || _a === void 0 ? void 0 : _a.originalname,

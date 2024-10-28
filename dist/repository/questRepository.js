@@ -50,6 +50,27 @@ let QuestRepository = class QuestRepository {
             return quest;
         });
     }
+    findQuestByIdAndViewStatus(questId, view_status) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const quest = yield this.prismaClient.quest.findUnique({
+                where: { id: questId, view_status },
+                include: {
+                    space: true,
+                    questParticipant: true,
+                    questVote: true,
+                    questVoteDiscussion: true,
+                    moduleQuests: {
+                        include: {
+                            module: true
+                        }
+                    }
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return quest;
+        });
+    }
     // Create a new quest
     createQuest(data) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -117,6 +138,38 @@ let QuestRepository = class QuestRepository {
             });
             yield this.prismaClient.$disconnect();
             return quests;
+        });
+    }
+    findQuestsBySpaceAndQuestViewStatus(spaceId, view_status) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const quests = yield this.prismaClient.quest.findMany({
+                where: { space_id: spaceId, view_status: view_status },
+                include: {
+                    moduleQuests: true,
+                    questParticipant: true
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return quests;
+        });
+    }
+    // Find All quests
+    findAll(page, pageSize, sortBy, sortOrder) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            // Fetch total count of records for pagination calculation
+            const totalCount = yield this.prismaClient.quest.count();
+            // Fetch paginated data with dynamic sorting
+            const quests = yield this.prismaClient.quest.findMany({
+                orderBy: {
+                    [sortBy]: sortOrder,
+                },
+                skip: (page - 1) * pageSize,
+                take: pageSize,
+            });
+            yield this.prismaClient.$disconnect();
+            return { quests, totalCount };
         });
     }
     // Delete a quest by its ID

@@ -33,7 +33,6 @@ const verifyTokenAndRolesMiddleware = (allowedRoles) => {
                 },
             });
             const user = response.data.data;
-            console.log("user =>", JSON.stringify(user));
             if (!user) {
                 return next(new httpException_1.HttpException(404, 'User not found.'));
             }

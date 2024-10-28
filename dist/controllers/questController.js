@@ -96,6 +96,19 @@ let QuestController = class QuestController {
                 next(error);
             }
         });
+        this.findAll = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const page = parseInt(req.query.page, 10) || 1;
+                const pageSize = parseInt(req.query.pageSize, 10) || 10;
+                const sortBy = req.query.sortBy || 'created_at';
+                const sortOrder = req.query.sortOrder || 'desc';
+                const { data, message, statusCode, meta } = yield this.questService.findAllQuests(page, pageSize, sortBy, sortOrder);
+                res.status(statusCode).send({ data, message, meta });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
         // Update quest status
         this.updateQuestStatus = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
