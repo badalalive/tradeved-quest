@@ -111,7 +111,7 @@ model ModuleQuest {
   module_id  String
   quest      Quest    @relation(fields: [quest_id], references: [id])
   quest_id   String
-  order      Int? // Optional: Display order of quests within the module
+  order      Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
@@ -121,7 +121,7 @@ model Module {
   title            String        @db.VarChar(255) // Title of the module
   description      String        @db.VarChar(1000) // Description of the module
   background_color String        @db.VarChar(7) // HEX code for the module's background color
-  image_url        String        @db.VarChar(255) // URL to a module image
+  image_url        String?       @db.VarChar(255) // URL to a module image
   created_at       DateTime      @default(now())
   updated_at       DateTime      @updatedAt
   created_by       String
