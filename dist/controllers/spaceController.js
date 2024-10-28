@@ -103,7 +103,6 @@ let SpaceController = class SpaceController {
                 const response = yield axios_1.default.post(`${process.env.AUTH_API_END_POINT}/check-email`, {
                     data: (0, rsaEncryption_1.encryptData)(emailDTO.email)
                 });
-                console.log(response.data);
                 if (response.data.data) {
                     next(new httpException_1.HttpException(400, "email already used"));
                 }

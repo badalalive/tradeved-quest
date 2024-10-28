@@ -1,4 +1,3 @@
-// space
 /**
  * @swagger
  * /space/create/{token}:
@@ -889,8 +888,6 @@
  *                   type: string
  *                   example: "Internal server error"
  */
-
-// quests
 /**
  * @swagger
  * /quest/create/{spaceId}:
