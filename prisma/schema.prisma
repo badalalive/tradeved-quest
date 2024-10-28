@@ -96,6 +96,7 @@ model Quest {
   updated_by          String
   approval_status     QuestApprovalStatus   @default(INITIATED)
   reject_reason       String?
+  template            QuestTemplate
   space               Space                 @relation("SpaceToQuest", fields: [space_id], references: [id])
   moduleQuests        ModuleQuest[]
   questParticipant    QuestParticipant[]
@@ -276,4 +277,9 @@ enum QuestCompletionStatus {
 enum VoteType {
   UPVOTE
   DOWNVOTE
+}
+
+enum QuestTemplate {
+  QNA
+  VOTE
 }
