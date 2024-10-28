@@ -97,8 +97,6 @@ model Quest {
   approval_status     QuestApprovalStatus   @default(INITIATED)
   reject_reason       String?
   space               Space                 @relation("SpaceToQuest", fields: [space_id], references: [id])
-  template            QuestTemplate         @relation(fields: [template_id], references: [id])
-  template_id         String                @unique
   moduleQuests        ModuleQuest[]
   questParticipant    QuestParticipant[]
   questVote           QuestVote[]
@@ -143,15 +141,6 @@ model QuestParticipant {
   reattempt_count   Int                   @default(0) // Tracks reattempts up to quest.reattempt
   created_at        DateTime              @default(now())
   updated_at        DateTime              @updatedAt
-}
-
-model QuestTemplate {
-  id            String   @id @unique @default(cuid())
-  template_name String   @db.VarChar(255)
-  description   String   @db.Text
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
-  quest         Quest?   @relation
 }
 
 // quest qna template related table
