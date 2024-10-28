@@ -81,6 +81,8 @@ model Quest {
   space_id            String
   title               String                @db.VarChar(255)
   description         String                @db.VarChar(1000)
+  content             String
+  content_type        QuestContentType
   participant_limit   Int
   max_reward_point    Int
   end_date            DateTime
@@ -282,4 +284,10 @@ enum VoteType {
 enum QuestTemplate {
   QNA
   VOTE
+}
+
+enum QuestContentType {
+  TEXT
+  VIDEO
+  IMAGE
 }
