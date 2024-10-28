@@ -37,7 +37,6 @@ let QuestModuleRepository = class QuestModuleRepository {
                     title: data.title,
                     description: data.description,
                     background_color: data.background_color,
-                    image_url: data.image_url,
                     created_by: data.created_by,
                     updated_by: data.updated_by,
                 },
@@ -76,29 +75,26 @@ let QuestModuleRepository = class QuestModuleRepository {
         });
     }
     // Add a quest to a module
-    addQuestToModule(questId, moduleId, order) {
+    addQuestsToModule(dataToInsert) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
-            const moduleQuest = yield this.prismaClient.moduleQuest.create({
-                data: {
-                    quest_id: questId,
-                    module_id: moduleId,
-                    order: order,
-                }
+            const moduleQuests = yield this.prismaClient.moduleQuest.createMany({
+                data: dataToInsert,
+                skipDuplicates: true, // Optional: prevents duplicate entries if quest-module pairs already exist
             });
             yield this.prismaClient.$disconnect();
-            return moduleQuest;
+            return moduleQuests.count ? dataToInsert : [];
         });
     }
     // Remove a quest from a module
-    removeQuestFromModule(questId, moduleId) {
+    removeQuestsFromModule(questIds, moduleIds) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const deleteModuleQuest = yield this.prismaClient.moduleQuest.deleteMany({
                 where: {
-                    quest_id: questId,
-                    module_id: moduleId
-                }
+                    quest_id: { in: questIds },
+                    module_id: { in: moduleIds },
+                },
             });
             yield this.prismaClient.$disconnect();
             return deleteModuleQuest.count > 0;

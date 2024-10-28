@@ -96,17 +96,6 @@ let QuestController = class QuestController {
                 next(error);
             }
         });
-        // Find all quests for a space with templates
-        this.findQuestsWithTemplate = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
-            try {
-                const spaceId = req.params.spaceId;
-                const { data, message, statusCode } = yield this.questService.findQuestsWithTemplate(spaceId);
-                res.status(statusCode).send({ data, message });
-            }
-            catch (error) {
-                next(error);
-            }
-        });
         // Update quest status
         this.updateQuestStatus = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {

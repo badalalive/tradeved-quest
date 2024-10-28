@@ -100,18 +100,6 @@ let QuestService = class QuestService {
                 data: quests,
             };
         });
-        // Find all quests for a space with templates
-        this.findQuestsWithTemplate = (spaceId) => __awaiter(this, void 0, void 0, function* () {
-            const quests = yield this.questRepository.findQuestsWithTemplate(spaceId);
-            if (!quests) {
-                throw new httpException_1.HttpException(404, "No quests with templates found for the specified space");
-            }
-            return {
-                statusCode: 200,
-                message: "Quests with templates fetched successfully",
-                data: quests,
-            };
-        });
         // Update quest status
         this.updateQuestStatus = (questId, status) => __awaiter(this, void 0, void 0, function* () {
             const quest = yield this.questRepository.findQuestById(questId);

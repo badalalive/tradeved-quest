@@ -81,16 +81,6 @@ export class QuestController {
         }
     };
 
-    // Find all quests for a space with templates
-    findQuestsWithTemplate = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const spaceId = req.params.spaceId;
-            const {data, message, statusCode} = await this.questService.findQuestsWithTemplate(spaceId);
-            res.status(statusCode).send({ data, message });
-        } catch (error: any) {
-            next(error)
-        }
-    };
 
     // Update quest status
     updateQuestStatus = async (req: Request, res: Response, next: NextFunction) => {

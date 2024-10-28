@@ -129,19 +129,6 @@ let QuestRepository = class QuestRepository {
             return !!deleteQuest;
         });
     }
-    findQuestsWithTemplate(spaceId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.prismaClient.$connect();
-            const quests = yield this.prismaClient.quest.findMany({
-                where: { space_id: spaceId },
-                include: {
-                    template: true,
-                },
-            });
-            yield this.prismaClient.$disconnect();
-            return quests;
-        });
-    }
 };
 exports.QuestRepository = QuestRepository;
 exports.QuestRepository = QuestRepository = __decorate([

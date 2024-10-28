@@ -58,7 +58,7 @@ export class QuestModuleController {
                  new HttpException(400, "The lengths of questIds, moduleIds, and orders must be the same");
             }
             // Create data for each quest-module pair with its specific order
-            const moduleQuests = questIds.map((questId, index) => ({
+            const moduleQuests = questIds.map((questId: string, index: number) => ({
                 quest_id: questId,
                 module_id: moduleIds[index],
                 order: orders[index],
