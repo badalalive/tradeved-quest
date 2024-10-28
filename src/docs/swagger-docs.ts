@@ -1,4 +1,3 @@
-"use strict";
 // space
 /**
  * @swagger
@@ -890,6 +889,7 @@
  *                   type: string
  *                   example: "Internal server error"
  */
+
 // quests
 /**
  * @swagger
