@@ -285,6 +285,8 @@ let SpaceService = class SpaceService {
             }
             const status = client_1.SpaceStatus[type];
             space = yield this.spaceRepository.updateSpaceStatus(spaceId, status, reject_reason);
+            const emailContent = (0, mailTemplate_1.spaceApprovalNotificationMailTemplate)();
+            yield (0, utilities_1.sendEmail)(space.email, "Space Approved", emailContent);
             return {
                 statusCode: 200,
                 message: `${status} Successfully`,

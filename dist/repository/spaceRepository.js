@@ -180,6 +180,35 @@ let SpaceRepository = class SpaceRepository {
             return space;
         });
     }
+    addSpaceUserId(spaceId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const space = yield this.prismaClient.space.update({
+                data: {
+                    user_id: userId
+                }, where: {
+                    id: spaceId
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return space;
+        });
+    }
+    findAllSpaceNoUserID() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const spaces = yield this.prismaClient.space.findMany({
+                where: {
+                    OR: [
+                        { user_id: null },
+                        { user_id: '' }
+                    ]
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return spaces; // Return the found spaces
+        });
+    }
     findSpaceByName(name) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();

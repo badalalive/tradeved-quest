@@ -174,6 +174,34 @@ export class SpaceRepository {
         return space;
     }
 
+    async addSpaceUserId(spaceId: string, userId: string): Promise<Space> {
+        await this.prismaClient.$connect();
+        const space = await this.prismaClient.space.update({
+            data: {
+                user_id: userId
+            }, where: {
+                id: spaceId
+            }
+        })
+        await this.prismaClient.$disconnect();
+        return space;
+    }
+
+    async findAllSpaceNoUserID(): Promise<Space[]> {
+        await this.prismaClient.$connect();
+        const spaces = await this.prismaClient.space.findMany({
+            where: {
+                OR: [
+                    { user_id: null },
+                    { user_id: '' }
+                ]
+            }
+        });
+        await this.prismaClient.$disconnect();
+        return spaces; // Return the found spaces
+    }
+
+
     async findSpaceByName(name: string): Promise<Space | null> {
         await this.prismaClient.$connect();
 

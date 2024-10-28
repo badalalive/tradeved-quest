@@ -15,6 +15,7 @@ const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const swagger_1 = __importDefault(require("./config/swagger"));
 const errorHandler_1 = require("./middlewares/errorHandler");
 const routes_1 = __importDefault(require("./routes/routes"));
+const cronScheduler_1 = require("./utils/cronScheduler");
 dotenv_1.default.config({ path: ".env" });
 const port = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 1119;
 const app = (0, express_1.default)();
@@ -34,6 +35,8 @@ app.use((0, cors_1.default)({
     credentials: Boolean(process.env.CREDENTIALS),
 }));
 app.use("/", routes_1.default);
+// cron jobs
+cronScheduler_1.spaceCredentialEmailTask.start();
 // global exception handler
 app.use(errorHandler_1.errorHandler);
 // export function print(path: any, layer: any) {

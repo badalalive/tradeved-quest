@@ -10,6 +10,7 @@ import swaggerJsDoc from "swagger-jsdoc";
 import swaggerOptions from "./config/swagger";
 import {errorHandler} from "./middlewares/errorHandler";
 import rootRouter from "./routes/routes";
+import {spaceCredentialEmailTask} from "./utils/cronScheduler";
 dotenv.config({ path: ".env" });
 
 const port: string | number = process.env.PORT ?? 1119;
@@ -34,6 +35,8 @@ app.use(
 );
 app.use("/", rootRouter);
 
+// cron jobs
+spaceCredentialEmailTask.start()
 // global exception handler
 app.use(errorHandler);
 // export function print(path: any, layer: any) {

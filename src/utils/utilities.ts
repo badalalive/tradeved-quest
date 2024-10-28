@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 export const generateRandomToken = (length: number): string => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -86,3 +87,42 @@ export const stringToArray = (str: string | null): string[] => {
         .split(/,\s*/) // Split by comma and optional space
         .map(item => item.slice(1, -1)); // Remove quotes around each item
 }
+
+
+export const generateRandomPassword = () => {
+    const characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+    const getRandomCharacter = (arr: any) =>
+        arr[Math.floor(Math.random() * arr.length)];
+
+    let password = "";
+
+    // Ensure at least one uppercase letter
+    password += getRandomCharacter("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+    // Ensure at least one lowercase letter
+    password += getRandomCharacter("abcdefghijklmnopqrstuvwxyz");
+
+    // Ensure at least one number
+    password += getRandomCharacter("0123456789");
+
+    // Ensure at least one special character
+    password += getRandomCharacter("!@#$%^&*()");
+
+    // Generate the remaining characters randomly
+    for (let i = 4; i < 8; i++) {
+        password += getRandomCharacter(characters);
+    }
+
+    // Shuffle the password to randomize the order
+    password = password
+        .split("")
+        .sort(() => Math.random() - 0.5)
+        .join("");
+
+    return password;
+};
+export const getBcryptPassword = async () => {
+    const password = generateRandomPassword();
+    return { password, bcrypt_password: await bcrypt.hash(password, 10) };
+};

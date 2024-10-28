@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.spaceFormSubmissionMailTemplate = exports.verificationMailTemplate = void 0;
+exports.spaceAccessCredentialsMailTemplate = exports.spaceApprovalNotificationMailTemplate = exports.spaceFormSubmissionMailTemplate = exports.verificationMailTemplate = void 0;
 const verificationMailTemplate = (link) => {
     return `<!DOCTYPE html>
 <html lang="en">
@@ -138,3 +138,134 @@ const spaceFormSubmissionMailTemplate = () => {
 `;
 };
 exports.spaceFormSubmissionMailTemplate = spaceFormSubmissionMailTemplate;
+// Function for space approval notification
+const spaceApprovalNotificationMailTemplate = () => {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Approval Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            background-color: #1a1a1a;
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #9BEC00;
+        }
+        p {
+            font-size: 16px;
+            color: #CCCCCC;
+            line-height: 1.6;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <h1>Space Approved!</h1>
+            <p>Congratulations! Your space has been approved and is now ready for you to access and manage.</p>
+            <p>You will receive your login credentials shortly.</p>
+            <div class="footer">
+                <p>If you did not request access to this space, please contact our support team immediately.</p>
+                <p>&copy; 2024 Your Company. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+`;
+};
+exports.spaceApprovalNotificationMailTemplate = spaceApprovalNotificationMailTemplate;
+// Function for sending credentials for space access
+const spaceAccessCredentialsMailTemplate = (email, password) => {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Access Credentials</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000000;
+            color: #FFFFFF;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            background-color: #1a1a1a;
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #9BEC00;
+        }
+        p {
+            font-size: 16px;
+            color: #CCCCCC;
+            line-height: 1.6;
+        }
+        .credentials-container {
+            background-color: #333333;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            color: #FFFFFF;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <h1>Your Access Credentials</h1>
+            <p>Use the credentials below to log in and get started with managing your space:</p>
+            <div class="credentials-container">
+                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Password:</strong> ${password}</p>
+            </div>
+            <p>We recommend changing your password after your first login for added security.</p>
+            <div class="footer">
+                <p>If you did not request access to this space, please contact our support team immediately.</p>
+                <p>&copy; 2024 Your Company. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+`;
+};
+exports.spaceAccessCredentialsMailTemplate = spaceAccessCredentialsMailTemplate;

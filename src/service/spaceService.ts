@@ -3,7 +3,11 @@ import {SpaceRepository} from "../repository/spaceRepository";
 import {CreateSpaceDto} from "../dto/spaceDTO";
 import {HttpException} from "../exceptions/httpException";
 import {Request, Response} from "express";
-import {spaceFormSubmissionMailTemplate, verificationMailTemplate} from "../templates/mailTemplate";
+import {
+    spaceApprovalNotificationMailTemplate,
+    spaceFormSubmissionMailTemplate,
+    verificationMailTemplate
+} from "../templates/mailTemplate";
 import {sendEmail, stringToArray} from "../utils/utilities";
 import {SpaceStatus} from "@prisma/client";
 import {TokenRepository} from "../repository/tokenRepository";
@@ -274,7 +278,7 @@ export class SpaceService {
     };
 
     updateStatus = async (spaceId: string, type: string, reject_reason: string) => {
-        let space = await this.spaceRepository.findSpaceById(spaceId);
+        let space: any = await this.spaceRepository.findSpaceById(spaceId);
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
         }
@@ -283,7 +287,8 @@ export class SpaceService {
         }
         const status = SpaceStatus[type as keyof typeof SpaceStatus];
         space = await this.spaceRepository.updateSpaceStatus(spaceId, status, reject_reason)
-
+        const emailContent = spaceApprovalNotificationMailTemplate();
+        await sendEmail(space.email, "Space Approved", emailContent)
         return {
             statusCode: 200,
             message: `${status} Successfully`,

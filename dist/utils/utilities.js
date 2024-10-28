@@ -12,8 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.stringToArray = exports.arrayToString = exports.extractErrorMessages = exports.sendEmail = exports.generateRandomToken = void 0;
+exports.getBcryptPassword = exports.generateRandomPassword = exports.stringToArray = exports.arrayToString = exports.extractErrorMessages = exports.sendEmail = exports.generateRandomToken = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const crypto_1 = require("crypto");
 const generateRandomToken = (length) => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -100,3 +101,32 @@ const stringToArray = (str) => {
         .map(item => item.slice(1, -1)); // Remove quotes around each item
 };
 exports.stringToArray = stringToArray;
+const generateRandomPassword = () => {
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+    const getRandomCharacter = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    let password = "";
+    // Ensure at least one uppercase letter
+    password += getRandomCharacter("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    // Ensure at least one lowercase letter
+    password += getRandomCharacter("abcdefghijklmnopqrstuvwxyz");
+    // Ensure at least one number
+    password += getRandomCharacter("0123456789");
+    // Ensure at least one special character
+    password += getRandomCharacter("!@#$%^&*()");
+    // Generate the remaining characters randomly
+    for (let i = 4; i < 8; i++) {
+        password += getRandomCharacter(characters);
+    }
+    // Shuffle the password to randomize the order
+    password = password
+        .split("")
+        .sort(() => Math.random() - 0.5)
+        .join("");
+    return password;
+};
+exports.generateRandomPassword = generateRandomPassword;
+const getBcryptPassword = () => __awaiter(void 0, void 0, void 0, function* () {
+    const password = (0, exports.generateRandomPassword)();
+    return { password, bcrypt_password: yield bcrypt_1.default.hash(password, 10) };
+});
+exports.getBcryptPassword = getBcryptPassword;
