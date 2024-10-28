@@ -33,8 +33,9 @@ let QuestController = class QuestController {
             try {
                 const spaceId = req.params.spaceId;
                 const questDTO = req.body;
-                const response = yield this.questService.createQuest(spaceId, questDTO);
-                res.status(response.statusCode).json(response);
+                const { data, message, statusCode } = yield this.questService.createQuest(spaceId, questDTO);
+                // Send the response
+                res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
@@ -44,8 +45,9 @@ let QuestController = class QuestController {
         this.getQuest = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const questId = req.params.id;
-                const response = yield this.questService.getQuest(questId);
-                res.status(response.statusCode).json(response);
+                const { data, message, statusCode } = yield this.questService.getQuest(questId);
+                // Send the response
+                res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
@@ -59,8 +61,8 @@ let QuestController = class QuestController {
                     next(new httpException_1.HttpException(400, "invalid quest id"));
                 }
                 const updateQuestDTO = req.body;
-                const response = yield this.questService.updateQuest(questId, updateQuestDTO);
-                res.status(response.statusCode).json(response);
+                const { data, message, statusCode } = yield this.questService.updateQuest(questId, updateQuestDTO);
+                res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
@@ -73,8 +75,8 @@ let QuestController = class QuestController {
                 if (!questId) {
                     next(new httpException_1.HttpException(400, "invalid quest id"));
                 }
-                const response = yield this.questService.deleteQuest(questId);
-                res.status(response.statusCode).json(response);
+                const { data, message, statusCode } = yield this.questService.deleteQuest(questId);
+                res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
@@ -87,8 +89,8 @@ let QuestController = class QuestController {
                 if (!spaceId) {
                     next(new httpException_1.HttpException(400, "invalid space id"));
                 }
-                const response = yield this.questService.findQuestsBySpace(spaceId);
-                res.status(response.statusCode).json(response);
+                const { data, message, statusCode } = yield this.questService.findQuestsBySpace(spaceId);
+                res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
@@ -98,8 +100,8 @@ let QuestController = class QuestController {
         this.findQuestsWithTemplate = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const spaceId = req.params.spaceId;
-                const response = yield this.questService.findQuestsWithTemplate(spaceId);
-                res.status(response.statusCode).json(response);
+                const { data, message, statusCode } = yield this.questService.findQuestsWithTemplate(spaceId);
+                res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
@@ -113,8 +115,8 @@ let QuestController = class QuestController {
                     next(new httpException_1.HttpException(400, "invalid quest id"));
                 }
                 const status = req.body.status;
-                const response = yield this.questService.updateQuestStatus(questId, status);
-                res.status(response.statusCode).json(response);
+                const { data, message, statusCode } = yield this.questService.updateQuestStatus(questId, status);
+                res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
@@ -135,8 +137,18 @@ let QuestController = class QuestController {
                 if (type === 'APPROVED') {
                     reject_reason = "";
                 }
-                const response = yield this.questService.submitQuestForApproval(questId, type, reject_reason);
-                res.status(response.statusCode).json(response);
+                const { data, message, statusCode } = yield this.questService.submitQuestForApproval(questId, type, reject_reason);
+                res.status(statusCode).send({ data, message });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+        this.toggleView = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const questId = req.params.id;
+                const { data, message, statusCode } = yield this.questService.toggleView(questId);
+                res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);

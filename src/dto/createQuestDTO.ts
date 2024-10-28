@@ -56,7 +56,7 @@ export class CreateQuestDTO {
     @Min(1)
     quest_time?: number; // Optional, quest time in seconds
 
-    @IsUUID()
+    @IsString()
     @IsNotEmpty()
     template_id: string;
 

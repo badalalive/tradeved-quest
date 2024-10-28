@@ -1,5 +1,5 @@
 import {inject, injectable} from "tsyringe";
-import {PrismaClient, Quest} from "@prisma/client";
+import {PrismaClient, Quest, QuestViewStatus} from "@prisma/client";
 import {CreateQuestDTO} from "../dto/createQuestDTO";
 import {UpdateQuestDTO} from "../dto/updateQuestDTO";
 
@@ -75,6 +75,20 @@ export class QuestRepository {
         await this.prismaClient.$disconnect();
         return updatedQuest;
     }
+    async toggleViewStatusById(questId: string, viewStatus: QuestViewStatus): Promise<Quest> {
+        await this.prismaClient.$connect();
+
+        const updatedQuest = await this.prismaClient.quest.update({
+            where: { id: questId },
+            data: {
+                view_status: viewStatus,
+                updated_at: new Date() // Update the updated_at timestamp
+            }
+        });
+
+        await this.prismaClient.$disconnect();
+        return updatedQuest;
+    }
 
     // Find all quests for a specific space
     async findQuestsBySpace(spaceId: string): Promise<Quest[] | null> {
@@ -103,19 +117,5 @@ export class QuestRepository {
         await this.prismaClient.$disconnect();
         return !!deleteQuest;
     }
-    async findQuestsWithTemplate(spaceId: string): Promise<Quest[] | null> {
-        await this.prismaClient.$connect();
-
-        const quests = await this.prismaClient.quest.findMany({
-            where: { space_id: spaceId },
-            include: {
-                template: true,
-            },
-        });
-
-        await this.prismaClient.$disconnect();
-        return quests;
-    }
-
 
 }

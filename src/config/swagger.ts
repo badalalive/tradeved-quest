@@ -5,9 +5,9 @@ const options: Options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Spedit Quest",
+      title: "Tradved Quest",
       version: "1.0.0",
-      description: "Spedit Quest",
+      description: "Tradved Quest",
     },
     components: {
       securitySchemes: {
@@ -24,7 +24,7 @@ const options: Options = {
       },
     ],
   },
-  apis: ["./dist/routes/*.js", "./dist/controllers/*.js", "./dist/dto/*.js"], // Files containing annotations
+  apis: ["./dist/routes/*.js", "./dist/controllers/*.js", "./dist/dto/*.js", "./dist/docs/*.js"], // Files containing annotations
 };
 
 export default options;

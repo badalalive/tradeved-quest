@@ -13,7 +13,6 @@ export class QuestModuleRepository {
         title: string;
         description: string;
         background_color: string;
-        image_url: string;
         created_by: string;
         updated_by: string;
     }): Promise<Module> {
@@ -24,7 +23,6 @@ export class QuestModuleRepository {
                 title: data.title,
                 description: data.description,
                 background_color: data.background_color,
-                image_url: data.image_url,
                 created_by: data.created_by,
                 updated_by: data.updated_by,
             },
@@ -39,7 +37,6 @@ export class QuestModuleRepository {
         title: string;
         description: string;
         background_color: string;
-        image_url: string;
         updated_by: string;
     }>): Promise<Module | null> {
         await this.prismaClient.$connect();
@@ -75,30 +72,27 @@ export class QuestModuleRepository {
     }
 
     // Add a quest to a module
-    async addQuestToModule(questId: string, moduleId: string, order?: number): Promise<ModuleQuest | null> {
+    async addQuestsToModule(dataToInsert: any[]): Promise<ModuleQuest[] | null> {
         await this.prismaClient.$connect();
 
-        const moduleQuest = await this.prismaClient.moduleQuest.create({
-            data: {
-                quest_id: questId,
-                module_id: moduleId,
-                order: order,
-            }
+        const moduleQuests = await this.prismaClient.moduleQuest.createMany({
+            data: dataToInsert,
+            skipDuplicates: true, // Optional: prevents duplicate entries if quest-module pairs already exist
         });
 
         await this.prismaClient.$disconnect();
-        return moduleQuest;
+        return moduleQuests.count ? dataToInsert : [];
     }
 
     // Remove a quest from a module
-    async removeQuestFromModule(questId: string, moduleId: string): Promise<boolean> {
+    async removeQuestsFromModule(questIds: string[], moduleIds: string[]): Promise<boolean> {
         await this.prismaClient.$connect();
 
         const deleteModuleQuest = await this.prismaClient.moduleQuest.deleteMany({
             where: {
-                quest_id: questId,
-                module_id: moduleId
-            }
+                quest_id: { in: questIds },
+                module_id: { in: moduleIds },
+            },
         });
 
         await this.prismaClient.$disconnect();

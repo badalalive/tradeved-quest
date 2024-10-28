@@ -139,13 +139,31 @@ let QuestService = class QuestService {
             }
             const status = client_1.QuestApprovalStatus[type];
             const updatedQuest = yield this.questRepository.updateQuestById(questId, {
-                approval_status: client_1.QuestApprovalStatus.APPROVED,
+                approval_status: status,
                 reject_reason: reject_reason
             });
             return {
                 statusCode: 200,
                 message: "Quest submitted for approval",
                 data: updatedQuest,
+            };
+        });
+        this.toggleView = (questId) => __awaiter(this, void 0, void 0, function* () {
+            const quest = yield this.questRepository.findQuestById(questId);
+            if (!quest) {
+                throw new httpException_1.HttpException(404, "Quest not found");
+            }
+            let updateQuest;
+            if (quest.view_status === client_1.QuestViewStatus.PUBLIC) {
+                updateQuest = yield this.questRepository.toggleViewStatusById(questId, client_1.QuestViewStatus.PRIVATE);
+            }
+            else {
+                updateQuest = yield this.questRepository.toggleViewStatusById(questId, client_1.QuestViewStatus.PUBLIC);
+            }
+            return {
+                statusCode: 200,
+                message: `toggle to ${updateQuest.view_status}`,
+                data: updateQuest,
             };
         });
     }

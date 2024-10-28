@@ -13,4 +13,5 @@ questRoutes.get("/get/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)(
 questRoutes.get("/get-all/:spaceId", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.findQuestsBySpace);
 questRoutes.put("/update-status/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.updateQuestStatus);
 questRoutes.post("/approval-status/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.submitQuestForApproval);
+questRoutes.post("/toggle-view/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.toggleView);
 exports.default = questRoutes;

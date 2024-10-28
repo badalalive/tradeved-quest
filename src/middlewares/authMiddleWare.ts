@@ -1,12 +1,15 @@
 import {HttpException} from "../exceptions/httpException";
 import { Response, NextFunction } from 'express';
-import { RequestWithUser, RequestWithTokenData } from "../interfaces/auth.interface";
+import {RequestWithUser, RequestWithTokenData, RequestWithUserSpace} from "../interfaces/auth.interface";
 import axios from 'axios';
 import {container} from "tsyringe";
-import {TokenRepository} from "../repository/tokenRepository"; // To make HTTP requests to the other microservice
+import {TokenRepository} from "../repository/tokenRepository";
+import {PrismaClient} from "@prisma/client"; // To make HTTP requests to the other microservice
+
+const prisma = new PrismaClient();
 
 export const verifyTokenAndRolesMiddleware = (allowedRoles: string[]) => {
-    return async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    return async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
         const token = req.headers['authorization'];
 
         if (!token) {
@@ -34,8 +37,15 @@ export const verifyTokenAndRolesMiddleware = (allowedRoles: string[]) => {
             if (!hasRole) {
                 return next(new HttpException(403, 'Access denied.'));
             }
-
+            const space = await prisma.space.findUnique({
+                where: { user_id: user.id }, include: {
+                    links: true,
+                    documents: true,
+                    quests: true
+                },
+            });
             req.user = user; // Attach user to request
+            req.space = space; // Attach space to request
             next();
         } catch (err: any) {
             console.log("Error:", err.message)

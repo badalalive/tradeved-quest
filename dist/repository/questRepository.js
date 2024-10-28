@@ -89,6 +89,20 @@ let QuestRepository = class QuestRepository {
             return updatedQuest;
         });
     }
+    toggleViewStatusById(questId, viewStatus) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const updatedQuest = yield this.prismaClient.quest.update({
+                where: { id: questId },
+                data: {
+                    view_status: viewStatus,
+                    updated_at: new Date() // Update the updated_at timestamp
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return updatedQuest;
+        });
+    }
     // Find all quests for a specific space
     findQuestsBySpace(spaceId) {
         return __awaiter(this, void 0, void 0, function* () {
