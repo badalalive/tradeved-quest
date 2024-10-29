@@ -38,8 +38,17 @@ export const verifyTokenAndRolesMiddleware = (allowedRoles: string[]) => {
             }
             const space = await prisma.space.findUnique({
                 where: { user_id: user.id }, include: {
-                    links: true,
-                    documents: true,
+                    links: {
+                        select: {
+                            link: true
+                        }
+                    },
+                    documents: {
+                        select: {
+                            path: true,
+                            filename: true
+                        }
+                    },
                     quests: true
                 },
             });

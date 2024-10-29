@@ -76,6 +76,16 @@ export class SpaceRepository {
         return updatedSpace;
     }
 
+    async updateSpacePartialById(id: string, updateData: any): Promise<Space> {
+        await this.prismaClient.$connect();
+        const updatedSpace = await this.prismaClient.space.update({
+            where: {
+                id: id
+            }, data: updateData
+        })
+        await this.prismaClient.$disconnect();
+        return updatedSpace;
+    }
     // Find space by ID (for updating or retrieving details)
     async findSpaceById(id: string): Promise<Space | null> {
         await this.prismaClient.$connect();

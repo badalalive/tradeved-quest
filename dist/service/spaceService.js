@@ -77,6 +77,23 @@ let SpaceService = class SpaceService {
                 statusCode: 201,
             };
         });
+        this.updateSpace = (space, updateSpaceDTO) => __awaiter(this, void 0, void 0, function* () {
+            // Handle category conversion
+            const updatedCategory = updateSpaceDTO.category
+                ? (0, utilities_1.arrayToString)(updateSpaceDTO.category)
+                : space.category; // Keep existing category if not provided
+            // Create an object with the necessary fields for updating
+            const updatedSpaceData = Object.assign(Object.assign({ updated_at: new Date() }, updateSpaceDTO), { category: updatedCategory });
+            // Update the space in the repository
+            const updatedSpace = yield this.spaceRepository.updateSpacePartialById(space.id, updatedSpaceData);
+            // Convert category back to array if necessary
+            updatedSpace.category = (0, utilities_1.stringToArray)(updatedSpace.category);
+            return {
+                statusCode: 200,
+                message: "Updated Successfully",
+                data: updatedSpace
+            };
+        });
         this.getSpace = (spaceId) => __awaiter(this, void 0, void 0, function* () {
             const space = yield this.spaceRepository.findSpaceById(spaceId);
             if (!space) {
@@ -240,13 +257,10 @@ let SpaceService = class SpaceService {
                 }
             };
         });
-        this.addBanner = (tokenData, req, res) => __awaiter(this, void 0, void 0, function* () {
-            let space = tokenData.space;
+        this.addBanner = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            let space = req.space;
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
-            }
-            if (space.status !== client_1.SpaceStatus.INITIATED) {
-                throw new httpException_1.HttpException(400, 'invalid Request');
             }
             // Use the `uploadImage` middleware for single image upload
             // await new Promise<void>((resolve, reject) => {

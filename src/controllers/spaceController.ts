@@ -6,10 +6,11 @@ import {HttpException} from "../exceptions/httpException";
 import {EmailDto} from "../dto/emailDTO";
 import { plainToInstance  } from "class-transformer";
 import { validate } from "class-validator";
-import {extractErrorMessages} from "../utils/utilities";
-import {RequestWithTokenData} from "../interfaces/auth.interface";
+import {extractErrorMessages, stringToArray} from "../utils/utilities";
+import {RequestWithTokenData, RequestWithUserSpace} from "../interfaces/auth.interface";
 import axios from "axios";
-import {encryptData} from "../config/rsaEncryption"; // for manual validation
+import {encryptData} from "../config/rsaEncryption";
+import {UpdateSpaceDTO} from "../dto/updateSpaceDTO"; // for manual validation
 
 @injectable()
 export class SpaceController {
@@ -43,14 +44,40 @@ export class SpaceController {
         }
     }
 
-    getSpace = async (req: Request, res: Response, next: NextFunction) => {
+    update = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
         try {
-            const spaceId: string = req.params.id;
-            if(!spaceId) {
-                next(new HttpException(400, "invalid spaceID"));
+            if(!req.space) {
+                next(new HttpException(404, "space not found"))
             }
-            const {data, message, statusCode} = await this.spaceService.getSpace(spaceId);
-            res.status(statusCode).send({ data, message})
+            // Transform plain object to class instance
+            const updatedSpaceDTO: any = plainToInstance(UpdateSpaceDTO, req.body);
+
+            // Validate the instance
+            const validationErrors = await validate(updatedSpaceDTO);
+
+            if (validationErrors.length > 0) {
+                // Extract error messages for all fields
+                const errorMessages = extractErrorMessages(validationErrors);
+                return next(new HttpException(400, errorMessages));
+            }
+
+            // Call the service to create the space
+            const { data, message, statusCode } = await this.spaceService.updateSpace(req.space, updatedSpaceDTO);
+
+            // Send the response
+            res.status(statusCode).send({ data, message });
+        } catch (error: any) {
+            next(error);
+        }
+    }
+
+    getSpace = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
+        try {
+            if(!req.space) {
+                next(new HttpException(404, "space not found"))
+            }
+            (req.space.category as any) = stringToArray(req.space.category);
+            res.status(200).send({ data: req.space, message: "space details"})
         } catch(error: any) {
             next(error)
         }
@@ -130,9 +157,9 @@ export class SpaceController {
         }
     }
 
-    addBanner = async (req: RequestWithTokenData, res: Response, next: NextFunction) => {
+    addBanner = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
         try {
-            const {data, message, statusCode} = await this.spaceService.addBanner(req.tokenData, req, res);
+            const {data, message, statusCode} = await this.spaceService.addBanner(req, res);
             res.status(statusCode).send({ data, message})
         } catch (error: any) {
             next(error)

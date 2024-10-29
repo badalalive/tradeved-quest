@@ -118,19 +118,117 @@
  */
 /**
  * @swagger
- * /space/details/{id}:
+ * /space/update:
+ *   put:
+ *     summary: Update space details
+ *     description: Updates the details of a space identified by the provided space ID.
+ *     tags:
+ *       - Space
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Updated Space Name"
+ *               description:
+ *                 type: string
+ *                 example: "Updated space description."
+ *               category:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["Education", "Technology"]
+ *     responses:
+ *       200:
+ *         description: Space updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Space updated successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "space-id-123"
+ *                     name:
+ *                       type: string
+ *                       example: "Updated Space Name"
+ *                     description:
+ *                       type: string
+ *                       example: "Updated space description."
+ *                     category:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: ["Education", "Technology"]
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-09-14T12:34:56Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2023-10-12T14:22:33Z"
+ *       400:
+ *         description: Invalid input data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid input data"
+ *       404:
+ *         description: Space not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: "Space not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+/**
+ * @swagger
+ * /space/details:
  *   get:
  *     summary: Retrieve space details
  *     description: Fetches the details of a space identified by the provided space ID.
  *     tags:
  *       - Space
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the space to retrieve
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Space details retrieved successfully
@@ -448,7 +546,7 @@
  * /space/upload-logo/{token}:
  *   put:
  *     summary: Upload a logo for a space
- *     description: Uploads a single image file (logo) to a space identified by the provided space ID.
+ *     description: Uploads a single image file banner to a space identified by the provided space ID.
  *     tags:
  *       - Space
  *     parameters:
@@ -534,19 +632,12 @@
  */
 /**
  * @swagger
- * /space/upload-banner/{token}:
+ * /space/upload-banner:
  *   put:
  *     summary: Upload a logo for a space
  *     description: Uploads a single image file (logo) to a space identified by the provided space ID.
  *     tags:
  *       - Space
- *     parameters:
- *       - in: path
- *         name: token
- *         required: true
- *         description: The email verification token
- *         schema:
- *           type: string
  *     requestBody:
  *       required: true
  *       content:

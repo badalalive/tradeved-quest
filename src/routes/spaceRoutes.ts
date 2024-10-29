@@ -10,13 +10,14 @@ const spaceController = container.resolve(SpaceController);
 const spaceRoutes: Router = Router();
 
 spaceRoutes.post("/create/:token", validateTokenMiddleware, spaceController.create)
-spaceRoutes.get("/details/:id", spaceController.getSpace)
+spaceRoutes.put("/update", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), spaceController.update)
+spaceRoutes.get("/details", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), spaceController.getSpace)
 spaceRoutes.get("/all", spaceController.getAll)
 spaceRoutes.put("/upload-documents/:token", validateTokenMiddleware, spaceController.uploadDocuments)
 spaceRoutes.post("/space-creation-link", spaceController.sentSpaceCreationLink)
 spaceRoutes.post("/verify-space-link/:token", validateTokenMiddleware, spaceController.verifySpaceLink)
 spaceRoutes.put("/upload-logo/:token", validateTokenMiddleware, spaceController.addLogo)
-spaceRoutes.put("/upload-banner/:token", validateTokenMiddleware, spaceController.addBanner)
+spaceRoutes.put("/upload-banner", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), spaceController.addBanner)
 spaceRoutes.put("/status/:id/:type", spaceController.updateStatus)
 spaceRoutes.post("/submit/:token", validateTokenMiddleware, spaceController.submitSpaceForm)
 

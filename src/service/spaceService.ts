@@ -8,9 +8,11 @@ import {
     spaceFormSubmissionMailTemplate,
     verificationMailTemplate
 } from "../templates/mailTemplate";
-import {sendEmail, stringToArray} from "../utils/utilities";
-import {SpaceStatus} from "@prisma/client";
+import {arrayToString, sendEmail, stringToArray} from "../utils/utilities";
+import {Space, SpaceStatus} from "@prisma/client";
 import {TokenRepository} from "../repository/tokenRepository";
+import {RequestWithUserSpace} from "../interfaces/auth.interface";
+import {UpdateSpaceDTO} from "../dto/updateSpaceDTO";
 
 @injectable()
 export class SpaceService {
@@ -69,6 +71,31 @@ export class SpaceService {
         };
     };
 
+    updateSpace = async (space: Space, updateSpaceDTO: Partial<UpdateSpaceDTO>) => {
+        // Handle category conversion
+        const updatedCategory = updateSpaceDTO.category
+            ? arrayToString(updateSpaceDTO.category)
+            : space.category; // Keep existing category if not provided
+
+        // Create an object with the necessary fields for updating
+        const updatedSpaceData = {
+            updated_at: new Date(), // Update the timestamp
+            ...updateSpaceDTO, // Only include the provided fields from updateSpaceDTO
+            category: updatedCategory, // Set the updated category
+        };
+
+        // Update the space in the repository
+        const updatedSpace = await this.spaceRepository.updateSpacePartialById(space.id, updatedSpaceData);
+
+        // Convert category back to array if necessary
+        (updatedSpace.category as any) = stringToArray(updatedSpace.category);
+
+        return {
+            statusCode: 200,
+            message: "Updated Successfully",
+            data: updatedSpace
+        };
+    }
     getSpace = async (spaceId: string) => {
         const space = await this.spaceRepository.findSpaceById(spaceId);
         if(!space) {
@@ -241,13 +268,10 @@ export class SpaceService {
         };
     };
 
-    addBanner = async (tokenData: any, req: Request, res: Response) => {
-        let space: any = tokenData.space;
+    addBanner = async (req: RequestWithUserSpace, res: Response) => {
+        let space: any = req.space;
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
-        }
-        if (space.status !== SpaceStatus.INITIATED) {
-            throw new HttpException(400, 'invalid Request');
         }
         // Use the `uploadImage` middleware for single image upload
         // await new Promise<void>((resolve, reject) => {

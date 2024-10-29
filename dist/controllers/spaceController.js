@@ -34,7 +34,8 @@ const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 const utilities_1 = require("../utils/utilities");
 const axios_1 = __importDefault(require("axios"));
-const rsaEncryption_1 = require("../config/rsaEncryption"); // for manual validation
+const rsaEncryption_1 = require("../config/rsaEncryption");
+const updateSpaceDTO_1 = require("../dto/updateSpaceDTO"); // for manual validation
 let SpaceController = class SpaceController {
     constructor(spaceService) {
         this.spaceService = spaceService;
@@ -58,14 +59,36 @@ let SpaceController = class SpaceController {
                 next(error);
             }
         });
+        this.update = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                if (!req.space) {
+                    next(new httpException_1.HttpException(404, "space not found"));
+                }
+                // Transform plain object to class instance
+                const updatedSpaceDTO = (0, class_transformer_1.plainToInstance)(updateSpaceDTO_1.UpdateSpaceDTO, req.body);
+                // Validate the instance
+                const validationErrors = yield (0, class_validator_1.validate)(updatedSpaceDTO);
+                if (validationErrors.length > 0) {
+                    // Extract error messages for all fields
+                    const errorMessages = (0, utilities_1.extractErrorMessages)(validationErrors);
+                    return next(new httpException_1.HttpException(400, errorMessages));
+                }
+                // Call the service to create the space
+                const { data, message, statusCode } = yield this.spaceService.updateSpace(req.space, updatedSpaceDTO);
+                // Send the response
+                res.status(statusCode).send({ data, message });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
         this.getSpace = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const spaceId = req.params.id;
-                if (!spaceId) {
-                    next(new httpException_1.HttpException(400, "invalid spaceID"));
+                if (!req.space) {
+                    next(new httpException_1.HttpException(404, "space not found"));
                 }
-                const { data, message, statusCode } = yield this.spaceService.getSpace(spaceId);
-                res.status(statusCode).send({ data, message });
+                req.space.category = (0, utilities_1.stringToArray)(req.space.category);
+                res.status(200).send({ data: req.space, message: "space details" });
             }
             catch (error) {
                 next(error);
@@ -146,7 +169,7 @@ let SpaceController = class SpaceController {
         });
         this.addBanner = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const { data, message, statusCode } = yield this.spaceService.addBanner(req.tokenData, req, res);
+                const { data, message, statusCode } = yield this.spaceService.addBanner(req, res);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {

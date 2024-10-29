@@ -84,6 +84,18 @@ let SpaceRepository = class SpaceRepository {
             return updatedSpace;
         });
     }
+    updateSpacePartialById(id, updateData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const updatedSpace = yield this.prismaClient.space.update({
+                where: {
+                    id: id
+                }, data: updateData
+            });
+            yield this.prismaClient.$disconnect();
+            return updatedSpace;
+        });
+    }
     // Find space by ID (for updating or retrieving details)
     findSpaceById(id) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -44,8 +44,17 @@ const verifyTokenAndRolesMiddleware = (allowedRoles) => {
             }
             const space = yield prisma.space.findUnique({
                 where: { user_id: user.id }, include: {
-                    links: true,
-                    documents: true,
+                    links: {
+                        select: {
+                            link: true
+                        }
+                    },
+                    documents: {
+                        select: {
+                            path: true,
+                            filename: true
+                        }
+                    },
                     quests: true
                 },
             });
