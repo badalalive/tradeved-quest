@@ -13,17 +13,15 @@ exports.CreateQuestDTO = void 0;
 const class_validator_1 = require("class-validator");
 const client_1 = require("@prisma/client"); // Assuming you have enums for QuestStatus and QuestCategory
 class CreateQuestDTO {
-    constructor(title, description, content, content_type, space_id, participant_limit, max_reward_point, end_date, reattempt, status, category, template, quest_time, created_by, updated_by) {
+    constructor(title, description, content, content_type, space_id, participant_limit, max_reward_point, end_date, reattempt, category, template, quest_time, created_by, updated_by) {
         this.title = title;
         this.description = description;
         this.content = content;
         this.content_type = content_type;
-        this.space_id = space_id;
         this.participant_limit = participant_limit;
         this.max_reward_point = max_reward_point;
         this.end_date = end_date;
         this.reattempt = reattempt;
-        this.status = status;
         this.category = category;
         this.template = template;
         this.quest_time = quest_time;
@@ -55,35 +53,25 @@ __decorate([
     __metadata("design:type", String)
 ], CreateQuestDTO.prototype, "content_type", void 0);
 __decorate([
-    (0, class_validator_1.IsUUID)(),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateQuestDTO.prototype, "space_id", void 0);
-__decorate([
     (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.Min)(1),
+    (0, class_validator_1.Min)(1, { message: "participant can not be zero" }),
     __metadata("design:type", Number)
 ], CreateQuestDTO.prototype, "participant_limit", void 0);
 __decorate([
     (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.Min)(1),
+    (0, class_validator_1.Min)(0),
     __metadata("design:type", Number)
 ], CreateQuestDTO.prototype, "max_reward_point", void 0);
 __decorate([
     (0, class_validator_1.IsDate)(),
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Date)
 ], CreateQuestDTO.prototype, "end_date", void 0);
 __decorate([
     (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.Min)(0),
+    (0, class_validator_1.Min)(-1),
     __metadata("design:type", Number)
 ], CreateQuestDTO.prototype, "reattempt", void 0);
-__decorate([
-    (0, class_validator_1.IsEnum)(client_1.QuestStatus),
-    (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", String)
-], CreateQuestDTO.prototype, "status", void 0);
 __decorate([
     (0, class_validator_1.IsEnum)(client_1.QuestCategory),
     (0, class_validator_1.IsNotEmpty)(),

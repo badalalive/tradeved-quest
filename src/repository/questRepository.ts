@@ -1,7 +1,8 @@
 import {inject, injectable} from "tsyringe";
-import {PrismaClient, Quest, QuestViewStatus} from "@prisma/client";
+import {PrismaClient, Quest, QuestStatus, QuestViewStatus} from "@prisma/client";
 import {CreateQuestDTO} from "../dto/createQuestDTO";
 import {UpdateQuestDTO} from "../dto/updateQuestDTO";
+import {QuestService} from "../service/questService";
 
 @injectable()
 export class QuestRepository {
@@ -55,23 +56,23 @@ export class QuestRepository {
     }
 
     // Create a new quest
-    async createQuest(data: CreateQuestDTO): Promise<Quest | null> {
+    async createQuest(spaceId: string, data: CreateQuestDTO): Promise<Quest | null> {
         await this.prismaClient.$connect();
 
         const newQuest = await this.prismaClient.quest.create({
             data: {
                 title: data.title,
                 description: data.description,
-                space_id: data.space_id,
+                space_id: spaceId,
                 participant_limit: data.participant_limit,
                 max_reward_point: data.max_reward_point,
-                end_date: data.end_date,
+                end_date: data.end_date || null,
                 reattempt: data.reattempt,
-                status: data.status,
+                status: QuestStatus.DRAFTED,
                 category: data.category,
                 quest_time: data.quest_time,
-                created_by: data.space_id,
-                updated_by: data.space_id,
+                created_by: spaceId,
+                updated_by: spaceId,
                 template: data.template,
                 content: data.content,
                 content_type: data.content_type

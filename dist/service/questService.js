@@ -31,16 +31,13 @@ let QuestService = class QuestService {
         this.questRepository = questRepository;
         // Create a new quest
         this.createQuest = (spaceId, questDTO) => __awaiter(this, void 0, void 0, function* () {
-            if (questDTO.participant_limit <= 0) {
-                throw new httpException_1.HttpException(400, "Participant limit must be greater than zero");
-            }
             // Check if a quest with the same title exists in the space
             const existingQuest = yield this.questRepository.findQuestsBySpace(spaceId);
             if (existingQuest === null || existingQuest === void 0 ? void 0 : existingQuest.some(quest => quest.title === questDTO.title)) {
                 throw new httpException_1.HttpException(409, "A quest with this title already exists in the space");
             }
             // Create a new quest
-            const newQuest = yield this.questRepository.createQuest(Object.assign(Object.assign({}, questDTO), { created_by: spaceId, updated_by: spaceId }));
+            const newQuest = yield this.questRepository.createQuest(spaceId, questDTO);
             return {
                 statusCode: 201,
                 message: "Quest created successfully",

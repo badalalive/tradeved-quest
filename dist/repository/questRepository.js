@@ -72,23 +72,23 @@ let QuestRepository = class QuestRepository {
         });
     }
     // Create a new quest
-    createQuest(data) {
+    createQuest(spaceId, data) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const newQuest = yield this.prismaClient.quest.create({
                 data: {
                     title: data.title,
                     description: data.description,
-                    space_id: data.space_id,
+                    space_id: spaceId,
                     participant_limit: data.participant_limit,
                     max_reward_point: data.max_reward_point,
-                    end_date: data.end_date,
+                    end_date: data.end_date || null,
                     reattempt: data.reattempt,
-                    status: data.status,
+                    status: client_1.QuestStatus.DRAFTED,
                     category: data.category,
                     quest_time: data.quest_time,
-                    created_by: data.space_id,
-                    updated_by: data.space_id,
+                    created_by: spaceId,
+                    updated_by: spaceId,
                     template: data.template,
                     content: data.content,
                     content_type: data.content_type

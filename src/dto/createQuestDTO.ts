@@ -31,29 +31,22 @@ export class CreateQuestDTO {
     @IsNotEmpty()
     content_type: QuestContentType
 
-    @IsUUID()
-    @IsNotEmpty()
-    space_id: string;
-
     @IsInt()
-    @Min(1)
+    @Min(1,{message: "participant can not be zero"})
     participant_limit: number;
 
     @IsInt()
-    @Min(1)
+    @Min(0)
     max_reward_point: number;
 
     @IsDate()
-    @IsNotEmpty()
-    end_date: Date;
+    @IsOptional()
+    end_date?: Date;
 
     @IsInt()
-    @Min(0)
+    @Min(-1)
     reattempt: number;
 
-    @IsEnum(QuestStatus)
-    @IsNotEmpty()
-    status: QuestStatus;
 
     @IsEnum(QuestCategory)
     @IsNotEmpty()
@@ -86,7 +79,6 @@ export class CreateQuestDTO {
         max_reward_point: number,
         end_date: Date,
         reattempt: number,
-        status: QuestStatus,
         category: QuestCategory,
         template: QuestTemplate,
         quest_time?: number,
@@ -97,12 +89,10 @@ export class CreateQuestDTO {
         this.description = description;
         this.content = content;
         this.content_type = content_type;
-        this.space_id = space_id;
         this.participant_limit = participant_limit;
         this.max_reward_point = max_reward_point;
         this.end_date = end_date;
         this.reattempt = reattempt;
-        this.status = status;
         this.category = category;
         this.template = template;
         this.quest_time = quest_time;

@@ -20,10 +20,6 @@ export class QuestService {
 
     // Create a new quest
     createQuest = async (spaceId: string, questDTO: CreateQuestDTO) => {
-        if (questDTO.participant_limit <= 0) {
-            throw new HttpException(400, "Participant limit must be greater than zero");
-        }
-
         // Check if a quest with the same title exists in the space
         const existingQuest = await this.questRepository.findQuestsBySpace(spaceId);
         if (existingQuest?.some(quest => quest.title === questDTO.title)) {
@@ -31,11 +27,10 @@ export class QuestService {
         }
 
         // Create a new quest
-        const newQuest = await this.questRepository.createQuest({
-            ...questDTO,
-            created_by: spaceId,
-            updated_by: spaceId,
-        });
+        const newQuest = await this.questRepository.createQuest(
+            spaceId,
+            questDTO
+        );
 
         return {
             statusCode: 201,

@@ -916,6 +916,13 @@
  *               description:
  *                 type: string
  *                 example: "A thrilling quest to find the lost treasure."
+ *               content:
+ *                 type: string
+ *                 example: "Quest content goes here."
+ *               content_type:
+ *                 type: string
+ *                 enum: [TEXT, VIDEO, IMAGE]
+ *                 example: "TEXT"
  *               participant_limit:
  *                 type: integer
  *                 example: 10
@@ -929,10 +936,6 @@
  *               reattempt:
  *                 type: integer
  *                 example: 0
- *               status:
- *                 type: string
- *                 enum: [DRAFTED, SCHEDULED, PAUSED, RUNNING, ENDED]
- *                 example: "DRAFTED"
  *               category:
  *                 type: string
  *                 enum: [GENERAL, TIMED, MINI_GAMES, DAILY]
@@ -940,9 +943,10 @@
  *               quest_time:
  *                 type: integer
  *                 example: 3600
- *               template_id:
+ *               template:
  *                 type: string
- *                 example: "ckllcbsyh0001ap5s4x83do89"
+ *                 enum: [QNA, VOTE]
+ *                 example: "QNA"
  *     responses:
  *       201:
  *         description: Quest created successfully

@@ -85,7 +85,7 @@ model Quest {
   content_type        QuestContentType
   participant_limit   Int
   max_reward_point    Int
-  end_date            DateTime
+  end_date            DateTime?
   reattempt           Int
   status              QuestStatus
   view_status         QuestViewStatus       @default(PUBLIC)
