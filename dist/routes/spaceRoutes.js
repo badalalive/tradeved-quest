@@ -15,6 +15,7 @@ spaceRoutes.put("/upload-documents/:token", authMiddleWare_1.validateTokenMiddle
 spaceRoutes.post("/space-creation-link", spaceController.sentSpaceCreationLink);
 spaceRoutes.post("/verify-space-link/:token", authMiddleWare_1.validateTokenMiddleware, spaceController.verifySpaceLink);
 spaceRoutes.put("/upload-logo/:token", authMiddleWare_1.validateTokenMiddleware, spaceController.addLogo);
+spaceRoutes.put("/update-logo", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), spaceController.updateLogo);
 spaceRoutes.put("/upload-banner", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), spaceController.addBanner);
 spaceRoutes.put("/status/:id/:type", spaceController.updateStatus);
 spaceRoutes.post("/submit/:token", authMiddleWare_1.validateTokenMiddleware, spaceController.submitSpaceForm);

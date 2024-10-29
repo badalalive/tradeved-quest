@@ -632,6 +632,88 @@
  */
 /**
  * @swagger
+ * /space/update-logo:
+ *   put:
+ *     summary: Update space logo
+ *     description: Updates the logo of the specified space.
+ *     tags:
+ *       - Space
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: The logo file to upload.
+ *     responses:
+ *       200:
+ *         description: Logo updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Logo uploaded successfully!"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     filename:
+ *                       type: string
+ *                       example: "logo.png"
+ *                     path:
+ *                       type: string
+ *                       example: "https://example.com/uploads/logo.png"
+ *       400:
+ *         description: Invalid logo file or space does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: "Space does not exist"  # or "No file uploaded" as appropriate
+ *       404:
+ *         description: Space not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: "Space not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 statusCode:
+ *                   type: number
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+/**
+ * @swagger
  * /space/upload-banner:
  *   put:
  *     summary: Upload a logo for a space

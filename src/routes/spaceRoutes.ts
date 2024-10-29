@@ -17,6 +17,7 @@ spaceRoutes.put("/upload-documents/:token", validateTokenMiddleware, spaceContro
 spaceRoutes.post("/space-creation-link", spaceController.sentSpaceCreationLink)
 spaceRoutes.post("/verify-space-link/:token", validateTokenMiddleware, spaceController.verifySpaceLink)
 spaceRoutes.put("/upload-logo/:token", validateTokenMiddleware, spaceController.addLogo)
+spaceRoutes.put("/update-logo", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), spaceController.updateLogo)
 spaceRoutes.put("/upload-banner", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), spaceController.addBanner)
 spaceRoutes.put("/status/:id/:type", spaceController.updateStatus)
 spaceRoutes.post("/submit/:token", validateTokenMiddleware, spaceController.submitSpaceForm)

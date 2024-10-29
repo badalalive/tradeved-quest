@@ -157,6 +157,15 @@ export class SpaceController {
         }
     }
 
+    updateLogo = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
+        try {
+            const {data, message, statusCode} = await this.spaceService.updateLogo(req, res);
+            res.status(statusCode).send({ data, message})
+        } catch (error: any) {
+            next(error)
+        }
+    }
+
     addBanner = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
         try {
             const {data, message, statusCode} = await this.spaceService.addBanner(req, res);

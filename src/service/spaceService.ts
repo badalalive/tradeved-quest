@@ -268,6 +268,39 @@ export class SpaceService {
         };
     };
 
+    updateLogo = async (req: RequestWithUserSpace, res: Response) => {
+        let space: any = req.space;
+        if (!space) {
+            throw new HttpException(400, 'Space does not exist');
+        }
+        // Use the `uploadImage` middleware for single image upload
+        // await new Promise<void>((resolve, reject) => {
+        //     uploadImage.single('file')(req, res, (err: any) => {
+        //         if (err) {
+        //             return reject(new HttpException(400, err.message));
+        //         }
+        //         if (!req.file) {
+        //             return reject(new HttpException(400, "No file uploaded"));
+        //         }
+        //         resolve();
+        //     });
+        // });
+
+        // const fileInfo = {
+        //     filename: req.file?.originalname,
+        //     path: `${process.env.SERVER_URL}${req.file?.destination}${req.file?.filename}`,
+        // };
+        // await this.spaceRepository.createSpaceLogo(space.id, fileInfo.path)
+        return {
+            statusCode: 200,
+            message: "Logo uploaded successfully!",
+            data: {
+                "filename": "logo.png",
+                "path": "https://yourserver.com/uploads/images/logo.png"
+            }
+        };
+    };
+
     addBanner = async (req: RequestWithUserSpace, res: Response) => {
         let space: any = req.space;
         if (!space) {
