@@ -88,6 +88,7 @@ model Quest {
   end_date            DateTime?
   reattempt           Int
   status              QuestStatus
+  schedule_time       DateTime?
   view_status         QuestViewStatus       @default(PUBLIC)
   is_lock             Boolean               @default(false)
   category            QuestCategory
