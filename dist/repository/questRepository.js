@@ -38,7 +38,7 @@ let QuestRepository = class QuestRepository {
                     space: true,
                     questParticipant: true,
                     questVote: true,
-                    questVoteDiscussion: true,
+                    questQNA: true,
                     moduleQuests: {
                         include: {
                             module: true
@@ -59,7 +59,7 @@ let QuestRepository = class QuestRepository {
                     space: true,
                     questParticipant: true,
                     questVote: true,
-                    questVoteDiscussion: true,
+                    questQNA: true,
                     moduleQuests: {
                         include: {
                             module: true

@@ -77,34 +77,34 @@ model SpaceDocuments {
 
 // quest core tables
 model Quest {
-  id                  String                @id @unique @default(cuid())
-  space_id            String
-  title               String                @db.VarChar(255)
-  description         String                @db.VarChar(1000)
-  content             String
-  content_type        QuestContentType
-  participant_limit   Int
-  max_reward_point    Int
-  end_date            DateTime?
-  reattempt           Int
-  status              QuestStatus
-  schedule_time       DateTime?
-  view_status         QuestViewStatus       @default(PUBLIC)
-  is_lock             Boolean               @default(false)
-  category            QuestCategory
-  quest_time          Int? // quest time in seconds
-  created_at          DateTime              @default(now())
-  updated_at          DateTime              @updatedAt
-  created_by          String
-  updated_by          String
-  approval_status     QuestApprovalStatus   @default(INITIATED)
-  reject_reason       String?
-  template            QuestTemplate
-  space               Space                 @relation("SpaceToQuest", fields: [space_id], references: [id])
-  moduleQuests        ModuleQuest[]
-  questParticipant    QuestParticipant[]
-  questVote           QuestVote[]
-  questVoteDiscussion QuestVoteDiscussion[]
+  id                String              @id @unique @default(cuid())
+  space_id          String
+  title             String              @db.VarChar(255)
+  description       String              @db.VarChar(1000)
+  content           String
+  content_type      QuestContentType
+  participant_limit Int
+  max_reward_point  Int
+  end_date          DateTime?
+  reattempt         Int
+  status            QuestStatus
+  schedule_time     DateTime?
+  view_status       QuestViewStatus     @default(PUBLIC)
+  is_lock           Boolean             @default(false)
+  category          QuestCategory
+  quest_time        Int? // quest time in seconds
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  created_by        String
+  updated_by        String
+  approval_status   QuestApprovalStatus @default(INITIATED)
+  reject_reason     String?
+  template          QuestTemplate
+  space             Space               @relation("SpaceToQuest", fields: [space_id], references: [id])
+  moduleQuests      ModuleQuest[]
+  questParticipant  QuestParticipant[]
+  questVote         QuestVote?
+  questQNA          QuestQNA?
 }
 
 model ModuleQuest {
@@ -154,11 +154,14 @@ model QuestQNA {
   created_at       DateTime           @default(now())
   updated_at       DateTime           @updatedAt
   questQNAQuestion QuestQNAQuestion[]
+  quest            Quest              @relation(fields: [questId], references: [id])
+  questId          String             @unique
 }
 
 model Question {
   id               String             @id @unique @default(cuid())
   question         String             @db.VarChar(500)
+  description      String?
   answer_type      AnswerType         @default(SINGLE)
   options          Option[]
   answer           Answer[]
@@ -195,13 +198,14 @@ model Answer {
 model QuestVote {
   id                   String                 @id @unique @default(cuid())
   quest                Quest                  @relation(fields: [quest_id], references: [id])
-  quest_id             String
+  quest_id             String                 @unique
   news_item            String                 @db.VarChar(255) // Name or identifier of the news item voted on
   upvotes              Int                    @default(0) // Count of upvotes
   downvotes            Int                    @default(0) // Count of downvotes
   created_at           DateTime               @default(now())
   updated_at           DateTime               @updatedAt
-  QuestParticipantVote QuestParticipantVote[]
+  questParticipantVote QuestParticipantVote[]
+  questVoteDiscussion  QuestVoteDiscussion[]
 }
 
 model QuestParticipantVote {
@@ -215,13 +219,13 @@ model QuestParticipantVote {
 }
 
 model QuestVoteDiscussion {
-  id         String   @id @unique @default(cuid())
-  quest      Quest    @relation(fields: [quest_id], references: [id])
-  quest_id   String
-  user_id    String
-  comment    String   @db.Text
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id            String    @id @unique @default(cuid())
+  quest_vote    QuestVote @relation(fields: [quest_vote_id], references: [id])
+  quest_vote_id String
+  user_id       String
+  comment       String    @db.Text
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
 }
 
 // enums
