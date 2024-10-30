@@ -1063,19 +1063,12 @@
  */
 /**
  * @swagger
- * /quest/create/{spaceId}:
+ * /quest/create:
  *   post:
  *     summary: Create a new quest
  *     description: Creates a new quest in the specified space.
  *     tags:
  *       - Quest
- *     parameters:
- *       - in: path
- *         name: spaceId
- *         required: true
- *         description: The ID of the space where the quest will be created.
- *         schema:
- *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -1113,6 +1106,10 @@
  *                 type: string
  *                 enum: [GENERAL, TIMED, MINI_GAMES, DAILY]
  *                 example: "GENERAL"
+ *               view_status:
+ *                 type: string
+ *                 enum: [PUBLIC, PRIVATE]
+ *                 example: "PUBLIC"
  *               quest_time:
  *                 type: integer
  *                 example: 3600
@@ -1182,10 +1179,36 @@
  *             properties:
  *               title:
  *                 type: string
+ *                 maxLength: 255
  *                 example: "Updated Epic Adventure"
  *               description:
  *                 type: string
+ *                 maxLength: 1000
  *                 example: "An updated description for the quest."
+ *               participant_limit:
+ *                 type: integer
+ *                 minimum: 1
+ *                 example: 100
+ *               max_reward_point:
+ *                 type: integer
+ *                 minimum: 1
+ *                 example: 500
+ *               end_date:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2024-12-31T23:59:59Z"
+ *               reattempt:
+ *                 type: integer
+ *                 minimum: 0
+ *                 example: 2
+ *               category:
+ *                 type: string
+ *                 enum: ["ADVENTURE", "PUZZLE", "EDUCATION"]
+ *                 example: "ADVENTURE"
+ *               quest_time:
+ *                 type: integer
+ *                 minimum: 1
+ *                 example: 3600
  *     responses:
  *       200:
  *         description: Quest updated successfully
@@ -1372,19 +1395,12 @@
  */
 /**
  * @swagger
- * /quest/get-all/{spaceId}:
+ * /quest/get-all:
  *   get:
- *     summary: Get all quests by space ID
+ *     summary: Get all quests
  *     description: Retrieves all quests associated with a specific space.
  *     tags:
  *       - Quest
- *     parameters:
- *       - in: path
- *         name: spaceId
- *         required: true
- *         description: The ID of the space to retrieve quests for
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Quests retrieved successfully
@@ -1453,6 +1469,10 @@
  *               status:
  *                 type: string
  *                 example: "COMPLETED"
+ *               schedule_time:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2024-12-31T23:59:59.999Z"
  *     responses:
  *       200:
  *         description: Quest status updated successfully
@@ -1474,6 +1494,98 @@
  *                 message:
  *                   type: string
  *                   example: "Invalid quest ID or status"
+ *       404:
+ *         description: Quest not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+/**
+ * @swagger
+ * /quest/publish/{id}:
+ *   put:
+ *     summary: Publish a quest by ID
+ *     description: Publishes a quest, making it available to participants.
+ *     tags:
+ *       - Quest
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the quest to publish
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 example: "COMPLETED"
+ *               schedule_time:
+ *                 type: string
+ *                 format: date-time
+ *                 example: "2024-12-31T23:59:59.999Z"
+ *     responses:
+ *       200:
+ *         description: Quest published successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest published successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "quest-id-123"
+ *                     status:
+ *                       type: string
+ *                       example: "PUBLISHED"
+ *       400:
+ *         description: Invalid quest ID or input data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid quest ID or input data"
+ *       403:
+ *         description: Unauthorized - user does not have permission
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized action"
  *       404:
  *         description: Quest not found
  *         content:

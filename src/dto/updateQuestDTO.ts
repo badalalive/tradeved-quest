@@ -8,7 +8,8 @@ import {
     IsDate,
     IsUUID
 } from 'class-validator';
-import {QuestStatus, QuestCategory, QuestApprovalStatus} from '@prisma/client'; // Assuming you have enums for QuestStatus and QuestCategory
+import {QuestStatus, QuestCategory, QuestApprovalStatus} from '@prisma/client';
+import {Type} from "class-transformer"; // Assuming you have enums for QuestStatus and QuestCategory
 
 export class UpdateQuestDTO {
     @IsOptional()
@@ -41,18 +42,6 @@ export class UpdateQuestDTO {
     reattempt?: number;
 
     @IsOptional()
-    @IsEnum(QuestStatus)
-    status?: QuestStatus;
-
-    @IsOptional()
-    @IsEnum(QuestApprovalStatus)
-    approval_status?: QuestApprovalStatus;
-
-    @IsOptional()
-    @IsString()
-    reject_reason?: string
-
-    @IsOptional()
     @IsEnum(QuestCategory)
     category?: QuestCategory;
 
@@ -73,8 +62,6 @@ export class UpdateQuestDTO {
         end_date: Date,
         reattempt: number,
         status: QuestStatus,
-        approval_status: QuestApprovalStatus,
-        reject_reason: string,
         category: QuestCategory,
         template_id: string,
         quest_time?: number,
@@ -86,9 +73,6 @@ export class UpdateQuestDTO {
         this.max_reward_point = max_reward_point;
         this.end_date = end_date;
         this.reattempt = reattempt;
-        this.status = status;
-        this.approval_status = approval_status;
-        this.reject_reason = reject_reason;
         this.category = category;
         this.quest_time = quest_time;
         this.updated_by = updated_by;

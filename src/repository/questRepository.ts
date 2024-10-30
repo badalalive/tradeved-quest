@@ -1,8 +1,7 @@
 import {inject, injectable} from "tsyringe";
-import {PrismaClient, Quest, QuestStatus, QuestViewStatus} from "@prisma/client";
+import {PrismaClient, Quest, QuestApprovalStatus, QuestStatus, QuestViewStatus} from "@prisma/client";
 import {CreateQuestDTO} from "../dto/createQuestDTO";
 import {UpdateQuestDTO} from "../dto/updateQuestDTO";
-import {QuestService} from "../service/questService";
 
 @injectable()
 export class QuestRepository {
@@ -70,6 +69,7 @@ export class QuestRepository {
                 reattempt: data.reattempt,
                 status: QuestStatus.DRAFTED,
                 category: data.category,
+                view_status: data.view_status,
                 quest_time: data.quest_time,
                 created_by: spaceId,
                 updated_by: spaceId,
@@ -97,6 +97,35 @@ export class QuestRepository {
 
         await this.prismaClient.$disconnect();
         return updatedQuest;
+    }
+
+    async updateApprovalStatus(questId: string, approval_status: QuestApprovalStatus, reject_reason: string): Promise<Quest> {
+        await this.prismaClient.$connect();
+        const quest = await this.prismaClient.quest.update({
+            where: {
+                id: questId
+            },
+            data: {
+                approval_status: approval_status,
+                reject_reason: reject_reason
+            }
+        })
+        await this.prismaClient.$disconnect();
+        return quest;
+    }
+
+    async updateQuestStatusById(questId: string, status: QuestStatus, schedule_time: Date | null): Promise<Quest> {
+        await this.prismaClient.$connect();
+        const quest = await this.prismaClient.quest.update({
+            where: {
+                id: questId
+            }, data: {
+                status: status,
+                schedule_time: schedule_time
+            }
+        })
+        await this.prismaClient.$disconnect();
+        return quest;
     }
     async toggleViewStatusById(questId: string, viewStatus: QuestViewStatus): Promise<Quest> {
         await this.prismaClient.$connect();

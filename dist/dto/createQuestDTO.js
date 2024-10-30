@@ -11,9 +11,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateQuestDTO = void 0;
 const class_validator_1 = require("class-validator");
-const client_1 = require("@prisma/client"); // Assuming you have enums for QuestStatus and QuestCategory
+const client_1 = require("@prisma/client");
+const class_transformer_1 = require("class-transformer"); // Assuming you have enums for QuestStatus and QuestCategory
 class CreateQuestDTO {
-    constructor(title, description, content, content_type, space_id, participant_limit, max_reward_point, end_date, reattempt, category, template, quest_time, created_by, updated_by) {
+    constructor(title, description, content, content_type, space_id, participant_limit, max_reward_point, end_date, reattempt, category, view_status, template, quest_time, created_by, updated_by) {
         this.title = title;
         this.description = description;
         this.content = content;
@@ -23,6 +24,7 @@ class CreateQuestDTO {
         this.end_date = end_date;
         this.reattempt = reattempt;
         this.category = category;
+        this.view_status = view_status;
         this.template = template;
         this.quest_time = quest_time;
         this.created_by = created_by;
@@ -63,7 +65,7 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateQuestDTO.prototype, "max_reward_point", void 0);
 __decorate([
-    (0, class_validator_1.IsDate)(),
+    (0, class_transformer_1.Type)((type) => type === null || type === void 0 ? void 0 : type.object.Date),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Date)
 ], CreateQuestDTO.prototype, "end_date", void 0);
@@ -77,6 +79,11 @@ __decorate([
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateQuestDTO.prototype, "category", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(client_1.QuestViewStatus),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateQuestDTO.prototype, "view_status", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsInt)(),

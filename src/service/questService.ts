@@ -122,7 +122,7 @@ export class QuestService {
     }
 
     // Update quest status
-    updateQuestStatus = async (questId: string, status: QuestStatus) => {
+    updateQuestStatus = async (questId: string, status: QuestStatus, schedule_time: Date | null) => {
         const quest = await this.questRepository.findQuestById(questId);
         if (!quest) {
             throw new HttpException(404, "Quest not found");
@@ -131,11 +131,28 @@ export class QuestService {
         if (quest.status === status) {
             throw new HttpException(400, "Quest is already in the specified status");
         }
-
-        const updatedQuest = await this.questRepository.updateQuestById(questId, { status });
+        const updatedQuest = await this.questRepository.updateQuestStatusById(questId, status, schedule_time);
         return {
             statusCode: 200,
             message: `Quest status updated to ${status}`,
+            data: updatedQuest,
+        };
+    };
+
+    publishQuest = async (questId: string, status: QuestStatus, schedule_time: Date | null) => {
+        const quest = await this.questRepository.findQuestById(questId);
+        if (!quest) {
+            throw new HttpException(404, "Quest not found");
+        }
+
+        if (quest.status === status) {
+            throw new HttpException(400, "Quest is already in the specified status");
+        }
+        await this.questRepository.updateQuestStatusById(questId, status, schedule_time);
+        const updatedQuest = await this.questRepository.updateApprovalStatus(questId, QuestApprovalStatus.REVIEW, "");
+        return {
+            statusCode: 200,
+            message: `Quest Published`,
             data: updatedQuest,
         };
     };
@@ -151,12 +168,7 @@ export class QuestService {
             throw new HttpException(400, "Only quests in review status can be submitted for approval");
         }
         const status = QuestApprovalStatus[type as keyof typeof QuestApprovalStatus];
-        const updatedQuest = await this.questRepository.updateQuestById(questId,
-              {
-                  approval_status: status,
-                  reject_reason: reject_reason
-              }
-        );
+        const updatedQuest = await this.questRepository.updateApprovalStatus(questId, status, reject_reason);
 
         return {
             statusCode: 200,

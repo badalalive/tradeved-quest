@@ -10,7 +10,8 @@ import {
     IsUUID,
     MaxLength
 } from 'class-validator';
-import {QuestStatus, QuestCategory, QuestTemplate, QuestContentType} from '@prisma/client'; // Assuming you have enums for QuestStatus and QuestCategory
+import {QuestStatus, QuestCategory, QuestTemplate, QuestContentType, QuestViewStatus} from '@prisma/client';
+import {Type} from "class-transformer"; // Assuming you have enums for QuestStatus and QuestCategory
 
 export class CreateQuestDTO {
     @IsString()
@@ -39,7 +40,7 @@ export class CreateQuestDTO {
     @Min(0)
     max_reward_point: number;
 
-    @IsDate()
+    @Type((type) => type?.object.Date)
     @IsOptional()
     end_date?: Date;
 
@@ -51,6 +52,10 @@ export class CreateQuestDTO {
     @IsEnum(QuestCategory)
     @IsNotEmpty()
     category: QuestCategory;
+
+    @IsEnum(QuestViewStatus)
+    @IsNotEmpty()
+    view_status: QuestViewStatus;
 
     @IsOptional()
     @IsInt()
@@ -80,6 +85,7 @@ export class CreateQuestDTO {
         end_date: Date,
         reattempt: number,
         category: QuestCategory,
+        view_status: QuestViewStatus,
         template: QuestTemplate,
         quest_time?: number,
         created_by?: string,
@@ -94,6 +100,7 @@ export class CreateQuestDTO {
         this.end_date = end_date;
         this.reattempt = reattempt;
         this.category = category;
+        this.view_status = view_status;
         this.template = template;
         this.quest_time = quest_time;
         this.created_by = created_by;

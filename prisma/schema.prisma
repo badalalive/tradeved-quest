@@ -243,7 +243,7 @@ enum QuestStatus {
   DRAFTED
   SCHEDULED
   PAUSED
-  RUNNING
+  PUBLISH
   ENDED
 }
 

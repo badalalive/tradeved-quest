@@ -20,19 +20,40 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestController = void 0;
 const tsyringe_1 = require("tsyringe");
+const createQuestDTO_1 = require("../dto/createQuestDTO");
+const client_1 = require("@prisma/client");
 const questService_1 = require("../service/questService");
 const httpException_1 = require("../exceptions/httpException");
+const moment_1 = __importDefault(require("moment"));
+const class_transformer_1 = require("class-transformer");
+const class_validator_1 = require("class-validator");
+const utilities_1 = require("../utils/utilities");
 let QuestController = class QuestController {
     constructor(questService) {
         this.questService = questService;
         // Create a new quest
         this.createQuest = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const spaceId = req.params.spaceId;
-                const questDTO = req.body;
+                if (!req.space) {
+                    next(new httpException_1.HttpException(400, "invalid space"));
+                }
+                const spaceId = req.space.id;
+                const questDTO = (0, class_transformer_1.plainToInstance)(createQuestDTO_1.CreateQuestDTO, req.body);
+                const validationErrors = yield (0, class_validator_1.validate)(questDTO);
+                if (validationErrors.length > 0) {
+                    // Extract error messages for all fields
+                    const errorMessages = (0, utilities_1.extractErrorMessages)(validationErrors);
+                    return next(new httpException_1.HttpException(400, errorMessages));
+                }
+                if (questDTO.category === client_1.QuestCategory.TIMED && !questDTO.quest_time) {
+                    next(new httpException_1.HttpException(400, "Quest time is required for timed quests"));
+                }
                 const { data, message, statusCode } = yield this.questService.createQuest(spaceId, questDTO);
                 // Send the response
                 res.status(statusCode).send({ data, message });
@@ -61,6 +82,7 @@ let QuestController = class QuestController {
                     next(new httpException_1.HttpException(400, "invalid quest id"));
                 }
                 const updateQuestDTO = req.body;
+                updateQuestDTO.updated_by = req.user.id;
                 const { data, message, statusCode } = yield this.questService.updateQuest(questId, updateQuestDTO);
                 res.status(statusCode).send({ data, message });
             }
@@ -85,10 +107,10 @@ let QuestController = class QuestController {
         // Find all quests for a specific space
         this.findQuestsBySpace = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const spaceId = req.params.spaceId;
-                if (!spaceId) {
-                    next(new httpException_1.HttpException(400, "invalid space id"));
+                if (!req.space) {
+                    next(new httpException_1.HttpException(400, "invalid space"));
                 }
+                const spaceId = req.space.id;
                 const { data, message, statusCode } = yield this.questService.findQuestsBySpace(spaceId);
                 res.status(statusCode).send({ data, message });
             }
@@ -114,10 +136,54 @@ let QuestController = class QuestController {
             try {
                 const questId = req.params.id;
                 if (!questId) {
-                    next(new httpException_1.HttpException(400, "invalid quest id"));
+                    return next(new httpException_1.HttpException(400, "Invalid quest ID"));
                 }
                 const status = req.body.status;
-                const { data, message, statusCode } = yield this.questService.updateQuestStatus(questId, status);
+                let schedule_time = req.body.schedule_time ? (0, moment_1.default)(req.body.schedule_time) : null;
+                // Validate status as a valid enum value
+                if (!Object.values(client_1.QuestStatus).includes(status)) {
+                    return next(new httpException_1.HttpException(400, "Invalid status value"));
+                }
+                // Validate schedule_time when status is SCHEDULED
+                if (status === client_1.QuestStatus.SCHEDULED) {
+                    if (!schedule_time || !schedule_time.isValid() || !schedule_time.isAfter((0, moment_1.default)())) {
+                        return next(new httpException_1.HttpException(400, "Invalid or missing schedule time. It must be a future date."));
+                    }
+                    schedule_time = schedule_time.toDate();
+                }
+                else {
+                    schedule_time = null;
+                }
+                const { data, message, statusCode } = yield this.questService.updateQuestStatus(questId, status, schedule_time);
+                res.status(statusCode).send({ data, message });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+        this.publishQuest = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const questId = req.params.id;
+                if (!questId) {
+                    return next(new httpException_1.HttpException(400, "Invalid quest ID"));
+                }
+                const status = req.body.status;
+                let schedule_time = req.body.schedule_time ? (0, moment_1.default)(req.body.schedule_time) : null;
+                // Validate status as a valid enum value
+                if (!(status === client_1.QuestStatus.PUBLISH || status === client_1.QuestStatus.SCHEDULED)) {
+                    return next(new httpException_1.HttpException(400, "Invalid status value"));
+                }
+                // Validate schedule_time when status is SCHEDULED
+                if (status === client_1.QuestStatus.SCHEDULED) {
+                    if (!schedule_time || !schedule_time.isValid() || !schedule_time.isAfter((0, moment_1.default)())) {
+                        return next(new httpException_1.HttpException(400, "Invalid or missing schedule time. It must be a future date."));
+                    }
+                    schedule_time = schedule_time.toDate();
+                }
+                else {
+                    schedule_time = null;
+                }
+                const { data, message, statusCode } = yield this.questService.publishQuest(questId, status, schedule_time);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {

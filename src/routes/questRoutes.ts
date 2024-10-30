@@ -13,13 +13,15 @@ const questParticipantController = container.resolve(QuestParticipantController)
 const questRoutes: Router = Router();
 
 // quest creation and update related api
-questRoutes.post("/create/:spaceId", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.createQuest);
-questRoutes.put("/update/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.updateQuest);
+questRoutes.post("/create", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.createQuest);
+questRoutes.put("/update/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR, UserRole.SUPER_ADMIN]), questController.updateQuest);
 questRoutes.get("/get/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.getQuest);
-questRoutes.get("/get-all/:spaceId", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.findQuestsBySpace);
-questRoutes.get("/all", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.findAll)
-questRoutes.put("/update-status/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.updateQuestStatus);
+// admin api
+questRoutes.put("/update-status/:id", verifyTokenAndRolesMiddleware([UserRole.SUPER_ADMIN]), questController.updateQuestStatus);
 questRoutes.post("/approval-status/:id", verifyTokenAndRolesMiddleware([UserRole.SUPER_ADMIN]), questController.submitQuestForApproval);
+questRoutes.put("/publish/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.publishQuest);
+questRoutes.get("/get-all", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.findQuestsBySpace);
+questRoutes.get("/all", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.findAll)
 questRoutes.post("/toggle-view/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.toggleView);
 questRoutes.post("/upload-media", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.uploadMedia);
 

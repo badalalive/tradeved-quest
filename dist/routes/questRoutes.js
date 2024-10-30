@@ -12,13 +12,15 @@ const questModuleController = tsyringe_1.container.resolve(questModuleController
 const questParticipantController = tsyringe_1.container.resolve(questParticipantController_1.QuestParticipantController);
 const questRoutes = (0, express_1.Router)();
 // quest creation and update related api
-questRoutes.post("/create/:spaceId", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.createQuest);
-questRoutes.put("/update/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.updateQuest);
+questRoutes.post("/create", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.createQuest);
+questRoutes.put("/update/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR, userRole_1.UserRole.SUPER_ADMIN]), questController.updateQuest);
 questRoutes.get("/get/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.getQuest);
-questRoutes.get("/get-all/:spaceId", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.findQuestsBySpace);
-questRoutes.get("/all", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.findAll);
-questRoutes.put("/update-status/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.updateQuestStatus);
+// admin api
+questRoutes.put("/update-status/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SUPER_ADMIN]), questController.updateQuestStatus);
 questRoutes.post("/approval-status/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SUPER_ADMIN]), questController.submitQuestForApproval);
+questRoutes.put("/publish/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.publishQuest);
+questRoutes.get("/get-all", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.findQuestsBySpace);
+questRoutes.get("/all", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.findAll);
 questRoutes.post("/toggle-view/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.toggleView);
 questRoutes.post("/upload-media", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.uploadMedia);
 // quest module related api

@@ -113,7 +113,7 @@ let QuestService = class QuestService {
             };
         });
         // Update quest status
-        this.updateQuestStatus = (questId, status) => __awaiter(this, void 0, void 0, function* () {
+        this.updateQuestStatus = (questId, status, schedule_time) => __awaiter(this, void 0, void 0, function* () {
             const quest = yield this.questRepository.findQuestById(questId);
             if (!quest) {
                 throw new httpException_1.HttpException(404, "Quest not found");
@@ -121,10 +121,26 @@ let QuestService = class QuestService {
             if (quest.status === status) {
                 throw new httpException_1.HttpException(400, "Quest is already in the specified status");
             }
-            const updatedQuest = yield this.questRepository.updateQuestById(questId, { status });
+            const updatedQuest = yield this.questRepository.updateQuestStatusById(questId, status, schedule_time);
             return {
                 statusCode: 200,
                 message: `Quest status updated to ${status}`,
+                data: updatedQuest,
+            };
+        });
+        this.publishQuest = (questId, status, schedule_time) => __awaiter(this, void 0, void 0, function* () {
+            const quest = yield this.questRepository.findQuestById(questId);
+            if (!quest) {
+                throw new httpException_1.HttpException(404, "Quest not found");
+            }
+            if (quest.status === status) {
+                throw new httpException_1.HttpException(400, "Quest is already in the specified status");
+            }
+            yield this.questRepository.updateQuestStatusById(questId, status, schedule_time);
+            const updatedQuest = yield this.questRepository.updateApprovalStatus(questId, client_1.QuestApprovalStatus.REVIEW, "");
+            return {
+                statusCode: 200,
+                message: `Quest Published`,
                 data: updatedQuest,
             };
         });
@@ -138,10 +154,7 @@ let QuestService = class QuestService {
                 throw new httpException_1.HttpException(400, "Only quests in review status can be submitted for approval");
             }
             const status = client_1.QuestApprovalStatus[type];
-            const updatedQuest = yield this.questRepository.updateQuestById(questId, {
-                approval_status: status,
-                reject_reason: reject_reason
-            });
+            const updatedQuest = yield this.questRepository.updateApprovalStatus(questId, status, reject_reason);
             return {
                 statusCode: 200,
                 message: "Quest submitted for approval",

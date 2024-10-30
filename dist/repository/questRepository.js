@@ -86,6 +86,7 @@ let QuestRepository = class QuestRepository {
                     reattempt: data.reattempt,
                     status: client_1.QuestStatus.DRAFTED,
                     category: data.category,
+                    view_status: data.view_status,
                     quest_time: data.quest_time,
                     created_by: spaceId,
                     updated_by: spaceId,
@@ -109,6 +110,37 @@ let QuestRepository = class QuestRepository {
             });
             yield this.prismaClient.$disconnect();
             return updatedQuest;
+        });
+    }
+    updateApprovalStatus(questId, approval_status, reject_reason) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const quest = yield this.prismaClient.quest.update({
+                where: {
+                    id: questId
+                },
+                data: {
+                    approval_status: approval_status,
+                    reject_reason: reject_reason
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return quest;
+        });
+    }
+    updateQuestStatusById(questId, status, schedule_time) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const quest = yield this.prismaClient.quest.update({
+                where: {
+                    id: questId
+                }, data: {
+                    status: status,
+                    schedule_time: schedule_time
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return quest;
         });
     }
     toggleViewStatusById(questId, viewStatus) {
