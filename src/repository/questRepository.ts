@@ -1,5 +1,5 @@
 import {inject, injectable} from "tsyringe";
-import {PrismaClient, Quest, QuestApprovalStatus, QuestStatus, QuestViewStatus} from "@prisma/client";
+import {PrismaClient, Quest, QuestApprovalStatus, QuestionStatus, QuestStatus, QuestViewStatus} from "@prisma/client";
 import {CreateQuestDTO} from "../dto/createQuestDTO";
 import {UpdateQuestDTO} from "../dto/updateQuestDTO";
 
@@ -81,6 +81,115 @@ export class QuestRepository {
 
         await this.prismaClient.$disconnect();
         return newQuest;
+    }
+
+    // Create a quest with QNA Template
+    async createQuestWithQNA(spaceId: string, data: CreateQuestDTO): Promise<Quest | null> {
+        await this.prismaClient.$connect();
+
+        const result = await this.prismaClient.$transaction(async (prisma) => {
+            // Create the quest
+            const newQuest: any = await prisma.quest.create({
+                data: {
+                    title: data.title,
+                    description: data.description,
+                    space_id: spaceId,
+                    participant_limit: data.participant_limit,
+                    max_reward_point: data.max_reward_point,
+                    end_date: data.end_date || null,
+                    reattempt: data.reattempt,
+                    status: QuestStatus.DRAFTED,
+                    category: data.category,
+                    view_status: data.view_status,
+                    quest_time: data.quest_time,
+                    created_by: spaceId,
+                    updated_by: spaceId,
+                    template: data.template,
+                    content: data.content,
+                    content_type: data.content_type,
+                },
+            });
+
+            // Create QNA with questions and options if questQNA is provided
+            if (data.questQNA) {
+                // Create the QuestQNA record first
+                const questQNA: any = await prisma.questQNA.create({
+                    data: {
+                        questId: newQuest.id, // Link to the new quest
+                        total_question: data.questQNA.length,
+                    },
+                });
+
+                // Create the questions and options
+                await Promise.all(data.questQNA.map(async (questionData) => {
+                    // Create the question
+                    const question: any = await prisma.question.create({
+                        data: {
+                            question: questionData.questionText,
+                            description: questionData.description,
+                            answer_type: questionData.answerType,
+                        },
+                    });
+
+                    // Create options for the question
+                    await Promise.all(questionData.options.map(async (option) => {
+                        const createdOption: any = await prisma.option.create({
+                            data: {
+                                content: option.content,
+                                questionId: question.id, // link the option to the question
+                            },
+                        });
+
+                        // Create an answer if the option is correct
+                        if (option.isCorrectAnswer) {
+                            await prisma.answer.create({
+                                data: {
+                                    questionId: question.id,
+                                    optionId: createdOption.id,
+                                },
+                            });
+                        }
+                    }));
+
+                    // Create the questQNAQuestion linking to the created question and the new questQNA
+                    await prisma.questQNAQuestion.create({
+                        data: {
+                            questQna: {
+                                connect: { id: questQNA.id }, // Link to the created QuestQNA
+                            },
+                            question: {
+                                connect: { id: question.id }, // Link to the created question
+                            },
+                            question_status: QuestionStatus.UNATTEMPTED,
+                        },
+                    });
+                }));
+            }
+
+            // Fetch the new quest including the related records
+            return prisma.quest.findUnique({
+                where: {id: newQuest.id},
+                include: {
+                    questQNA: {
+                        include: {
+                            questQNAQuestion: {
+                                include: {
+                                    question: {
+                                        include: {
+                                            options: true,
+                                            answer: true,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            }); // Return the complete quest with all relationships
+        });
+
+        await this.prismaClient.$disconnect();
+        return result;
     }
 
     // Update an existing quest by its ID

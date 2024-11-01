@@ -1117,6 +1117,32 @@
  *                 type: string
  *                 enum: [QNA, VOTE]
  *                 example: "QNA"
+ *               questQNA:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     questionText:
+ *                       type: string
+ *                       example: "What is the treasure's location?"
+ *                     description:
+ *                       type: string
+ *                       example: "Clue to find the treasure."
+ *                     answerType:
+ *                       type: string
+ *                       enum: [SINGLE, MULTIPLE]
+ *                       example: "SINGLE"
+ *                     options:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           content:
+ *                             type: string
+ *                             example: "Under the old oak tree"
+ *                           isCorrectAnswer:
+ *                             type: boolean
+ *                             example: true
  *     responses:
  *       201:
  *         description: Quest created successfully

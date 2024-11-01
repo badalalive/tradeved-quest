@@ -99,6 +99,108 @@ let QuestRepository = class QuestRepository {
             return newQuest;
         });
     }
+    // Create a quest with QNA Template
+    createQuestWithQNA(spaceId, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const result = yield this.prismaClient.$transaction((prisma) => __awaiter(this, void 0, void 0, function* () {
+                // Create the quest
+                const newQuest = yield prisma.quest.create({
+                    data: {
+                        title: data.title,
+                        description: data.description,
+                        space_id: spaceId,
+                        participant_limit: data.participant_limit,
+                        max_reward_point: data.max_reward_point,
+                        end_date: data.end_date || null,
+                        reattempt: data.reattempt,
+                        status: client_1.QuestStatus.DRAFTED,
+                        category: data.category,
+                        view_status: data.view_status,
+                        quest_time: data.quest_time,
+                        created_by: spaceId,
+                        updated_by: spaceId,
+                        template: data.template,
+                        content: data.content,
+                        content_type: data.content_type,
+                    },
+                });
+                // Create QNA with questions and options if questQNA is provided
+                if (data.questQNA) {
+                    // Create the QuestQNA record first
+                    const questQNA = yield prisma.questQNA.create({
+                        data: {
+                            questId: newQuest.id, // Link to the new quest
+                            total_question: data.questQNA.length,
+                        },
+                    });
+                    // Create the questions and options
+                    yield Promise.all(data.questQNA.map((questionData) => __awaiter(this, void 0, void 0, function* () {
+                        // Create the question
+                        const question = yield prisma.question.create({
+                            data: {
+                                question: questionData.questionText,
+                                description: questionData.description,
+                                answer_type: questionData.answerType,
+                            },
+                        });
+                        // Create options for the question
+                        yield Promise.all(questionData.options.map((option) => __awaiter(this, void 0, void 0, function* () {
+                            const createdOption = yield prisma.option.create({
+                                data: {
+                                    content: option.content,
+                                    questionId: question.id, // link the option to the question
+                                },
+                            });
+                            // Create an answer if the option is correct
+                            if (option.isCorrectAnswer) {
+                                yield prisma.answer.create({
+                                    data: {
+                                        questionId: question.id,
+                                        optionId: createdOption.id,
+                                    },
+                                });
+                            }
+                        })));
+                        // Create the questQNAQuestion linking to the created question and the new questQNA
+                        yield prisma.questQNAQuestion.create({
+                            data: {
+                                questQna: {
+                                    connect: { id: questQNA.id }, // Link to the created QuestQNA
+                                },
+                                question: {
+                                    connect: { id: question.id }, // Link to the created question
+                                },
+                                question_status: client_1.QuestionStatus.UNATTEMPTED,
+                            },
+                        });
+                    })));
+                }
+                // Fetch the new quest including the related records
+                return prisma.quest.findUnique({
+                    where: { id: newQuest.id },
+                    include: {
+                        questQNA: {
+                            include: {
+                                questQNAQuestion: {
+                                    include: {
+                                        question: {
+                                            include: {
+                                                options: true,
+                                                answer: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                }); // Return the complete quest with all relationships
+            }));
+            yield this.prismaClient.$disconnect();
+            return result;
+        });
+    }
     // Update an existing quest by its ID
     updateQuestById(questId, updateData) {
         return __awaiter(this, void 0, void 0, function* () {

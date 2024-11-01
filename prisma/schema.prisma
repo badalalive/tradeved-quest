@@ -183,7 +183,7 @@ model Option {
   content    String
   question   Question @relation(fields: [questionId], references: [id])
   questionId String
-  Answer     Answer[]
+  answer     Answer[]
 }
 
 model Answer {

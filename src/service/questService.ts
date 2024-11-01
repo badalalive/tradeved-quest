@@ -3,7 +3,7 @@ import { QuestRepository } from "../repository/questRepository";
 import { CreateQuestDTO } from "../dto/createQuestDTO";
 import { UpdateQuestDTO } from "../dto/updateQuestDTO";
 import { HttpException } from "../exceptions/httpException";
-import {QuestStatus, Quest, QuestApprovalStatus, SpaceStatus, QuestViewStatus} from "@prisma/client";
+import {QuestStatus, Quest, QuestApprovalStatus, SpaceStatus, QuestViewStatus, QuestTemplate} from "@prisma/client";
 import { RequestWithTokenData } from "../interfaces/auth.interface";
 import { stringToArray } from "../utils/utilities";
 import {Request, Response} from "express";
@@ -26,17 +26,22 @@ export class QuestService {
             throw new HttpException(409, "A quest with this title already exists in the space");
         }
 
-        // Create a new quest
-        const newQuest = await this.questRepository.createQuest(
-            spaceId,
-            questDTO
-        );
+        if (questDTO.template === QuestTemplate.QNA) {
+            // Create a new quest
+            const newQuest = await this.questRepository.createQuestWithQNA(
+                spaceId,
+                questDTO
+            );
 
-        return {
-            statusCode: 201,
-            message: "Quest created successfully",
-            data: newQuest,
-        };
+            return {
+                statusCode: 201,
+                message: "Quest created successfully",
+                data: newQuest,
+            };
+        } else {
+            throw new HttpException(400, "Only QNA template supported")
+        }
+
     };
 
     // Fetch a quest by its ID

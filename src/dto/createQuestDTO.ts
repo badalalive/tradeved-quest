@@ -8,10 +8,11 @@ import {
     IsEnum,
     IsDate,
     IsUUID,
-    MaxLength
+    MaxLength, ValidateNested
 } from 'class-validator';
 import {QuestStatus, QuestCategory, QuestTemplate, QuestContentType, QuestViewStatus} from '@prisma/client';
-import {Type} from "class-transformer"; // Assuming you have enums for QuestStatus and QuestCategory
+import {Type} from "class-transformer";
+import {QuestQNAQuestionDTO} from "./createQuestQNADTO"; // Assuming you have enums for QuestStatus and QuestCategory
 
 export class CreateQuestDTO {
     @IsString()
@@ -74,6 +75,11 @@ export class CreateQuestDTO {
     @IsOptional()
     updated_by?: string;
 
+    @IsOptional()
+    @ValidateNested({ each: true })
+    @Type((type) => type?.object.QuestQNAQuestionDTO)
+    questQNA?: QuestQNAQuestionDTO[];
+
     constructor(
         title: string,
         description: string,
@@ -89,7 +95,8 @@ export class CreateQuestDTO {
         template: QuestTemplate,
         quest_time?: number,
         created_by?: string,
-        updated_by?: string
+        updated_by?: string,
+        questQNA?: QuestQNAQuestionDTO[]
     ) {
         this.title = title;
         this.description = description;
@@ -105,5 +112,6 @@ export class CreateQuestDTO {
         this.quest_time = quest_time;
         this.created_by = created_by;
         this.updated_by = updated_by;
+        this.questQNA = questQNA;
     }
 }
