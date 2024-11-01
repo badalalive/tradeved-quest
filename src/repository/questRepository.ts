@@ -22,7 +22,8 @@ export class QuestRepository {
                 questVote: {
                     include: {
                         questVoteOptions: true,
-                        questParticipantVote: true
+                        questParticipantVote: true,
+                        questVoteDiscussion: true
                     }
                 },
                 questQNA: true,
