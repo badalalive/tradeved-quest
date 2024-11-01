@@ -109,6 +109,7 @@ let QuestRepository = class QuestRepository {
                     data: {
                         title: data.title,
                         description: data.description,
+                        logo_url: data.logo_url,
                         space_id: spaceId,
                         participant_limit: data.participant_limit,
                         max_reward_point: data.max_reward_point,
@@ -197,6 +198,71 @@ let QuestRepository = class QuestRepository {
                         },
                     },
                 }); // Return the complete quest with all relationships
+            }));
+            yield this.prismaClient.$disconnect();
+            return result;
+        });
+    }
+    // Create a quest with VOTE Template
+    createQuestWithVote(spaceId, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const result = yield this.prismaClient.$transaction((prisma) => __awaiter(this, void 0, void 0, function* () {
+                // Create the quest
+                const newQuest = yield prisma.quest.create({
+                    data: {
+                        title: data.title,
+                        description: data.description,
+                        logo_url: data.logo_url,
+                        content: data.content,
+                        content_type: data.content_type,
+                        space_id: spaceId,
+                        participant_limit: data.participant_limit,
+                        max_reward_point: data.max_reward_point,
+                        end_date: data.end_date || null,
+                        reattempt: data.reattempt,
+                        status: client_1.QuestStatus.DRAFTED,
+                        category: data.category,
+                        view_status: data.view_status,
+                        quest_time: data.quest_time,
+                        created_by: data.created_by || spaceId,
+                        updated_by: data.updated_by || spaceId,
+                        template: data.template,
+                    },
+                });
+                // Create QuestVote record if questVote is provided
+                if (data.questVote && data.questVote.length > 0) {
+                    yield Promise.all(data.questVote.map((voteData) => __awaiter(this, void 0, void 0, function* () {
+                        const questVote = yield prisma.questVote.create({
+                            data: {
+                                quest_id: newQuest.id,
+                                news_item: voteData.news_item,
+                            },
+                        });
+                        // Create QuestVoteOptions if options are provided in questVote
+                        if (voteData.options && voteData.options.length > 0) {
+                            yield Promise.all(voteData.options.map((optionData) => __awaiter(this, void 0, void 0, function* () {
+                                yield prisma.questVoteOption.create({
+                                    data: {
+                                        quest_vote_id: questVote.id,
+                                        option_text: optionData.option_text,
+                                    },
+                                });
+                            })));
+                        }
+                    })));
+                }
+                // Fetch the complete quest with related vote data for verification
+                return prisma.quest.findUnique({
+                    where: { id: newQuest.id },
+                    include: {
+                        questVote: {
+                            include: {
+                                questVoteOptions: true,
+                            },
+                        },
+                    },
+                });
             }));
             yield this.prismaClient.$disconnect();
             return result;

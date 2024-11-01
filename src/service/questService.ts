@@ -26,22 +26,27 @@ export class QuestService {
             throw new HttpException(409, "A quest with this title already exists in the space");
         }
 
+        let newQuest;
         if (questDTO.template === QuestTemplate.QNA) {
-            // Create a new quest
-            const newQuest = await this.questRepository.createQuestWithQNA(
+            // Create a new qna quest
+            newQuest = await this.questRepository.createQuestWithQNA(
                 spaceId,
                 questDTO
             );
-
-            return {
-                statusCode: 201,
-                message: "Quest created successfully",
-                data: newQuest,
-            };
+        } else if (questDTO.template === QuestTemplate.VOTE) {
+            // Create a new vote quest
+            newQuest = await this.questRepository.createQuestWithVote(
+                spaceId,
+                questDTO
+            );
         } else {
-            throw new HttpException(400, "Only QNA template supported")
+            throw new HttpException(400, "Only QNA, VOTE template supported")
         }
-
+        return {
+            statusCode: 201,
+            message: "Quest created successfully",
+            data: newQuest,
+        };
     };
 
     // Fetch a quest by its ID

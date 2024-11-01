@@ -14,7 +14,7 @@ const class_validator_1 = require("class-validator");
 const client_1 = require("@prisma/client");
 const class_transformer_1 = require("class-transformer");
 class CreateQuestDTO {
-    constructor(title, description, logo_url, content, content_type, space_id, participant_limit, max_reward_point, end_date, reattempt, category, view_status, template, quest_time, created_by, updated_by, questQNA) {
+    constructor(title, description, logo_url, content, content_type, space_id, participant_limit, max_reward_point, end_date, reattempt, category, view_status, template, quest_time, created_by, updated_by, questQNA, questVote) {
         this.title = title;
         this.description = description;
         this.logo_url = logo_url;
@@ -31,6 +31,7 @@ class CreateQuestDTO {
         this.created_by = created_by;
         this.updated_by = updated_by;
         this.questQNA = questQNA;
+        this.questVote = questVote;
     }
 }
 exports.CreateQuestDTO = CreateQuestDTO;

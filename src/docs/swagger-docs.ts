@@ -1078,13 +1078,15 @@
  *             properties:
  *               title:
  *                 type: string
+ *                 maxLength: 255
  *                 example: "Epic Adventure"
  *               description:
  *                 type: string
+ *                 maxLength: 1000
  *                 example: "A thrilling quest to find the lost treasure."
  *               logo_url:
  *                 type: string
- *                 example: "https//domain.org/logo.png"
+ *                 example: "https://domain.org/logo.png"
  *               content:
  *                 type: string
  *                 example: "Quest content goes here."
@@ -1094,9 +1096,11 @@
  *                 example: "TEXT"
  *               participant_limit:
  *                 type: integer
+ *                 minimum: 1
  *                 example: 10
  *               max_reward_point:
  *                 type: integer
+ *                 minimum: 0
  *                 example: 100
  *               end_date:
  *                 type: string
@@ -1104,6 +1108,7 @@
  *                 example: "2024-12-31T23:59:59.999Z"
  *               reattempt:
  *                 type: integer
+ *                 minimum: -1
  *                 example: 0
  *               category:
  *                 type: string
@@ -1115,6 +1120,7 @@
  *                 example: "PUBLIC"
  *               quest_time:
  *                 type: integer
+ *                 minimum: 1
  *                 example: 3600
  *               template:
  *                 type: string
@@ -1148,7 +1154,23 @@
  *                             example: true
  *                           description:
  *                             type: string
- *                             example: oak
+ *                             example: "oak"
+ *               questVote:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     news_item:
+ *                       type: string
+ *                       example: "Where will the market go?"
+ *                     options:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                            option_text:
+ *                              type: string
+ *                              example: "UP"
  *     responses:
  *       201:
  *         description: Quest created successfully
@@ -1187,6 +1209,7 @@
  *                   type: string
  *                   example: "Internal server error"
  */
+
 /**
  * @swagger
  * /quest/update/{id}:

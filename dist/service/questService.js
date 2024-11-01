@@ -36,18 +36,23 @@ let QuestService = class QuestService {
             if (existingQuest === null || existingQuest === void 0 ? void 0 : existingQuest.some(quest => quest.title === questDTO.title)) {
                 throw new httpException_1.HttpException(409, "A quest with this title already exists in the space");
             }
+            let newQuest;
             if (questDTO.template === client_1.QuestTemplate.QNA) {
-                // Create a new quest
-                const newQuest = yield this.questRepository.createQuestWithQNA(spaceId, questDTO);
-                return {
-                    statusCode: 201,
-                    message: "Quest created successfully",
-                    data: newQuest,
-                };
+                // Create a new qna quest
+                newQuest = yield this.questRepository.createQuestWithQNA(spaceId, questDTO);
+            }
+            else if (questDTO.template === client_1.QuestTemplate.VOTE) {
+                // Create a new vote quest
+                newQuest = yield this.questRepository.createQuestWithVote(spaceId, questDTO);
             }
             else {
-                throw new httpException_1.HttpException(400, "Only QNA template supported");
+                throw new httpException_1.HttpException(400, "Only QNA, VOTE template supported");
             }
+            return {
+                statusCode: 201,
+                message: "Quest created successfully",
+                data: newQuest,
+            };
         });
         // Fetch a quest by its ID
         this.findQuest = (questId) => __awaiter(this, void 0, void 0, function* () {

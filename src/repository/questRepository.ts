@@ -93,6 +93,7 @@ export class QuestRepository {
                 data: {
                     title: data.title,
                     description: data.description,
+                    logo_url: data.logo_url,
                     space_id: spaceId,
                     participant_limit: data.participant_limit,
                     max_reward_point: data.max_reward_point,
@@ -193,6 +194,74 @@ export class QuestRepository {
         return result;
     }
 
+    // Create a quest with VOTE Template
+    async createQuestWithVote(spaceId: string, data: CreateQuestDTO): Promise<Quest | null> {
+        await this.prismaClient.$connect();
+
+        const result = await this.prismaClient.$transaction(async (prisma) => {
+            // Create the quest
+            const newQuest: any = await prisma.quest.create({
+                data: {
+                    title: data.title,
+                    description: data.description,
+                    logo_url: data.logo_url,
+                    content: data.content,
+                    content_type: data.content_type,
+                    space_id: spaceId,
+                    participant_limit: data.participant_limit,
+                    max_reward_point: data.max_reward_point,
+                    end_date: data.end_date || null,
+                    reattempt: data.reattempt,
+                    status: QuestStatus.DRAFTED,
+                    category: data.category,
+                    view_status: data.view_status,
+                    quest_time: data.quest_time,
+                    created_by: data.created_by || spaceId,
+                    updated_by: data.updated_by || spaceId,
+                    template: data.template,
+                },
+            });
+
+            // Create QuestVote record if questVote is provided
+            if (data.questVote && data.questVote.length > 0) {
+                await Promise.all(data.questVote.map(async (voteData) => {
+                    const questVote: any = await prisma.questVote.create({
+                        data: {
+                            quest_id: newQuest.id,
+                            news_item: voteData.news_item,
+                        },
+                    });
+
+                    // Create QuestVoteOptions if options are provided in questVote
+                    if (voteData.options && voteData.options.length > 0) {
+                        await Promise.all(voteData.options.map(async (optionData) => {
+                            await prisma.questVoteOption.create({
+                                data: {
+                                    quest_vote_id: questVote.id,
+                                    option_text: optionData.option_text,
+                                },
+                            });
+                        }));
+                    }
+                }));
+            }
+
+            // Fetch the complete quest with related vote data for verification
+            return prisma.quest.findUnique({
+                where: { id: newQuest.id },
+                include: {
+                    questVote: {
+                        include: {
+                            questVoteOptions: true,
+                        },
+                    },
+                },
+            });
+        });
+
+        await this.prismaClient.$disconnect();
+        return result;
+    }
     // Update an existing quest by its ID
     async updateQuestById(questId: string, updateData: Partial<UpdateQuestDTO>): Promise<Quest | null> {
         await this.prismaClient.$connect();

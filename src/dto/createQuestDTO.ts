@@ -13,7 +13,7 @@ import {
 import {QuestStatus, QuestCategory, QuestTemplate, QuestContentType, QuestViewStatus} from '@prisma/client';
 import {Type} from "class-transformer";
 import {QuestQNAQuestionDTO} from "./createQuestQNADTO";
-import {QuestVoteDTO} from "./createQuestVoteDTO"; // Assuming you have enums for QuestStatus and QuestCategory
+import {QuestVoteDTO, QuestVoteOptionDTO} from "./createQuestVoteDTO"; // Assuming you have enums for QuestStatus and QuestCategory
 
 export class CreateQuestDTO {
     @IsString()
@@ -107,7 +107,8 @@ export class CreateQuestDTO {
         quest_time?: number,
         created_by?: string,
         updated_by?: string,
-        questQNA?: QuestQNAQuestionDTO[]
+        questQNA?: QuestQNAQuestionDTO[],
+        questVote?: QuestVoteDTO[]
     ) {
         this.title = title;
         this.description = description;
@@ -125,5 +126,6 @@ export class CreateQuestDTO {
         this.created_by = created_by;
         this.updated_by = updated_by;
         this.questQNA = questQNA;
+        this.questVote = questVote;
     }
 }
