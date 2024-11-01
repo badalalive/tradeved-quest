@@ -29,7 +29,7 @@ let QuestParticipantsRepository = class QuestParticipantsRepository {
         this.prismaClient = prismaClient;
     }
     // add quest participants
-    addParticipantToQuest(questId, participantId) {
+    createParticipantToQuest(questId, participantId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const newParticipant = yield this.prismaClient.questParticipant.create({

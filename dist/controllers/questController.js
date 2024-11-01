@@ -63,10 +63,10 @@ let QuestController = class QuestController {
             }
         });
         // Get quest by ID
-        this.getQuest = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.findQuest = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const questId = req.params.id;
-                const { data, message, statusCode } = yield this.questService.getQuest(questId);
+                const { data, message, statusCode } = yield this.questService.findQuest(questId);
                 // Send the response
                 res.status(statusCode).send({ data, message });
             }

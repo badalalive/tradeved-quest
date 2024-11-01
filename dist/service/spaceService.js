@@ -107,7 +107,7 @@ let SpaceService = class SpaceService {
                 data: space
             };
         });
-        this.getAll = () => __awaiter(this, void 0, void 0, function* () {
+        this.findAll = () => __awaiter(this, void 0, void 0, function* () {
             const spaces = yield this.spaceRepository.findAllSpace();
             // string of array category to array of category
             spaces.map((space) => space.category = (0, utilities_1.stringToArray)(space.category));
@@ -223,7 +223,7 @@ let SpaceService = class SpaceService {
                 data: spaceLink
             };
         });
-        this.addLogo = (tokenData, req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.createLogo = (tokenData, req, res) => __awaiter(this, void 0, void 0, function* () {
             let space = tokenData.space;
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');
@@ -288,7 +288,7 @@ let SpaceService = class SpaceService {
                 }
             };
         });
-        this.addBanner = (req, res) => __awaiter(this, void 0, void 0, function* () {
+        this.createBanner = (req, res) => __awaiter(this, void 0, void 0, function* () {
             let space = req.space;
             if (!space) {
                 throw new httpException_1.HttpException(400, 'Space does not exist');

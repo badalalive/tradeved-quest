@@ -54,7 +54,7 @@ let QuestModuleController = class QuestModuleController {
                 next(error);
             }
         });
-        this.addQuests = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.createQuests = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const { questIds, moduleIds, orders } = req.body;
                 if (!questIds || !moduleIds || !orders) {
@@ -69,14 +69,14 @@ let QuestModuleController = class QuestModuleController {
                     module_id: moduleIds[index],
                     order: orders[index],
                 }));
-                const { data, statusCode, message } = yield this.questModuleService.addQuests(moduleQuests);
+                const { data, statusCode, message } = yield this.questModuleService.createQuests(moduleQuests);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
             }
         });
-        this.removeQuests = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.deleteQuests = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const { questIds, moduleIds } = req.body;
                 if (!questIds || !moduleIds) {
@@ -85,7 +85,7 @@ let QuestModuleController = class QuestModuleController {
                 if (questIds.length !== moduleIds.length) {
                     new httpException_1.HttpException(400, "The lengths of questIds, moduleIds must be the same");
                 }
-                const { data, statusCode, message } = yield this.questModuleService.removeQuests(questIds, moduleIds);
+                const { data, statusCode, message } = yield this.questModuleService.deleteQuests(questIds, moduleIds);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {

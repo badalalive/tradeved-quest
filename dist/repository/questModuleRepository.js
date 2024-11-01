@@ -75,7 +75,7 @@ let QuestModuleRepository = class QuestModuleRepository {
         });
     }
     // Add a quest to a module
-    addQuestsToModule(dataToInsert) {
+    createQuestsToModule(dataToInsert) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const moduleQuests = yield this.prismaClient.moduleQuest.createMany({
@@ -87,7 +87,7 @@ let QuestModuleRepository = class QuestModuleRepository {
         });
     }
     // Remove a quest from a module
-    removeQuestsFromModule(questIds, moduleIds) {
+    deleteQuestsFromModule(questIds, moduleIds) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const deleteModuleQuest = yield this.prismaClient.moduleQuest.deleteMany({

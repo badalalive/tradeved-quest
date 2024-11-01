@@ -45,7 +45,7 @@ export class QuestService {
     };
 
     // Fetch a quest by its ID
-    getQuest = async (questId: string) => {
+    findQuest = async (questId: string) => {
         const quest = await this.questRepository.findQuestByIdAndViewStatus(questId, QuestViewStatus.PUBLIC);
         if (!quest) {
             throw new HttpException(404, "Quest not found");

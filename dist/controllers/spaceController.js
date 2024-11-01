@@ -82,7 +82,7 @@ let SpaceController = class SpaceController {
                 next(error);
             }
         });
-        this.getSpace = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.findSpace = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 if (!req.space) {
                     next(new httpException_1.HttpException(404, "space not found"));
@@ -94,9 +94,9 @@ let SpaceController = class SpaceController {
                 next(error);
             }
         });
-        this.getAll = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.findAll = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const { data, message, statusCode } = yield this.spaceService.getAll();
+                const { data, message, statusCode } = yield this.spaceService.findAll();
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
@@ -158,9 +158,9 @@ let SpaceController = class SpaceController {
                 next(error);
             }
         });
-        this.addLogo = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.createLogo = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const { data, message, statusCode } = yield this.spaceService.addLogo(req.tokenData, req, res);
+                const { data, message, statusCode } = yield this.spaceService.createLogo(req.tokenData, req, res);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
@@ -176,9 +176,9 @@ let SpaceController = class SpaceController {
                 next(error);
             }
         });
-        this.addBanner = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.createBanner = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const { data, message, statusCode } = yield this.spaceService.addBanner(req, res);
+                const { data, message, statusCode } = yield this.spaceService.createBanner(req, res);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {

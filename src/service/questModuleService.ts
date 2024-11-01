@@ -32,8 +32,8 @@ export class QuestModuleService {
         }
     }
 
-    addQuests = async (moduleQuestsArray: any[]) => {
-        const moduleQuests = await this.questModuleRepository.addQuestsToModule(moduleQuestsArray);
+    createQuests = async (moduleQuestsArray: any[]) => {
+        const moduleQuests = await this.questModuleRepository.createQuestsToModule(moduleQuestsArray);
         return {
             statusCode: 200,
             data: module,
@@ -41,8 +41,8 @@ export class QuestModuleService {
         }
     }
 
-    removeQuests = async (questIds: string[], moduleIds: string[]) => {
-        const removeQuests = await this.questModuleRepository.removeQuestsFromModule(questIds, moduleIds);
+    deleteQuests = async (questIds: string[], moduleIds: string[]) => {
+        const removeQuests = await this.questModuleRepository.deleteQuestsFromModule(questIds, moduleIds);
         if (removeQuests) {
             return {
                 statusCode: 204,

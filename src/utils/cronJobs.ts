@@ -29,7 +29,7 @@ export const sentSpaceCredentialEmail  = async () => {
 
         const user: any = response.data.data;
         console.log("user =>", JSON.stringify(user))
-        const result = await spaceRepository.addSpaceUserId(space.id, user.id);
+        const result = await spaceRepository.createSpaceUserId(space.id, user.id);
         const emailContent = spaceAccessCredentialsMailTemplate(space.email, passwordObj.password);
         await sendEmail(space.email, "Space Credentials", emailContent)
         console.log(`${result.name} Space User ID ${result.user_id}`)

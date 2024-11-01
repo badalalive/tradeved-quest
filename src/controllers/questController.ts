@@ -47,10 +47,10 @@ export class QuestController {
     };
 
     // Get quest by ID
-    getQuest = async (req: Request, res: Response, next: NextFunction) => {
+    findQuest = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const questId = req.params.id;
-            const {data, message, statusCode} = await this.questService.getQuest(questId);
+            const {data, message, statusCode} = await this.questService.findQuest(questId);
             // Send the response
             res.status(statusCode).send({ data, message });
         } catch (error: any) {

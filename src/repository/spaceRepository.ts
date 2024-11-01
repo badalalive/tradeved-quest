@@ -184,7 +184,7 @@ export class SpaceRepository {
         return space;
     }
 
-    async addSpaceUserId(spaceId: string, userId: string): Promise<Space> {
+    async createSpaceUserId(spaceId: string, userId: string): Promise<Space> {
         await this.prismaClient.$connect();
         const space = await this.prismaClient.space.update({
             data: {

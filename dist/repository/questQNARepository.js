@@ -103,7 +103,7 @@ let QuestQNARepository = class QuestQNARepository {
             return newQuestQNA;
         });
     }
-    addQuestionToQNA(questQNAId, questionId) {
+    createQuestionToQNA(questQNAId, questionId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const newQuestQNAQuestion = yield this.prismaClient.questQNAQuestion.create({
@@ -116,7 +116,7 @@ let QuestQNARepository = class QuestQNARepository {
             return newQuestQNAQuestion;
         });
     }
-    getQuestQNAByQuestId(questId) {
+    findQuestQNAByQuestId(questId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const questQNA = yield this.prismaClient.questQNA.findUnique({
@@ -144,7 +144,7 @@ let QuestQNARepository = class QuestQNARepository {
             return updatedQuestQNA;
         });
     }
-    getAllQuestionsForQNA(questQNAId) {
+    findAllQuestionsForQNA(questQNAId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const questions = yield this.prismaClient.questQNAQuestion.findMany({
@@ -170,7 +170,7 @@ let QuestQNARepository = class QuestQNARepository {
             return newQuestion;
         });
     }
-    addOptionToQuestion(questionId, optionContent) {
+    createOptionToQuestion(questionId, optionContent) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const newOption = yield this.prismaClient.option.create({
@@ -183,7 +183,7 @@ let QuestQNARepository = class QuestQNARepository {
             return newOption;
         });
     }
-    addAnswerToQuestion(questionId, optionId) {
+    createAnswerToQuestion(questionId, optionId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const newAnswer = yield this.prismaClient.answer.create({
@@ -196,7 +196,7 @@ let QuestQNARepository = class QuestQNARepository {
             return newAnswer;
         });
     }
-    getQuestionById(questionId) {
+    findQuestionById(questionId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const question = yield this.prismaClient.question.findUnique({
@@ -210,7 +210,7 @@ let QuestQNARepository = class QuestQNARepository {
             return question;
         });
     }
-    getAllOptionsForQuestion(questionId) {
+    findAllOptionsForQuestion(questionId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const options = yield this.prismaClient.option.findMany({
@@ -220,7 +220,7 @@ let QuestQNARepository = class QuestQNARepository {
             return options;
         });
     }
-    getAllAnswersForQuestion(questionId) {
+    findAllAnswersForQuestion(questionId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const answers = yield this.prismaClient.answer.findMany({

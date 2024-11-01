@@ -14,7 +14,7 @@ const questRoutes = (0, express_1.Router)();
 // quest creation and update related api
 questRoutes.post("/create", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.createQuest);
 questRoutes.put("/update/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR, userRole_1.UserRole.SUPER_ADMIN]), questController.updateQuest);
-questRoutes.get("/get/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.getQuest);
+questRoutes.get("/get/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), questController.findQuest);
 // admin api
 questRoutes.put("/update-status/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SUPER_ADMIN]), questController.updateQuestStatus);
 questRoutes.post("/approval-status/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SUPER_ADMIN]), questController.submitQuestForApproval);
@@ -26,6 +26,6 @@ questRoutes.post("/upload-media", (0, authMiddleWare_1.verifyTokenAndRolesMiddle
 // quest module related api
 questRoutes.post("/module", questModuleController.create);
 questRoutes.put("/module/:id", questModuleController.update);
-questRoutes.post("/module/add-quests", questModuleController.addQuests);
-questRoutes.delete("/module/remove-quests", questModuleController.removeQuests);
+questRoutes.post("/module/add-quests", questModuleController.createQuests);
+questRoutes.delete("/module/remove-quests", questModuleController.deleteQuests);
 exports.default = questRoutes;

@@ -110,7 +110,7 @@ export class SpaceService {
         }
     }
 
-    getAll = async () => {
+    findAll = async () => {
         const spaces = await this.spaceRepository.findAllSpace();
         // string of array category to array of category
         spaces.map((space) => (space.category as any) = stringToArray(space.category));
@@ -232,7 +232,7 @@ export class SpaceService {
         }
     }
 
-    addLogo = async (tokenData: any, req: Request, res: Response) => {
+    createLogo = async (tokenData: any, req: Request, res: Response) => {
         let space: any = tokenData.space;
         if (!space) {
             throw new HttpException(400, 'Space does not exist');
@@ -301,7 +301,7 @@ export class SpaceService {
         };
     };
 
-    addBanner = async (req: RequestWithUserSpace, res: Response) => {
+    createBanner = async (req: RequestWithUserSpace, res: Response) => {
         let space: any = req.space;
         if (!space) {
             throw new HttpException(400, 'Space does not exist');

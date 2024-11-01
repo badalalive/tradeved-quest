@@ -71,7 +71,7 @@ export class SpaceController {
         }
     }
 
-    getSpace = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
+    findSpace = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
         try {
             if(!req.space) {
                 next(new HttpException(404, "space not found"))
@@ -83,9 +83,9 @@ export class SpaceController {
         }
     }
 
-    getAll = async (req: Request, res: Response, next: NextFunction) => {
+    findAll = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const {data, message, statusCode} = await this.spaceService.getAll();
+            const {data, message, statusCode} = await this.spaceService.findAll();
             res.status(statusCode).send({ data, message})
         } catch(error: any) {
             next(error)
@@ -148,9 +148,9 @@ export class SpaceController {
         }
     }
 
-    addLogo = async (req: RequestWithTokenData, res: Response, next: NextFunction) => {
+    createLogo = async (req: RequestWithTokenData, res: Response, next: NextFunction) => {
         try {
-            const {data, message, statusCode} = await this.spaceService.addLogo(req.tokenData, req, res);
+            const {data, message, statusCode} = await this.spaceService.createLogo(req.tokenData, req, res);
             res.status(statusCode).send({ data, message})
         } catch (error: any) {
             next(error)
@@ -166,9 +166,9 @@ export class SpaceController {
         }
     }
 
-    addBanner = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
+    createBanner = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
         try {
-            const {data, message, statusCode} = await this.spaceService.addBanner(req, res);
+            const {data, message, statusCode} = await this.spaceService.createBanner(req, res);
             res.status(statusCode).send({ data, message})
         } catch (error: any) {
             next(error)

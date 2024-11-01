@@ -9,14 +9,14 @@ const spaceController = tsyringe_1.container.resolve(spaceController_1.SpaceCont
 const spaceRoutes = (0, express_1.Router)();
 spaceRoutes.post("/create/:token", authMiddleWare_1.validateTokenMiddleware, spaceController.create);
 spaceRoutes.put("/update", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), spaceController.update);
-spaceRoutes.get("/details", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), spaceController.getSpace);
-spaceRoutes.get("/all", spaceController.getAll);
+spaceRoutes.get("/details", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), spaceController.findSpace);
+spaceRoutes.get("/all", spaceController.findAll);
 spaceRoutes.put("/upload-documents/:token", authMiddleWare_1.validateTokenMiddleware, spaceController.uploadDocuments);
 spaceRoutes.post("/space-creation-link", spaceController.sentSpaceCreationLink);
 spaceRoutes.post("/verify-space-link/:token", authMiddleWare_1.validateTokenMiddleware, spaceController.verifySpaceLink);
-spaceRoutes.put("/upload-logo/:token", authMiddleWare_1.validateTokenMiddleware, spaceController.addLogo);
+spaceRoutes.put("/upload-logo/:token", authMiddleWare_1.validateTokenMiddleware, spaceController.createLogo);
 spaceRoutes.put("/update-logo", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), spaceController.updateLogo);
-spaceRoutes.put("/upload-banner", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), spaceController.addBanner);
+spaceRoutes.put("/upload-banner", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SPACE_CREATOR]), spaceController.createBanner);
 spaceRoutes.put("/status/:id/:type", spaceController.updateStatus);
 spaceRoutes.post("/submit/:token", authMiddleWare_1.validateTokenMiddleware, spaceController.submitSpaceForm);
 exports.default = spaceRoutes;

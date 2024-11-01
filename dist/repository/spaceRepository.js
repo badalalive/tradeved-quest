@@ -192,7 +192,7 @@ let SpaceRepository = class SpaceRepository {
             return space;
         });
     }
-    addSpaceUserId(spaceId, userId) {
+    createSpaceUserId(spaceId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
             const space = yield this.prismaClient.space.update({

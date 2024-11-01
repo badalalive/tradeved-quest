@@ -103,7 +103,7 @@ export class QuestQNARepository {
         return newQuestQNA;
     }
 
-    async addQuestionToQNA(questQNAId: string, questionId: string): Promise<QuestQNAQuestion> {
+    async createQuestionToQNA(questQNAId: string, questionId: string): Promise<QuestQNAQuestion> {
         await this.prismaClient.$connect();
 
         const newQuestQNAQuestion = await this.prismaClient.questQNAQuestion.create({
@@ -117,7 +117,7 @@ export class QuestQNARepository {
         return newQuestQNAQuestion;
     }
 
-    async getQuestQNAByQuestId(questId: string): Promise<QuestQNA | null> {
+    async findQuestQNAByQuestId(questId: string): Promise<QuestQNA | null> {
         await this.prismaClient.$connect();
 
         const questQNA = await this.prismaClient.questQNA.findUnique({
@@ -147,7 +147,7 @@ export class QuestQNARepository {
         return updatedQuestQNA;
     }
 
-    async getAllQuestionsForQNA(questQNAId: string): Promise<QuestQNAQuestion[]> {
+    async findAllQuestionsForQNA(questQNAId: string): Promise<QuestQNAQuestion[]> {
         await this.prismaClient.$connect();
 
         const questions = await this.prismaClient.questQNAQuestion.findMany({
@@ -175,7 +175,7 @@ export class QuestQNARepository {
         return newQuestion;
     }
 
-    async addOptionToQuestion(questionId: string, optionContent: string): Promise<Option> {
+    async createOptionToQuestion(questionId: string, optionContent: string): Promise<Option> {
         await this.prismaClient.$connect();
 
         const newOption = await this.prismaClient.option.create({
@@ -189,7 +189,7 @@ export class QuestQNARepository {
         return newOption;
     }
 
-    async addAnswerToQuestion(questionId: string, optionId: string): Promise<Answer> {
+    async createAnswerToQuestion(questionId: string, optionId: string): Promise<Answer> {
         await this.prismaClient.$connect();
 
         const newAnswer = await this.prismaClient.answer.create({
@@ -203,7 +203,7 @@ export class QuestQNARepository {
         return newAnswer;
     }
 
-    async getQuestionById(questionId: string): Promise<Question | null> {
+    async findQuestionById(questionId: string): Promise<Question | null> {
         await this.prismaClient.$connect();
 
         const question = await this.prismaClient.question.findUnique({
@@ -218,7 +218,7 @@ export class QuestQNARepository {
         return question;
     }
 
-    async getAllOptionsForQuestion(questionId: string): Promise<Option[]> {
+    async findAllOptionsForQuestion(questionId: string): Promise<Option[]> {
         await this.prismaClient.$connect();
 
         const options = await this.prismaClient.option.findMany({
@@ -229,7 +229,7 @@ export class QuestQNARepository {
         return options;
     }
 
-    async getAllAnswersForQuestion(questionId: string): Promise<Answer[]> {
+    async findAllAnswersForQuestion(questionId: string): Promise<Answer[]> {
         await this.prismaClient.$connect();
 
         const answers = await this.prismaClient.answer.findMany({

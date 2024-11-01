@@ -72,7 +72,7 @@ export class QuestModuleRepository {
     }
 
     // Add a quest to a module
-    async addQuestsToModule(dataToInsert: any[]): Promise<ModuleQuest[] | null> {
+    async createQuestsToModule(dataToInsert: any[]): Promise<ModuleQuest[] | null> {
         await this.prismaClient.$connect();
 
         const moduleQuests = await this.prismaClient.moduleQuest.createMany({
@@ -85,7 +85,7 @@ export class QuestModuleRepository {
     }
 
     // Remove a quest from a module
-    async removeQuestsFromModule(questIds: string[], moduleIds: string[]): Promise<boolean> {
+    async deleteQuestsFromModule(questIds: string[], moduleIds: string[]): Promise<boolean> {
         await this.prismaClient.$connect();
 
         const deleteModuleQuest = await this.prismaClient.moduleQuest.deleteMany({

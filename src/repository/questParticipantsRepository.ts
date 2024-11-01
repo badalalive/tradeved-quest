@@ -9,7 +9,7 @@ export class QuestParticipantsRepository {
     ) {}
 
     // add quest participants
-    async addParticipantToQuest(questId: string, participantId: string): Promise<QuestParticipant | null> {
+    async createParticipantToQuest(questId: string, participantId: string): Promise<QuestParticipant | null> {
         await this.prismaClient.$connect();
 
         const newParticipant = await this.prismaClient.questParticipant.create({

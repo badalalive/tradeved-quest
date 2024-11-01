@@ -48,7 +48,7 @@ export class QuestModuleController {
         }
     }
 
-    addQuests = async (req: Request, res: Response, next: NextFunction)=> {
+    createQuests = async (req: Request, res: Response, next: NextFunction)=> {
         try {
             const {questIds, moduleIds, orders} = req.body;
             if (!questIds || !moduleIds || !orders) {
@@ -63,14 +63,14 @@ export class QuestModuleController {
                 module_id: moduleIds[index],
                 order: orders[index],
             }));
-            const {data, statusCode, message} = await this.questModuleService.addQuests(moduleQuests)
+            const {data, statusCode, message} = await this.questModuleService.createQuests(moduleQuests)
             res.status(statusCode).send({ data, message });
         } catch (error: any) {
             next(error)
         }
     }
 
-    removeQuests = async (req: Request, res: Response, next: NextFunction)=> {
+    deleteQuests = async (req: Request, res: Response, next: NextFunction)=> {
         try {
             const {questIds, moduleIds} = req.body;
             if (!questIds || !moduleIds) {
@@ -79,7 +79,7 @@ export class QuestModuleController {
             if (questIds.length !== moduleIds.length) {
                 new HttpException(400, "The lengths of questIds, moduleIds must be the same");
             }
-            const {data, statusCode, message} = await this.questModuleService.removeQuests(questIds, moduleIds)
+            const {data, statusCode, message} = await this.questModuleService.deleteQuests(questIds, moduleIds)
             res.status(statusCode).send({ data, message });
         } catch (error: any) {
             next(error)

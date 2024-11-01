@@ -43,16 +43,16 @@ let QuestModuleService = class QuestModuleService {
                 message: "Module Updated"
             };
         });
-        this.addQuests = (moduleQuestsArray) => __awaiter(this, void 0, void 0, function* () {
-            const moduleQuests = yield this.questModuleRepository.addQuestsToModule(moduleQuestsArray);
+        this.createQuests = (moduleQuestsArray) => __awaiter(this, void 0, void 0, function* () {
+            const moduleQuests = yield this.questModuleRepository.createQuestsToModule(moduleQuestsArray);
             return {
                 statusCode: 200,
                 data: module,
                 message: "Quests Added"
             };
         });
-        this.removeQuests = (questIds, moduleIds) => __awaiter(this, void 0, void 0, function* () {
-            const removeQuests = yield this.questModuleRepository.removeQuestsFromModule(questIds, moduleIds);
+        this.deleteQuests = (questIds, moduleIds) => __awaiter(this, void 0, void 0, function* () {
+            const removeQuests = yield this.questModuleRepository.deleteQuestsFromModule(questIds, moduleIds);
             if (removeQuests) {
                 return {
                     statusCode: 204,

@@ -50,7 +50,7 @@ let QuestService = class QuestService {
             }
         });
         // Fetch a quest by its ID
-        this.getQuest = (questId) => __awaiter(this, void 0, void 0, function* () {
+        this.findQuest = (questId) => __awaiter(this, void 0, void 0, function* () {
             const quest = yield this.questRepository.findQuestByIdAndViewStatus(questId, client_1.QuestViewStatus.PUBLIC);
             if (!quest) {
                 throw new httpException_1.HttpException(404, "Quest not found");

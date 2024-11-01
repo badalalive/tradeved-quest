@@ -41,7 +41,7 @@ const sentSpaceCredentialEmail = () => __awaiter(void 0, void 0, void 0, functio
         });
         const user = response.data.data;
         console.log("user =>", JSON.stringify(user));
-        const result = yield spaceRepository.addSpaceUserId(space.id, user.id);
+        const result = yield spaceRepository.createSpaceUserId(space.id, user.id);
         const emailContent = (0, mailTemplate_1.spaceAccessCredentialsMailTemplate)(space.email, passwordObj.password);
         yield (0, utilities_1.sendEmail)(space.email, "Space Credentials", emailContent);
         console.log(`${result.name} Space User ID ${result.user_id}`);
