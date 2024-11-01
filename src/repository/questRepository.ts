@@ -19,7 +19,12 @@ export class QuestRepository {
             include: {
                 space: true,
                 questParticipant: true,
-                questVote: true,
+                questVote: {
+                    include: {
+                        questVoteOptions: true,
+                        questParticipantVote: true
+                    }
+                },
                 questQNA: true,
                 moduleQuests: {
                     include: {

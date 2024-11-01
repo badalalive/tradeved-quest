@@ -75,11 +75,11 @@ export class QuestController {
 
     getVoteQuestById = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
-            const questVoteId =  req.params.questVoteId;
-            if(!questVoteId) {
+            const questId =  req.params.id;
+            if(!questId) {
                 next(new HttpException(400, "invalid params"))
             }
-            const {data, message, statusCode} = await this.questService.getQuestVoteById(questVoteId);
+            const {data, message, statusCode} = await this.questService.getQuestVoteById(questId);
             res.status(statusCode).send({data, message});
         } catch (error: any) {
             next(error)

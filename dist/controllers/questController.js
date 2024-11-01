@@ -91,11 +91,11 @@ let QuestController = class QuestController {
         });
         this.getVoteQuestById = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const questVoteId = req.params.questVoteId;
-                if (!questVoteId) {
+                const questId = req.params.id;
+                if (!questId) {
                     next(new httpException_1.HttpException(400, "invalid params"));
                 }
-                const { data, message, statusCode } = yield this.questService.getQuestVoteById(questVoteId);
+                const { data, message, statusCode } = yield this.questService.getQuestVoteById(questId);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {

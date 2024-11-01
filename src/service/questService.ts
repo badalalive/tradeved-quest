@@ -104,16 +104,15 @@ export class QuestService {
         }
     }
 
-    getQuestVoteById = async (questVoteId: string) => {
-        const questVote: any = await this.questVoteRepository.findQuestVoteById(questVoteId);
-        if(!questVote) {
+    getQuestVoteById = async (questId: string) => {
+        const quest: any = await this.questRepository.findQuestById(questId);
+        if(!quest.questVote) {
             throw new HttpException(404, "quest voting article not found")
         }
-        delete questVote.quest;
         return {
             statusCode: 200,
             message: "Quest Vote Details",
-            data: questVote,
+            data: quest.questVote,
         };
     }
     // Update a quest by ID

@@ -98,16 +98,15 @@ let QuestService = class QuestService {
                 };
             }
         });
-        this.getQuestVoteById = (questVoteId) => __awaiter(this, void 0, void 0, function* () {
-            const questVote = yield this.questVoteRepository.findQuestVoteById(questVoteId);
-            if (!questVote) {
+        this.getQuestVoteById = (questId) => __awaiter(this, void 0, void 0, function* () {
+            const quest = yield this.questRepository.findQuestById(questId);
+            if (!quest.questVote) {
                 throw new httpException_1.HttpException(404, "quest voting article not found");
             }
-            delete questVote.quest;
             return {
                 statusCode: 200,
                 message: "Quest Vote Details",
-                data: questVote,
+                data: quest.questVote,
             };
         });
         // Update a quest by ID

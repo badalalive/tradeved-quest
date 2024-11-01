@@ -1277,7 +1277,7 @@
  */
 /**
  * @swagger
- * /quest/voting-article/{questVoteId}:
+ * /quest/voting-article/{id}:
  *   get:
  *     summary: Get voting details for a quest
  *     description: Retrieves details for a specific quest vote including options and current vote counts.
@@ -1285,11 +1285,11 @@
  *       - Quest
  *     parameters:
  *       - in: path
- *         name: questVoteId
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: ID of the quest vote
+ *         description: ID of the quest
  *     security:
  *       - bearerAuth: []
  *     responses:
