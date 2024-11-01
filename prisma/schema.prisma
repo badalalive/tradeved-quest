@@ -202,22 +202,33 @@ model QuestVote {
   quest                Quest                  @relation(fields: [quest_id], references: [id])
   quest_id             String                 @unique
   news_item            String                 @db.VarChar(1000) // Name or identifier of the news item voted on
-  upvotes              Int                    @default(0) // Count of upvotes
-  downvotes            Int                    @default(0) // Count of downvotes
   created_at           DateTime               @default(now())
   updated_at           DateTime               @updatedAt
+  questVoteOptions     QuestVoteOption[] // Relation to dynamically created vote options
   questParticipantVote QuestParticipantVote[]
   questVoteDiscussion  QuestVoteDiscussion[]
 }
 
+model QuestVoteOption {
+  id                   String                 @id @unique @default(cuid())
+  quest_vote           QuestVote              @relation(fields: [quest_vote_id], references: [id])
+  quest_vote_id        String
+  option_text          String                 @db.VarChar(255) // Text or label for the vote option
+  vote_count           Int                    @default(0) // Tracks the count of votes for this option
+  created_at           DateTime               @default(now())
+  updated_at           DateTime               @updatedAt
+  questParticipantVote QuestParticipantVote[]
+}
+
 model QuestParticipantVote {
-  id             String    @id @unique @default(cuid())
-  quest_vote     QuestVote @relation(fields: [quest_vote_id], references: [id])
-  quest_vote_id  String
-  participant_id String // user id
-  vote_type      VoteType // Enum for UPVOTE or DOWNVOTE
-  created_at     DateTime  @default(now())
-  updated_at     DateTime  @updatedAt
+  id              String          @id @unique @default(cuid())
+  quest_vote      QuestVote       @relation(fields: [quest_vote_id], references: [id])
+  quest_vote_id   String
+  participant_id  String // user id
+  selected_option QuestVoteOption @relation(fields: [option_id], references: [id]) // Chosen option by the participant
+  option_id       String
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
 }
 
 model QuestVoteDiscussion {
