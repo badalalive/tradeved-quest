@@ -1143,6 +1143,9 @@
  *                           isCorrectAnswer:
  *                             type: boolean
  *                             example: true
+ *                           description:
+ *                             type: string
+ *                             example: oak
  *     responses:
  *       201:
  *         description: Quest created successfully

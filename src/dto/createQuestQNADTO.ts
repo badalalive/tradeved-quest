@@ -10,9 +10,14 @@ export class QuestQNAOptionDTO {
     @IsBoolean()
     isCorrectAnswer: boolean;
 
-    constructor(content: string, isCorrectAnswer: boolean) {
+    @IsString()
+    @IsOptional()
+    description?: string;
+
+    constructor(content: string, isCorrectAnswer: boolean, description: string) {
         this.content = content;
         this.isCorrectAnswer = isCorrectAnswer;
+        this.description = description;
     }
 }
 

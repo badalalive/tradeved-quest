@@ -179,11 +179,12 @@ model QuestQNAQuestion {
 }
 
 model Option {
-  id         String   @id @unique @default(cuid())
-  content    String
-  question   Question @relation(fields: [questionId], references: [id])
-  questionId String
-  answer     Answer[]
+  id          String   @id @unique @default(cuid())
+  content     String
+  description String?
+  question    Question @relation(fields: [questionId], references: [id])
+  questionId  String
+  answer      Answer[]
 }
 
 model Answer {

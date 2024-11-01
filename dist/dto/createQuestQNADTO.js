@@ -15,9 +15,10 @@ const class_transformer_1 = require("class-transformer");
 const client_1 = require("@prisma/client");
 // DTO for options within a question
 class QuestQNAOptionDTO {
-    constructor(content, isCorrectAnswer) {
+    constructor(content, isCorrectAnswer, description) {
         this.content = content;
         this.isCorrectAnswer = isCorrectAnswer;
+        this.description = description;
     }
 }
 exports.QuestQNAOptionDTO = QuestQNAOptionDTO;
@@ -29,6 +30,11 @@ __decorate([
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], QuestQNAOptionDTO.prototype, "isCorrectAnswer", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], QuestQNAOptionDTO.prototype, "description", void 0);
 // DTO for a single question with options
 class QuestQNAQuestionDTO {
     constructor(questionText, answerType, options, description) {

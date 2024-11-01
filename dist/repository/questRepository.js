@@ -149,6 +149,7 @@ let QuestRepository = class QuestRepository {
                             const createdOption = yield prisma.option.create({
                                 data: {
                                     content: option.content,
+                                    description: option.description,
                                     questionId: question.id, // link the option to the question
                                 },
                             });
