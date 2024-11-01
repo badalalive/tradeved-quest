@@ -278,7 +278,7 @@ enum QuestionStatus {
 
 enum QuestCompletionStatus {
   NOT_STARTED
-  IN_PROGRESS
+  INCOMPLETED
   COMPLETED
   FAILED
 }
