@@ -1082,6 +1082,9 @@
  *               description:
  *                 type: string
  *                 example: "A thrilling quest to find the lost treasure."
+ *               logo_url:
+ *                 type: string
+ *                 example: "https//domain.org/logo.png"
  *               content:
  *                 type: string
  *                 example: "Quest content goes here."

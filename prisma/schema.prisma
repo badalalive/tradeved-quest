@@ -81,6 +81,7 @@ model Quest {
   space_id          String
   title             String              @db.VarChar(255)
   description       String              @db.VarChar(1000)
+  logo_url          String?
   content           String
   content_type      QuestContentType
   participant_limit Int
@@ -200,7 +201,7 @@ model QuestVote {
   id                   String                 @id @unique @default(cuid())
   quest                Quest                  @relation(fields: [quest_id], references: [id])
   quest_id             String                 @unique
-  news_item            String                 @db.VarChar(255) // Name or identifier of the news item voted on
+  news_item            String                 @db.VarChar(1000) // Name or identifier of the news item voted on
   upvotes              Int                    @default(0) // Count of upvotes
   downvotes            Int                    @default(0) // Count of downvotes
   created_at           DateTime               @default(now())

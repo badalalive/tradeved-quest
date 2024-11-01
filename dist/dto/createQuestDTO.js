@@ -14,9 +14,10 @@ const class_validator_1 = require("class-validator");
 const client_1 = require("@prisma/client");
 const class_transformer_1 = require("class-transformer");
 class CreateQuestDTO {
-    constructor(title, description, content, content_type, space_id, participant_limit, max_reward_point, end_date, reattempt, category, view_status, template, quest_time, created_by, updated_by, questQNA) {
+    constructor(title, description, logo_url, content, content_type, space_id, participant_limit, max_reward_point, end_date, reattempt, category, view_status, template, quest_time, created_by, updated_by, questQNA) {
         this.title = title;
         this.description = description;
+        this.logo_url = logo_url;
         this.content = content;
         this.content_type = content_type;
         this.participant_limit = participant_limit;
@@ -45,6 +46,12 @@ __decorate([
     (0, class_validator_1.MaxLength)(1000),
     __metadata("design:type", String)
 ], CreateQuestDTO.prototype, "description", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsUrl)(),
+    __metadata("design:type", String)
+], CreateQuestDTO.prototype, "logo_url", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
@@ -112,3 +119,9 @@ __decorate([
     (0, class_transformer_1.Type)((type) => type === null || type === void 0 ? void 0 : type.object.QuestQNAQuestionDTO),
     __metadata("design:type", Array)
 ], CreateQuestDTO.prototype, "questQNA", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)((type) => type === null || type === void 0 ? void 0 : type.object.QuestVoteDTO),
+    __metadata("design:type", Array)
+], CreateQuestDTO.prototype, "questVote", void 0);
