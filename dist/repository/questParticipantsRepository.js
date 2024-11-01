@@ -36,7 +36,7 @@ let QuestParticipantsRepository = class QuestParticipantsRepository {
                 data: {
                     quest_id: questId,
                     participant_id: participantId,
-                    completion_status: "NOT_STARTED",
+                    completion_status: client_1.QuestCompletionStatus.NOT_STARTED,
                     joined_at: new Date()
                 },
             });
@@ -45,25 +45,49 @@ let QuestParticipantsRepository = class QuestParticipantsRepository {
         });
     }
     // update quest participants
-    updateParticipantStatus(questId, participantId, status, reward_collected, reattempt_count, completed_at, reward_points, score) {
+    updateParticipantStats(questId, participantId, status, reward_collected, joined_at, completed_at, reward_points, reattempt_count, score) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();
-            const updatedParticipant = yield this.prismaClient.questParticipant.updateMany({
+            const updatedParticipant = yield this.prismaClient.questParticipant.upsert({
                 where: {
-                    quest_id: questId,
-                    participant_id: participantId,
+                    quest_id_participant_id: {
+                        quest_id: questId,
+                        participant_id: participantId,
+                    },
                 },
-                data: {
+                update: {
                     score: score,
                     completion_status: status,
-                    reattempt_count: reattempt_count,
                     reward_collected: reward_collected,
                     reward_points: reward_points,
-                    completed_at: completed_at
+                    completed_at: completed_at,
+                    reattempt_count: reattempt_count
+                },
+                create: {
+                    quest_id: questId,
+                    participant_id: participantId,
+                    score: score,
+                    completion_status: status,
+                    reward_collected: reward_collected,
+                    reward_points: reward_points,
+                    joined_at: joined_at,
+                    completed_at: completed_at,
                 },
             });
             yield this.prismaClient.$disconnect();
-            return !!updatedParticipant;
+            return updatedParticipant;
+        });
+    }
+    findParticipantByUserId(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const questParticipant = yield this.prismaClient.questParticipant.findUnique({
+                where: {
+                    id: userId
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return questParticipant;
         });
     }
 };

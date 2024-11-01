@@ -26,9 +26,13 @@ const tsyringe_1 = require("tsyringe");
 const questRepository_1 = require("../repository/questRepository");
 const httpException_1 = require("../exceptions/httpException");
 const client_1 = require("@prisma/client");
+const questParticipantsRepository_1 = require("../repository/questParticipantsRepository");
+const questVoteRepository_1 = require("../repository/questVoteRepository");
 let QuestService = class QuestService {
-    constructor(questRepository) {
+    constructor(questRepository, questParticipantsRepository, questVoteRepository) {
         this.questRepository = questRepository;
+        this.questParticipantsRepository = questParticipantsRepository;
+        this.questVoteRepository = questVoteRepository;
         // Create a new quest
         this.createQuest = (spaceId, questDTO) => __awaiter(this, void 0, void 0, function* () {
             // Check if a quest with the same title exists in the space
@@ -64,6 +68,46 @@ let QuestService = class QuestService {
                 statusCode: 200,
                 message: "Quest details fetched successfully",
                 data: quest,
+            };
+        });
+        this.updateQuestVoteCount = (user, questVoteId, optionId) => __awaiter(this, void 0, void 0, function* () {
+            const questVote = yield this.questVoteRepository.findQuestVoteById(questVoteId);
+            let questParticipant = yield this.questParticipantsRepository.findParticipantByUserId(user.id);
+            // quest template should be "VOTE"
+            if (questVote.quest.template !== client_1.QuestTemplate.VOTE) {
+                throw new httpException_1.HttpException(400, "Invalid Quest For This Action");
+            }
+            // quest attempt's check
+            if (questParticipant && questParticipant.reattempt_count <= questVote.quest.reattempt) {
+                throw new httpException_1.HttpException(400, "Attempt Over");
+            }
+            questParticipant = yield this.questParticipantsRepository.updateParticipantStats(questVote.quest.id, user.id, client_1.QuestCompletionStatus.COMPLETED, true, new Date(), new Date(), questVote.quest.max_reward_point, questParticipant ? Number(questParticipant.reattempt_count) + 1 : 1, 0);
+            const questVoteParticipant = yield this.questVoteRepository.updateParticipantVoteByUserIdAndQuestVoteId(questVoteId, user.id, optionId);
+            if (questVoteParticipant && questParticipant) {
+                return {
+                    statusCode: 200,
+                    message: "Voted Successfully",
+                    data: questParticipant,
+                };
+            }
+            else {
+                return {
+                    statusCode: 400,
+                    message: "Something went wrong",
+                    data: "",
+                };
+            }
+        });
+        this.getQuestVoteById = (questVoteId) => __awaiter(this, void 0, void 0, function* () {
+            const questVote = yield this.questVoteRepository.findQuestVoteById(questVoteId);
+            if (!questVote) {
+                throw new httpException_1.HttpException(404, "quest voting article not found");
+            }
+            delete questVote.quest;
+            return {
+                statusCode: 200,
+                message: "Quest Vote Details",
+                data: questVote,
             };
         });
         // Update a quest by ID
@@ -220,5 +264,9 @@ exports.QuestService = QuestService;
 exports.QuestService = QuestService = __decorate([
     (0, tsyringe_1.injectable)(),
     __param(0, (0, tsyringe_1.inject)("QuestRepository")),
-    __metadata("design:paramtypes", [questRepository_1.QuestRepository])
+    __param(1, (0, tsyringe_1.inject)("QuestParticipantsRepository")),
+    __param(2, (0, tsyringe_1.inject)("QuestVoteRepository")),
+    __metadata("design:paramtypes", [questRepository_1.QuestRepository,
+        questParticipantsRepository_1.QuestParticipantsRepository,
+        questVoteRepository_1.QuestVoteRepository])
 ], QuestService);

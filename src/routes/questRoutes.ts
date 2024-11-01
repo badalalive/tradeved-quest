@@ -16,6 +16,9 @@ const questRoutes: Router = Router();
 questRoutes.post("/create", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.createQuest);
 questRoutes.put("/update/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR, UserRole.SUPER_ADMIN]), questController.updateQuest);
 questRoutes.get("/get/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.findQuest);
+// quest VOTE Template user api's
+questRoutes.post("/vote/:questVoteId/:optionId", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.voteQuest)
+questRoutes.get("/voting-article/:questVoteId", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.getVoteQuestById)
 // admin api
 questRoutes.put("/update-status/:id", verifyTokenAndRolesMiddleware([UserRole.SUPER_ADMIN]), questController.updateQuestStatus);
 questRoutes.post("/approval-status/:id", verifyTokenAndRolesMiddleware([UserRole.SUPER_ADMIN]), questController.submitQuestForApproval);

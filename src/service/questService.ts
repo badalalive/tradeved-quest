@@ -3,12 +3,22 @@ import { QuestRepository } from "../repository/questRepository";
 import { CreateQuestDTO } from "../dto/createQuestDTO";
 import { UpdateQuestDTO } from "../dto/updateQuestDTO";
 import { HttpException } from "../exceptions/httpException";
-import {QuestStatus, Quest, QuestApprovalStatus, SpaceStatus, QuestViewStatus, QuestTemplate} from "@prisma/client";
+import {
+    QuestStatus,
+    Quest,
+    QuestApprovalStatus,
+    SpaceStatus,
+    QuestViewStatus,
+    QuestTemplate,
+    QuestCompletionStatus
+} from "@prisma/client";
 import { RequestWithTokenData } from "../interfaces/auth.interface";
 import { stringToArray } from "../utils/utilities";
 import {Request, Response} from "express";
 import multer from "multer";
 import {uploadFile} from "../config/multerConfig";
+import {QuestParticipantsRepository} from "../repository/questParticipantsRepository";
+import {QuestVoteRepository} from "../repository/questVoteRepository";
 
 
 @injectable()
@@ -16,6 +26,10 @@ export class QuestService {
     constructor(
         @inject("QuestRepository")
         private questRepository: QuestRepository,
+        @inject("QuestParticipantsRepository")
+        private questParticipantsRepository: QuestParticipantsRepository,
+        @inject("QuestVoteRepository")
+        private questVoteRepository: QuestVoteRepository,
     ) {}
 
     // Create a new quest
@@ -62,6 +76,46 @@ export class QuestService {
         };
     };
 
+    updateQuestVoteCount = async (user: any, questVoteId: string, optionId: string) => {
+        const questVote: any = await this.questVoteRepository.findQuestVoteById(questVoteId);
+        let questParticipant: any = await this.questParticipantsRepository.findParticipantByUserId(user.id);
+        // quest template should be "VOTE"
+        if (questVote.quest.template !== QuestTemplate.VOTE) {
+            throw new HttpException(400, "Invalid Quest For This Action");
+        }
+        // quest attempt's check
+        if (questParticipant && questParticipant.reattempt_count <= questVote.quest.reattempt) {
+            throw new HttpException(400, "Attempt Over")
+        }
+        questParticipant = await this.questParticipantsRepository.updateParticipantStats(questVote.quest.id, user.id, QuestCompletionStatus.COMPLETED, true, new Date(), new Date(), questVote.quest.max_reward_point, questParticipant ? Number(questParticipant.reattempt_count) + 1 : 1, 0);
+        const questVoteParticipant = await this.questVoteRepository.updateParticipantVoteByUserIdAndQuestVoteId(questVoteId, user.id, optionId);
+        if (questVoteParticipant && questParticipant) {
+            return {
+                statusCode: 200,
+                message: "Voted Successfully",
+                data: questParticipant,
+            };
+        } else {
+            return {
+                statusCode: 400,
+                message: "Something went wrong",
+                data: "",
+            };
+        }
+    }
+
+    getQuestVoteById = async (questVoteId: string) => {
+        const questVote: any = await this.questVoteRepository.findQuestVoteById(questVoteId);
+        if(!questVote) {
+            throw new HttpException(404, "quest voting article not found")
+        }
+        delete questVote.quest;
+        return {
+            statusCode: 200,
+            message: "Quest Vote Details",
+            data: questVote,
+        };
+    }
     // Update a quest by ID
     updateQuest = async (questId: string, updateQuestDTO: UpdateQuestDTO) => {
         const quest = await this.questRepository.findQuestById(questId);

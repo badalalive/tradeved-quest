@@ -1209,7 +1209,140 @@
  *                   type: string
  *                   example: "Internal server error"
  */
-
+/**
+ * @swagger
+ * /quest/vote/{questVoteId}/{optionId}:
+ *   post:
+ *     summary: Submit a vote for a quest option
+ *     description: Allows a user to vote on a specific option in a quest.
+ *     tags:
+ *       - Quest
+ *     parameters:
+ *       - in: path
+ *         name: questVoteId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the quest vote
+ *       - in: path
+ *         name: optionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the option to vote for
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Vote submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Vote submitted successfully"
+ *       400:
+ *         description: Invalid input data or already voted
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid input data or user has already voted"
+ *       404:
+ *         description: Quest vote or option not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest vote or option not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+/**
+ * @swagger
+ * /quest/voting-article/{questVoteId}:
+ *   get:
+ *     summary: Get voting details for a quest
+ *     description: Retrieves details for a specific quest vote including options and current vote counts.
+ *     tags:
+ *       - Quest
+ *     parameters:
+ *       - in: path
+ *         name: questVoteId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the quest vote
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Quest vote details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 questVote:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "questVoteId123"
+ *                     news_item:
+ *                       type: string
+ *                       example: "Market forecast for next quarter"
+ *                     options:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "optionId123"
+ *                           option_text:
+ *                             type: string
+ *                             example: "UP"
+ *                           vote_count:
+ *                             type: integer
+ *                             example: 42
+ *       404:
+ *         description: Quest vote not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest vote not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 /**
  * @swagger
  * /quest/update/{id}:

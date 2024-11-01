@@ -5,7 +5,7 @@ import { CreateQuestDTO } from "../dto/createQuestDTO";
 import {QuestCategory, QuestStatus} from "@prisma/client";
 import {QuestService} from "../service/questService";
 import {HttpException} from "../exceptions/httpException";
-import {RequestWithUserSpace} from "../interfaces/auth.interface";
+import {RequestWithUser, RequestWithUserSpace} from "../interfaces/auth.interface";
 import moment from 'moment';
 import {plainToInstance} from "class-transformer";
 import {CreateSpaceDto} from "../dto/spaceDTO";
@@ -57,6 +57,34 @@ export class QuestController {
             next(error)
         }
     };
+
+    voteQuest = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+        try {
+            const questVoteId =  req.params.questVoteId;
+            const optionId =  req.params.optionId;
+            const user = req.user;
+            if (!optionId || !questVoteId || !user) {
+                next(new HttpException(400, "invalid params"))
+            }
+            const {data, message, statusCode} = await this.questService.updateQuestVoteCount(user, questVoteId, optionId);
+            res.status(statusCode).send({data, message});
+        } catch (error: any) {
+            next(error)
+        }
+    }
+
+    getVoteQuestById = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+        try {
+            const questVoteId =  req.params.questVoteId;
+            if(!questVoteId) {
+                next(new HttpException(400, "invalid params"))
+            }
+            const {data, message, statusCode} = await this.questService.getQuestVoteById(questVoteId);
+            res.status(statusCode).send({data, message});
+        } catch (error: any) {
+            next(error)
+        }
+    }
 
     // Update a quest by ID
     updateQuest = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {

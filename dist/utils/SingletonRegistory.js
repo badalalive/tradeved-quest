@@ -16,6 +16,8 @@ const questModuleController_1 = require("../controllers/questModuleController");
 const questParticipantController_1 = require("../controllers/questParticipantController");
 const questModuleService_1 = require("../service/questModuleService");
 const questParticipantService_1 = require("../service/questParticipantService");
+const questVoteRepository_1 = require("../repository/questVoteRepository");
+const questQNARepository_1 = require("../repository/questQNARepository");
 exports.prisma = new client_1.PrismaClient({
     errorFormat: "minimal",
 });
@@ -37,4 +39,6 @@ tsyringe_1.container.registerSingleton("SpaceRepository", spaceRepository_1.Spac
 tsyringe_1.container.registerSingleton("QuestRepository", questRepository_1.QuestRepository);
 tsyringe_1.container.registerSingleton("QuestParticipantsRepository", questParticipantsRepository_1.QuestParticipantsRepository);
 tsyringe_1.container.registerSingleton("QuestModuleRepository", questModuleRepository_1.QuestModuleRepository);
+tsyringe_1.container.registerSingleton("QuestVoteRepository", questVoteRepository_1.QuestVoteRepository);
+tsyringe_1.container.registerSingleton("QuestQNARepository", questQNARepository_1.QuestQNARepository);
 tsyringe_1.container.registerSingleton("TokenRepository", tokenRepository_1.TokenRepository);

@@ -74,6 +74,34 @@ let QuestController = class QuestController {
                 next(error);
             }
         });
+        this.voteQuest = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const questVoteId = req.params.questVoteId;
+                const optionId = req.params.optionId;
+                const user = req.user;
+                if (!optionId || !questVoteId || !user) {
+                    next(new httpException_1.HttpException(400, "invalid params"));
+                }
+                const { data, message, statusCode } = yield this.questService.updateQuestVoteCount(user, questVoteId, optionId);
+                res.status(statusCode).send({ data, message });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+        this.getVoteQuestById = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const questVoteId = req.params.questVoteId;
+                if (!questVoteId) {
+                    next(new httpException_1.HttpException(400, "invalid params"));
+                }
+                const { data, message, statusCode } = yield this.questService.getQuestVoteById(questVoteId);
+                res.status(statusCode).send({ data, message });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
         // Update a quest by ID
         this.updateQuest = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
