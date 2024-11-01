@@ -49,7 +49,6 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsUrl)(),
     __metadata("design:type", String)
 ], CreateQuestDTO.prototype, "logo_url", void 0);
 __decorate([

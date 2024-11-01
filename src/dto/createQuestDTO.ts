@@ -28,7 +28,6 @@ export class CreateQuestDTO {
 
     @IsString()
     @IsNotEmpty()
-    @IsUrl()
     logo_url: string;
 
     @IsString()
