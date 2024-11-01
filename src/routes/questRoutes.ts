@@ -17,7 +17,7 @@ questRoutes.post("/create", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATO
 questRoutes.put("/update/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR, UserRole.SUPER_ADMIN]), questController.updateQuest);
 questRoutes.get("/get/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.findQuest);
 // quest VOTE Template user api's
-questRoutes.post("/vote/:questVoteId/:optionId", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.voteQuest)
+questRoutes.post("/vote/:id/:optionId", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.voteQuest)
 questRoutes.get("/voting-article/:id", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.getVoteQuestById)
 questRoutes.get("/qna/:id", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.getQnaQuestById)
 // admin api

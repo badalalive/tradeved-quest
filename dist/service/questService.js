@@ -73,19 +73,19 @@ let QuestService = class QuestService {
                 data: quest,
             };
         });
-        this.updateQuestVoteCount = (user, questVoteId, optionId) => __awaiter(this, void 0, void 0, function* () {
-            const questVote = yield this.questVoteRepository.findQuestVoteById(questVoteId);
+        this.updateQuestVoteCount = (user, questId, optionId) => __awaiter(this, void 0, void 0, function* () {
+            const quest = yield this.questRepository.findQuestById(questId);
             let questParticipant = yield this.questParticipantsRepository.findParticipantByUserId(user.id);
             // quest template should be "VOTE"
-            if (questVote.quest.template !== client_1.QuestTemplate.VOTE) {
+            if (quest.template !== client_1.QuestTemplate.VOTE) {
                 throw new httpException_1.HttpException(400, "Invalid Quest For This Action");
             }
             // quest attempt's check
-            if (questParticipant && questParticipant.reattempt_count <= questVote.quest.reattempt) {
+            if (questParticipant && questParticipant.reattempt_count <= quest.reattempt) {
                 throw new httpException_1.HttpException(400, "Attempt Over");
             }
-            questParticipant = yield this.questParticipantsRepository.updateParticipantStats(questVote.quest.id, user.id, client_1.QuestCompletionStatus.COMPLETED, true, new Date(), new Date(), questVote.quest.max_reward_point, questParticipant ? Number(questParticipant.reattempt_count) + 1 : 1, 0);
-            const questVoteParticipant = yield this.questVoteRepository.updateParticipantVoteByUserIdAndQuestVoteId(questVoteId, user.id, optionId);
+            questParticipant = yield this.questParticipantsRepository.updateParticipantStats(quest.id, user.id, client_1.QuestCompletionStatus.COMPLETED, true, new Date(), new Date(), quest.max_reward_point, questParticipant ? Number(questParticipant.reattempt_count) + 1 : 1, 0);
+            const questVoteParticipant = yield this.questVoteRepository.updateParticipantVoteByUserIdAndQuestVoteId(quest.questVote.id, user.id, optionId);
             if (questVoteParticipant && questParticipant) {
                 return {
                     statusCode: 200,

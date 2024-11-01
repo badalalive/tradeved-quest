@@ -60,13 +60,13 @@ export class QuestController {
 
     voteQuest = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
-            const questVoteId =  req.params.questVoteId;
+            const questId =  req.params.id;
             const optionId =  req.params.optionId;
             const user = req.user;
-            if (!optionId || !questVoteId || !user) {
+            if (!optionId || !questId || !user) {
                 next(new HttpException(400, "invalid params"))
             }
-            const {data, message, statusCode} = await this.questService.updateQuestVoteCount(user, questVoteId, optionId);
+            const {data, message, statusCode} = await this.questService.updateQuestVoteCount(user, questId, optionId);
             res.status(statusCode).send({data, message});
         } catch (error: any) {
             next(error)

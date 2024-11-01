@@ -80,19 +80,19 @@ export class QuestService {
         };
     };
 
-    updateQuestVoteCount = async (user: any, questVoteId: string, optionId: string) => {
-        const questVote: any = await this.questVoteRepository.findQuestVoteById(questVoteId);
+    updateQuestVoteCount = async (user: any, questId: string, optionId: string) => {
+        const quest: any = await this.questRepository.findQuestById(questId);
         let questParticipant: any = await this.questParticipantsRepository.findParticipantByUserId(user.id);
         // quest template should be "VOTE"
-        if (questVote.quest.template !== QuestTemplate.VOTE) {
+        if (quest.template !== QuestTemplate.VOTE) {
             throw new HttpException(400, "Invalid Quest For This Action");
         }
         // quest attempt's check
-        if (questParticipant && questParticipant.reattempt_count <= questVote.quest.reattempt) {
+        if (questParticipant && questParticipant.reattempt_count <= quest.reattempt) {
             throw new HttpException(400, "Attempt Over")
         }
-        questParticipant = await this.questParticipantsRepository.updateParticipantStats(questVote.quest.id, user.id, QuestCompletionStatus.COMPLETED, true, new Date(), new Date(), questVote.quest.max_reward_point, questParticipant ? Number(questParticipant.reattempt_count) + 1 : 1, 0);
-        const questVoteParticipant = await this.questVoteRepository.updateParticipantVoteByUserIdAndQuestVoteId(questVoteId, user.id, optionId);
+        questParticipant = await this.questParticipantsRepository.updateParticipantStats(quest.id, user.id, QuestCompletionStatus.COMPLETED, true, new Date(), new Date(), quest.max_reward_point, questParticipant ? Number(questParticipant.reattempt_count) + 1 : 1, 0);
+        const questVoteParticipant = await this.questVoteRepository.updateParticipantVoteByUserIdAndQuestVoteId(quest.questVote.id, user.id, optionId);
         if (questVoteParticipant && questParticipant) {
             return {
                 statusCode: 200,

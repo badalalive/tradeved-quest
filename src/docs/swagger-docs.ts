@@ -1211,7 +1211,7 @@
  */
 /**
  * @swagger
- * /quest/vote/{questVoteId}/{optionId}:
+ * /quest/vote/{id}/{optionId}:
  *   post:
  *     summary: Submit a vote for a quest option
  *     description: Allows a user to vote on a specific option in a quest.
@@ -1219,11 +1219,11 @@
  *       - Quest
  *     parameters:
  *       - in: path
- *         name: questVoteId
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: ID of the quest vote
+ *         description: ID of the quest
  *       - in: path
  *         name: optionId
  *         required: true

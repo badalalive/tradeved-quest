@@ -76,13 +76,13 @@ let QuestController = class QuestController {
         });
         this.voteQuest = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const questVoteId = req.params.questVoteId;
+                const questId = req.params.id;
                 const optionId = req.params.optionId;
                 const user = req.user;
-                if (!optionId || !questVoteId || !user) {
+                if (!optionId || !questId || !user) {
                     next(new httpException_1.HttpException(400, "invalid params"));
                 }
-                const { data, message, statusCode } = yield this.questService.updateQuestVoteCount(user, questVoteId, optionId);
+                const { data, message, statusCode } = yield this.questService.updateQuestVoteCount(user, questId, optionId);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
