@@ -117,6 +117,8 @@ model ModuleQuest {
   order      Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  @@index([module_id, quest_id])
 }
 
 model Module {
@@ -146,6 +148,9 @@ model QuestParticipant {
   reattempt_count   Int                   @default(0) // Tracks reattempts up to quest.reattempt
   created_at        DateTime              @default(now())
   updated_at        DateTime              @updatedAt
+
+  @@unique([quest_id, participant_id])
+  @@index([quest_id, participant_id])
 }
 
 // quest qna template related table
@@ -225,10 +230,14 @@ model QuestParticipantVote {
   quest_vote      QuestVote       @relation(fields: [quest_vote_id], references: [id])
   quest_vote_id   String
   participant_id  String // user id
-  selected_option QuestVoteOption @relation(fields: [option_id], references: [id]) // Chosen option by the participant
+  questVoteOption QuestVoteOption @relation(fields: [option_id], references: [id]) // Chosen option by the participant
   option_id       String
+  voted           Boolean         @default(false)
   created_at      DateTime        @default(now())
   updated_at      DateTime        @updatedAt
+
+  @@unique([quest_vote_id, participant_id])
+  @@index([quest_vote_id, participant_id])
 }
 
 model QuestVoteDiscussion {
