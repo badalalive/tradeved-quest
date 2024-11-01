@@ -21,10 +21,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.QuestQNARepository = void 0;
+exports.QuestQnaRepository = void 0;
 const tsyringe_1 = require("tsyringe");
 const client_1 = require("@prisma/client");
-let QuestQNARepository = class QuestQNARepository {
+let QuestQnaRepository = class QuestQnaRepository {
     constructor(prismaClient) {
         this.prismaClient = prismaClient;
     }
@@ -122,9 +122,14 @@ let QuestQNARepository = class QuestQNARepository {
             const questQNA = yield this.prismaClient.questQNA.findUnique({
                 where: { questId },
                 include: {
+                    quest: true,
                     questQNAQuestion: {
                         include: {
-                            question: true, // Include related question data
+                            question: {
+                                include: {
+                                    options: true
+                                }
+                            }, // Include related question data
                         },
                     },
                 },
@@ -234,8 +239,9 @@ let QuestQNARepository = class QuestQNARepository {
         });
     }
 };
-exports.QuestQNARepository = QuestQNARepository;
-exports.QuestQNARepository = QuestQNARepository = __decorate([
+exports.QuestQnaRepository = QuestQnaRepository;
+exports.QuestQnaRepository = QuestQnaRepository = __decorate([
+    (0, tsyringe_1.injectable)(),
     __param(0, (0, tsyringe_1.inject)("PrismaClient")),
     __metadata("design:paramtypes", [client_1.PrismaClient])
-], QuestQNARepository);
+], QuestQnaRepository);

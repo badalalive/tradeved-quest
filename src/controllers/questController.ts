@@ -86,6 +86,19 @@ export class QuestController {
         }
     }
 
+    getQnaQuestById = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+        try {
+            const questId =  req.params.id;
+            if(!questId) {
+                next(new HttpException(400, "invalid params"))
+            }
+            const {data, message, statusCode} = await this.questService.getQnaQuestById(questId);
+            res.status(statusCode).send({data, message});
+        } catch (error: any) {
+            next(error)
+        }
+    }
+
     // Update a quest by ID
     updateQuest = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
         try {

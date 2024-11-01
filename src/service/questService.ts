@@ -19,6 +19,8 @@ import multer from "multer";
 import {uploadFile} from "../config/multerConfig";
 import {QuestParticipantsRepository} from "../repository/questParticipantsRepository";
 import {QuestVoteRepository} from "../repository/questVoteRepository";
+import {QuestQnaRepository} from "../repository/questQnaRepository";
+import {transformToQuestQnADetails, transformToQuestVoteDetails} from "../interfaces/quest.interface";
 
 
 @injectable()
@@ -30,6 +32,8 @@ export class QuestService {
         private questParticipantsRepository: QuestParticipantsRepository,
         @inject("QuestVoteRepository")
         private questVoteRepository: QuestVoteRepository,
+        @inject("QuestQnaRepository")
+        private questQnaRepository: QuestQnaRepository,
     ) {}
 
     // Create a new quest
@@ -112,8 +116,18 @@ export class QuestService {
         return {
             statusCode: 200,
             message: "Quest Vote Details",
-            data: quest.questVote,
+            data: await transformToQuestVoteDetails(quest.questVote),
         };
+    }
+
+    getQnaQuestById = async (questId: string) => {
+        const data: any = await this.questQnaRepository.findQuestQNAByQuestId(questId);
+        const questQna = await transformToQuestQnADetails(data);
+        return {
+            statusCode: 200,
+            message: "Quest Qna Details",
+            data: questQna
+        }
     }
     // Update a quest by ID
     updateQuest = async (questId: string, updateQuestDTO: UpdateQuestDTO) => {

@@ -14,7 +14,7 @@ import {QuestParticipantController} from "../controllers/questParticipantControl
 import {QuestModuleService} from "../service/questModuleService";
 import {QuestParticipantService} from "../service/questParticipantService";
 import {QuestVoteRepository} from "../repository/questVoteRepository";
-import {QuestQNARepository} from "../repository/questQNARepository";
+import {QuestQnaRepository} from "../repository/questQnaRepository";
 
 export const prisma: PrismaClient = new PrismaClient({
     errorFormat: "minimal",
@@ -40,5 +40,5 @@ container.registerSingleton<QuestRepository>("QuestRepository", QuestRepository)
 container.registerSingleton<QuestParticipantsRepository>("QuestParticipantsRepository", QuestParticipantsRepository);
 container.registerSingleton<QuestModuleRepository>("QuestModuleRepository", QuestModuleRepository);
 container.registerSingleton<QuestVoteRepository>("QuestVoteRepository", QuestVoteRepository);
-container.registerSingleton<QuestQNARepository>("QuestQNARepository", QuestQNARepository);
+container.registerSingleton<QuestQnaRepository>("QuestQnaRepository", QuestQnaRepository);
 container.registerSingleton<TokenRepository>("TokenRepository", TokenRepository);

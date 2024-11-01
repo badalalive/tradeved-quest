@@ -28,11 +28,14 @@ const httpException_1 = require("../exceptions/httpException");
 const client_1 = require("@prisma/client");
 const questParticipantsRepository_1 = require("../repository/questParticipantsRepository");
 const questVoteRepository_1 = require("../repository/questVoteRepository");
+const questQnaRepository_1 = require("../repository/questQnaRepository");
+const quest_interface_1 = require("../interfaces/quest.interface");
 let QuestService = class QuestService {
-    constructor(questRepository, questParticipantsRepository, questVoteRepository) {
+    constructor(questRepository, questParticipantsRepository, questVoteRepository, questQnaRepository) {
         this.questRepository = questRepository;
         this.questParticipantsRepository = questParticipantsRepository;
         this.questVoteRepository = questVoteRepository;
+        this.questQnaRepository = questQnaRepository;
         // Create a new quest
         this.createQuest = (spaceId, questDTO) => __awaiter(this, void 0, void 0, function* () {
             // Check if a quest with the same title exists in the space
@@ -106,7 +109,16 @@ let QuestService = class QuestService {
             return {
                 statusCode: 200,
                 message: "Quest Vote Details",
-                data: quest.questVote,
+                data: yield (0, quest_interface_1.transformToQuestVoteDetails)(quest.questVote),
+            };
+        });
+        this.getQnaQuestById = (questId) => __awaiter(this, void 0, void 0, function* () {
+            const data = yield this.questQnaRepository.findQuestQNAByQuestId(questId);
+            const questQna = yield (0, quest_interface_1.transformToQuestQnADetails)(data);
+            return {
+                statusCode: 200,
+                message: "Quest Qna Details",
+                data: questQna
             };
         });
         // Update a quest by ID
@@ -265,7 +277,9 @@ exports.QuestService = QuestService = __decorate([
     __param(0, (0, tsyringe_1.inject)("QuestRepository")),
     __param(1, (0, tsyringe_1.inject)("QuestParticipantsRepository")),
     __param(2, (0, tsyringe_1.inject)("QuestVoteRepository")),
+    __param(3, (0, tsyringe_1.inject)("QuestQnaRepository")),
     __metadata("design:paramtypes", [questRepository_1.QuestRepository,
         questParticipantsRepository_1.QuestParticipantsRepository,
-        questVoteRepository_1.QuestVoteRepository])
+        questVoteRepository_1.QuestVoteRepository,
+        questQnaRepository_1.QuestQnaRepository])
 ], QuestService);

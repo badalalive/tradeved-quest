@@ -18,6 +18,7 @@ questRoutes.get("/get/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)(
 // quest VOTE Template user api's
 questRoutes.post("/vote/:questVoteId/:optionId", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.USER]), questController.voteQuest);
 questRoutes.get("/voting-article/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.USER]), questController.getVoteQuestById);
+questRoutes.get("/qna/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.USER]), questController.getQnaQuestById);
 // admin api
 questRoutes.put("/update-status/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SUPER_ADMIN]), questController.updateQuestStatus);
 questRoutes.post("/approval-status/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SUPER_ADMIN]), questController.submitQuestForApproval);

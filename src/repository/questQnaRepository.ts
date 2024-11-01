@@ -1,4 +1,4 @@
-import { inject } from "tsyringe";
+import {inject, injectable} from "tsyringe";
 import {
     PrismaClient,
     QuestQNA,
@@ -11,7 +11,8 @@ import {
 } from "@prisma/client";
 import {QuestQNAQuestionDTO} from "../dto/createQuestQNADTO";
 
-export class QuestQNARepository {
+@injectable()
+export class QuestQnaRepository {
     constructor(
         @inject("PrismaClient")
         private prismaClient: PrismaClient,
@@ -123,9 +124,14 @@ export class QuestQNARepository {
         const questQNA = await this.prismaClient.questQNA.findUnique({
             where: { questId },
             include: {
+                quest: true,
                 questQNAQuestion: {
                     include: {
-                        question: true, // Include related question data
+                        question: {
+                            include: {
+                                options: true
+                            }
+                        }, // Include related question data
                     },
                 },
             },

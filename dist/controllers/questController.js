@@ -102,6 +102,19 @@ let QuestController = class QuestController {
                 next(error);
             }
         });
+        this.getQnaQuestById = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const questId = req.params.id;
+                if (!questId) {
+                    next(new httpException_1.HttpException(400, "invalid params"));
+                }
+                const { data, message, statusCode } = yield this.questService.getQnaQuestById(questId);
+                res.status(statusCode).send({ data, message });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
         // Update a quest by ID
         this.updateQuest = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {

@@ -1345,6 +1345,86 @@
  */
 /**
  * @swagger
+ * /quest/qna/{id}:
+ *   get:
+ *     summary: Get Quest Q&A by ID
+ *     description: Retrieve a Quest's Q&A by its unique ID. This endpoint requires user authentication with a USER role.
+ *     tags:
+ *       - Quest
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique identifier of the quest Q&A to retrieve.
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Quest Q&A details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: "questQnaId123"
+ *                 title:
+ *                   type: string
+ *                   example: "Epic Adventure"
+ *                 description:
+ *                   type: string
+ *                   example: "A thrilling quest to find the lost treasure."
+ *                 questions:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "questionId123"
+ *                       questionText:
+ *                         type: string
+ *                         example: "What is the treasure's location?"
+ *                       options:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: string
+ *                               example: "optionId123"
+ *                             content:
+ *                               type: string
+ *                               example: "Under the old oak tree"
+ *                             isCorrectAnswer:
+ *                               type: boolean
+ *                               example: true
+ *       404:
+ *         description: Quest Q&A not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest Q&A not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+/**
+ * @swagger
  * /quest/update/{id}:
  *   put:
  *     summary: Update a quest by ID
