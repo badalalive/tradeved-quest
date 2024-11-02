@@ -138,18 +138,16 @@ let QuestController = class QuestController {
         });
         this.submitQuestionAnswer = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const questQuestionOptionsDTO = (0, class_transformer_1.plainToInstance)(questQuestionOptionDTO_1.QuestQuestionsWithSelectedOptionsDTO, req.body);
-                const validationErrors = yield (0, class_validator_1.validate)(questQuestionOptionsDTO);
-                if (validationErrors.length > 0) {
-                    // Extract error messages for all fields
-                    const errorMessages = (0, utilities_1.extractErrorMessages)(validationErrors);
-                    return next(new httpException_1.HttpException(400, errorMessages));
+                const questId = req.params.id;
+                if (!questId) {
+                    next(new httpException_1.HttpException(400, "invalid params"));
                 }
-                const { data, message, statusCode } = yield this.questService.submitQuestionAnswer(questQuestionOptionsDTO);
+                const { data, message, statusCode } = yield this.questService.submitQuestionAnswer(req.user, questId);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
+                console.log(error);
             }
         });
         // Update a quest by ID

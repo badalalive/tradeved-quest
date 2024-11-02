@@ -20,7 +20,11 @@ import {uploadFile} from "../config/multerConfig";
 import {QuestParticipantsRepository} from "../repository/questParticipantsRepository";
 import {QuestVoteRepository} from "../repository/questVoteRepository";
 import {QuestQnaRepository} from "../repository/questQnaRepository";
-import {transformToQuestQnADetails, transformToQuestVoteDetails} from "../interfaces/quest.interface";
+import {
+    transformToQuestQnADetails,
+    transformToQuestQnaReviewDetails,
+    transformToQuestVoteDetails
+} from "../interfaces/quest.interface";
 import {QuestQuestionsWithSelectedOptionsDTO} from "../dto/questQuestionOptionDTO";
 
 
@@ -156,11 +160,14 @@ export class QuestService {
 
     }
 
-    submitQuestionAnswer = async (questQuestionOptionsDTO: QuestQuestionsWithSelectedOptionsDTO) => {
+    submitQuestionAnswer = async (user: any, questId: string) => {
+        const data: any = await this.questQnaRepository.findQuestQNAByQuestId(questId);
+        const qnaParticipantAnswer: any = await this.questQnaRepository.findQuestQNAParticipantAnswerById(data.id, user.id);
+        const questQnaReviewDetails = await transformToQuestQnaReviewDetails(data, stringToArray(qnaParticipantAnswer.selected_options));
         return {
             statusCode: 200,
-            message: "Quest Qna Submitted",
-            data: ""
+            message: "Quest Qna Review Details",
+            data: questQnaReviewDetails
         }
     }
 

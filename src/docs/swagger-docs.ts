@@ -1498,7 +1498,78 @@
  *                   type: string
  *                   example: "Internal server error"
  */
-
+/**
+ * @swagger
+ * /quest/qna/submit/{id}:
+ *   post:
+ *     summary: Submit answers for a QnA quest
+ *     description: Submits the selected answers for questions in a QnA quest by a participant.
+ *     tags:
+ *       - Quest
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the QnA quest
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Answers submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Answers submitted successfully"
+ *                 submissionId:
+ *                   type: string
+ *                   example: "submission123"
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid data provided"
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unauthorized"
+ *       404:
+ *         description: QnA quest not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "QnA quest not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
 /**
  * @swagger
  * /quest/update/{id}:

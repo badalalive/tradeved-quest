@@ -130,7 +130,12 @@ export class QuestQnaRepository {
                     include: {
                         question: {
                             include: {
-                                options: true
+                                options: true,
+                                answer: {
+                                    include: {
+                                        option: true
+                                    }
+                                }
                             }
                         }, // Include related question data
                     },
@@ -208,6 +213,20 @@ export class QuestQnaRepository {
         });
         await this.prismaClient.$disconnect();
         return questQNAParticipantAnswer;
+    }
+
+    async findQuestQNAParticipantAnswerById(questQna_id: string, participantId: string): Promise<QuestQNAParticipantAnswer | null> {
+        await this.prismaClient.$connect();
+        const qnaParticipantAnswer = await this.prismaClient.questQNAParticipantAnswer.findUnique({
+            where: {
+                questQna_id_participantId: {
+                    participantId: participantId,
+                    questQna_id: questQna_id
+                }
+            }
+        })
+        await this.prismaClient.$disconnect();
+        return qnaParticipantAnswer;
     }
     async createAnswerToQuestion(questionId: string, optionId: string): Promise<Answer> {
         await this.prismaClient.$connect();

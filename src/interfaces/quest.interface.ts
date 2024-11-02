@@ -55,7 +55,29 @@ interface QuestVoteDetails {
     }>;
 }
 
-
+interface QuestQnaReviewDetails {
+    questions: Array<{
+        id: string;
+        questionText: string;
+        description: string;
+        answerType: string;
+        options: Array<{
+            id: string;
+            content: string;
+            description: string
+        }>;
+        selected_options: Array<{
+            id: string;
+            content: string;
+            description: string
+        }>
+        answer: Array<{
+                id: string;
+                content: string;
+                description: string
+        }>
+    }>;
+}
 export async function transformToQuestQnADetails(data: any): Promise<QuestQnADetails> {
     return {
         id: data.id,
@@ -113,5 +135,39 @@ export async function transformToQuestVoteDetails(data: any): Promise<QuestVoteD
             createdAt: new Date(discussion.created_at),
             updatedAt: new Date(discussion.updated_at),
         })),
+    };
+}
+
+export async function transformToQuestQnaReviewDetails(data: any, selected_options: string[]): Promise<QuestQnaReviewDetails> {
+    return {
+        questions: await Promise.all(data.questQNAQuestion.map((questionData: any) => {
+            const selectedOptionsForQuestion = questionData.question.options
+                .filter((option: any) => selected_options.includes(option.id))
+                .map((option: any) => ({
+                    id: option.id,
+                    content: option.content,
+                    description: option.description || "",
+                }));
+
+            console.log("selectedOptionsForQuestion", selectedOptionsForQuestion);
+            console.log("questionData.question.answer", questionData.question);
+            return {
+                id: questionData.question.id,
+                questionText: questionData.question.question,
+                description: questionData.question.description || "",
+                answerType: questionData.question.answer_type,
+                options: questionData.question.options.map((option: any) => ({
+                    id: option.id,
+                    content: option.content,
+                    description: option.description || "",
+                })),
+                selected_options: selectedOptionsForQuestion,
+                answer: questionData.question.answer.map((ans: any) => ({
+                    id: ans.id,
+                    content: ans.option.content,
+                    description: ans.option.description || "",
+                }))
+            };
+        }))
     };
 }

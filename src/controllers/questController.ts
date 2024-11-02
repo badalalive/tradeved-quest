@@ -122,15 +122,11 @@ export class QuestController {
     }
     submitQuestionAnswer = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
-            const questQuestionOptionsDTO: any = plainToInstance(QuestQuestionsWithSelectedOptionsDTO, req.body);
-            const validationErrors = await validate(questQuestionOptionsDTO);
-
-            if (validationErrors.length > 0) {
-                // Extract error messages for all fields
-                const errorMessages = extractErrorMessages(validationErrors);
-                return next(new HttpException(400, errorMessages));
+            const questId =  req.params.id;
+            if(!questId) {
+                next(new HttpException(400, "invalid params"))
             }
-            const {data, message, statusCode} = await this.questService.submitQuestionAnswer(questQuestionOptionsDTO);
+            const {data, message, statusCode} = await this.questService.submitQuestionAnswer(req.user, questId);
             res.status(statusCode).send({data, message});
         } catch(error: any) {
             next(error)

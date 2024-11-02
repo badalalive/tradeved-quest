@@ -192,6 +192,9 @@ model QuestQNAParticipantAnswer {
   question_status  QuestionStatus @default(UNATTEMPTED)
   created_at       DateTime       @default(now())
   updated_at       DateTime       @updatedAt
+
+  @@unique([questQna_id, participantId])
+  @@index([questQna_id, participantId])
 }
 
 model Option {

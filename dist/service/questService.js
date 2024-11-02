@@ -26,6 +26,7 @@ const tsyringe_1 = require("tsyringe");
 const questRepository_1 = require("../repository/questRepository");
 const httpException_1 = require("../exceptions/httpException");
 const client_1 = require("@prisma/client");
+const utilities_1 = require("../utils/utilities");
 const questParticipantsRepository_1 = require("../repository/questParticipantsRepository");
 const questVoteRepository_1 = require("../repository/questVoteRepository");
 const questQnaRepository_1 = require("../repository/questQnaRepository");
@@ -144,11 +145,16 @@ let QuestService = class QuestService {
                 message: "answer checked"
             };
         });
-        this.submitQuestionAnswer = (questQuestionOptionsDTO) => __awaiter(this, void 0, void 0, function* () {
+        this.submitQuestionAnswer = (user, questId) => __awaiter(this, void 0, void 0, function* () {
+            const data = yield this.questQnaRepository.findQuestQNAByQuestId(questId);
+            const qnaParticipantAnswer = yield this.questQnaRepository.findQuestQNAParticipantAnswerById(data.id, user.id);
+            console.log(data);
+            console.log((0, utilities_1.stringToArray)(qnaParticipantAnswer.selected_options));
+            const questQna = yield (0, quest_interface_1.transformToQuestQnaReviewDetails)(data, (0, utilities_1.stringToArray)(qnaParticipantAnswer.selected_options));
             return {
                 statusCode: 200,
-                message: "Quest Qna Submitted",
-                data: ""
+                message: "Quest Qna Details",
+                data: questQna
             };
         });
         // Update a quest by ID

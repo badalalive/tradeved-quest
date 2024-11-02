@@ -204,6 +204,21 @@ let QuestQnaRepository = class QuestQnaRepository {
             return questQNAParticipantAnswer;
         });
     }
+    findQuestQNAParticipantAnswerById(questQna_id, participantId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const qnaParticipantAnswer = yield this.prismaClient.questQNAParticipantAnswer.findUnique({
+                where: {
+                    questQna_id_participantId: {
+                        participantId: participantId,
+                        questQna_id: questQna_id
+                    }
+                }
+            });
+            yield this.prismaClient.$disconnect();
+            return qnaParticipantAnswer;
+        });
+    }
     createAnswerToQuestion(questionId, optionId) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.prismaClient.$connect();

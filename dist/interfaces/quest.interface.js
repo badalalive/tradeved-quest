@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.transformToQuestQnADetails = transformToQuestQnADetails;
 exports.transformToQuestVoteDetails = transformToQuestVoteDetails;
+exports.transformToQuestQnaReviewDetails = transformToQuestQnaReviewDetails;
 function transformToQuestQnADetails(data) {
     return __awaiter(this, void 0, void 0, function* () {
         return {
@@ -70,6 +71,38 @@ function transformToQuestVoteDetails(data) {
                 createdAt: new Date(discussion.created_at),
                 updatedAt: new Date(discussion.updated_at),
             })),
+        };
+    });
+}
+function transformToQuestQnaReviewDetails(data, selected_options) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return {
+            questions: yield Promise.all(data.questQNAQuestion.map((questionData) => {
+                const selectedOptionsForQuestion = questionData.question.options
+                    .filter((option) => selected_options.includes(option.id))
+                    .map((option) => ({
+                    id: option.id,
+                    content: option.content,
+                    description: option.description || "",
+                }));
+                return {
+                    id: questionData.question.id,
+                    questionText: questionData.question.question,
+                    description: questionData.question.description || "",
+                    answerType: questionData.question.answer_type,
+                    options: questionData.question.options.map((option) => ({
+                        id: option.id,
+                        content: option.content,
+                        description: option.description || "",
+                    })),
+                    selected_options: selectedOptionsForQuestion,
+                    answer: questionData.question.answer.map((ans) => ({
+                        id: ans.id,
+                        content: ans.option.content,
+                        description: ans.option.description || "",
+                    }))
+                };
+            }))
         };
     });
 }
