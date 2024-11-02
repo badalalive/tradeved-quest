@@ -175,13 +175,23 @@ model Question {
 }
 
 model QuestQNAQuestion {
-  id               String         @id @unique @default(cuid())
-  questQna         QuestQNA       @relation(fields: [questQna_id], references: [id])
-  questQna_id      String
-  question         Question       @relation(fields: [questionId], references: [id])
-  questionId       String
-  question_status  QuestionStatus @default(UNATTEMPTED)
-  selected_options String?
+  id                        String                      @id @unique @default(cuid())
+  questQna                  QuestQNA                    @relation(fields: [questQna_id], references: [id])
+  questQna_id               String
+  question                  Question                    @relation(fields: [questionId], references: [id])
+  questionId                String
+  questQNAParticipantAnswer QuestQNAParticipantAnswer[]
+}
+
+model QuestQNAParticipantAnswer {
+  id                 String           @id @unique @default(cuid())
+  questQnaQuestion   QuestQNAQuestion @relation(fields: [questQnaQuestionId], references: [id])
+  questQnaQuestionId String
+  participantId      String // ID of the participant
+  selected_options   String?
+  question_status    QuestionStatus   @default(UNATTEMPTED)
+  created_at         DateTime         @default(now())
+  updated_at         DateTime         @updatedAt
 }
 
 model Option {
