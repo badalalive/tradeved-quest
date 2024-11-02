@@ -99,6 +99,13 @@ export class QuestController {
         }
     }
 
+    validateQuestion = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+        try {
+            
+        } catch(error: any) {
+            next(error)
+        }
+    }
     // Update a quest by ID
     updateQuest = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
         try {

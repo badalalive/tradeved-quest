@@ -115,6 +115,13 @@ let QuestController = class QuestController {
                 next(error);
             }
         });
+        this.validateQuestion = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+            }
+            catch (error) {
+                next(error);
+            }
+        });
         // Update a quest by ID
         this.updateQuest = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
