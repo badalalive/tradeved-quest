@@ -121,20 +121,26 @@ let QuestService = class QuestService {
                 data: questQna
             };
         });
-        this.findAnswerByQuestionId = (questId, questQuestionOptionsDTO) => __awaiter(this, void 0, void 0, function* () {
+        this.findAnswerByQuestionId = (user, questId, questQuestionOptionsDTO) => __awaiter(this, void 0, void 0, function* () {
             const questQNA = yield this.questQnaRepository.findQuestQNAByQuestId(questId);
-            if (questQNA.questQNAQuestion.question.answer_type === client_1.AnswerType.SINGLE && questQuestionOptionsDTO.question.selected_options.length > 1) {
+            const question = yield this.questQnaRepository.findQuestionById(questQuestionOptionsDTO.question.question_id);
+            if (question.answer_type === client_1.AnswerType.SINGLE && questQuestionOptionsDTO.question.selected_options.length > 1) {
                 throw new httpException_1.HttpException(400, "invalid options selected");
             }
-            const answers = yield this.questQnaRepository.findAllAnswersForQuestion(questQuestionOptionsDTO.question.question_id);
             if (questQuestionOptionsDTO.question.selected_options.length === 0) {
-                throw new httpException_1.HttpException(400, "invalid options selected");
+                const questQNAParticipantAnswer = yield this.questQnaRepository.createQuestQNAParticipantAnswer(questQNA.id, user.id, null, null);
+                return {
+                    statusCode: 200,
+                    message: "answer skipped",
+                    data: questQNAParticipantAnswer
+                };
             }
-            const options = answers.map(a => a.optionId);
+            const options = question.answer.map((a) => a.optionId);
             const is_answer_correct = options.every(value => questQuestionOptionsDTO.question.selected_options.includes(value));
+            const questQNAParticipantAnswer = yield this.questQnaRepository.createQuestQNAParticipantAnswer(questQNA.id, user.id, questQuestionOptionsDTO.question.selected_options, is_answer_correct ? client_1.QuestionStatus.CORRECT : client_1.QuestionStatus.INCORRECT);
             return {
                 statusCode: 200,
-                data: "",
+                data: questQNAParticipantAnswer,
                 message: "answer checked"
             };
         });

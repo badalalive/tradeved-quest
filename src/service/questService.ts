@@ -10,7 +10,7 @@ import {
     SpaceStatus,
     QuestViewStatus,
     QuestTemplate,
-    QuestCompletionStatus, Answer, AnswerType
+    QuestCompletionStatus, Answer, AnswerType, QuestionStatus, Question
 } from "@prisma/client";
 import { RequestWithTokenData } from "../interfaces/auth.interface";
 import { stringToArray } from "../utils/utilities";
@@ -131,20 +131,26 @@ export class QuestService {
         }
     }
 
-    findAnswerByQuestionId = async (questId: string, questQuestionOptionsDTO: QuestQuestionsWithSelectedOptionsDTO) => {
+    findAnswerByQuestionId = async (user: any, questId: string, questQuestionOptionsDTO: QuestQuestionsWithSelectedOptionsDTO) => {
         const questQNA: any = await this.questQnaRepository.findQuestQNAByQuestId(questId);
-        if(questQNA.questQNAQuestion.question.answer_type === AnswerType.SINGLE && questQuestionOptionsDTO.question.selected_options.length > 1) {
+        const question: any = await this.questQnaRepository.findQuestionById(questQuestionOptionsDTO.question.question_id);
+        if(question.answer_type === AnswerType.SINGLE && questQuestionOptionsDTO.question.selected_options.length > 1) {
             throw new HttpException(400, "invalid options selected");
         }
-        const answers: Answer[] = await this.questQnaRepository.findAllAnswersForQuestion(questQuestionOptionsDTO.question.question_id);
         if (questQuestionOptionsDTO.question.selected_options.length === 0) {
-            throw new HttpException(400, "invalid options selected");
+            const questQNAParticipantAnswer = await this.questQnaRepository.createQuestQNAParticipantAnswer(questQNA.id, user.id, null, null);
+            return {
+                statusCode: 200,
+                message: "answer skipped",
+                data: questQNAParticipantAnswer
+            }
         }
-        const options = answers.map(a => a.optionId);
+        const options: string[] = question.answer.map((a: any) => a.optionId);
         const is_answer_correct = options.every(value => questQuestionOptionsDTO.question.selected_options.includes(value))
+        const questQNAParticipantAnswer = await this.questQnaRepository.createQuestQNAParticipantAnswer(questQNA.id, user.id, questQuestionOptionsDTO.question.selected_options, is_answer_correct ? QuestionStatus.CORRECT : QuestionStatus.INCORRECT);
         return {
             statusCode: 200,
-            data: "",
+            data: questQNAParticipantAnswer,
             message: "answer checked"
         }
 

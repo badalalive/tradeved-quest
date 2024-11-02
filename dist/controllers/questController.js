@@ -118,7 +118,7 @@ let QuestController = class QuestController {
         });
         this.checkAnswerByQuestionId = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const questId = req.params.id;
+                const questId = req.params.questId;
                 if (!questId) {
                     next(new httpException_1.HttpException(400, "invalid params"));
                 }
@@ -129,7 +129,7 @@ let QuestController = class QuestController {
                     const errorMessages = (0, utilities_1.extractErrorMessages)(validationErrors);
                     return next(new httpException_1.HttpException(400, errorMessages));
                 }
-                const { data, message, statusCode } = yield this.questService.findAnswerByQuestionId(questId, questQuestionOptionsDTO);
+                const { data, message, statusCode } = yield this.questService.findAnswerByQuestionId(req.user, questId, questQuestionOptionsDTO);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {

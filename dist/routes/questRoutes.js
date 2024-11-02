@@ -19,7 +19,7 @@ questRoutes.get("/get/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)(
 questRoutes.post("/vote/:id/:optionId", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.USER]), questController.voteQuest);
 questRoutes.get("/voting-article/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.USER]), questController.findVoteQuestById);
 questRoutes.get("/qna/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.USER]), questController.findQnaQuestById);
-questRoutes.get("/qna/check-answer/:questId", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.USER]), questController.checkAnswerByQuestionId);
+questRoutes.post("/qna/check-answer/:questId", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.USER]), questController.checkAnswerByQuestionId);
 questRoutes.post("/qna/submit", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.USER]), questController.submitQuestionAnswer);
 // admin api
 questRoutes.put("/update-status/:id", (0, authMiddleWare_1.verifyTokenAndRolesMiddleware)([userRole_1.UserRole.SUPER_ADMIN]), questController.updateQuestStatus);

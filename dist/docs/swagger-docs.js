@@ -1426,6 +1426,81 @@
  */
 /**
  * @swagger
+ * /quest/qna/check-answer:
+ *   post:
+ *     summary: Check answers for questions in a quest
+ *     description: Validates selected options for each question in a quest based on the provided question IDs and selected options.
+ *     tags:
+ *       - Quest
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               question:
+ *                 type: object
+ *                 properties:
+ *                   question_id:
+ *                     type: string
+ *                     description: ID of the question
+ *                     example: "question123"
+ *                   selected_options:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     description: Array of selected option IDs
+ *                     example: ["option1", "option2"]
+ *     responses:
+ *       200:
+ *         description: Answer validation results
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 correct:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "All answers are correct"
+ *       400:
+ *         description: Bad Request - Validation Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid request data"
+ *       404:
+ *         description: Quest or Question not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Quest or question not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Internal server error"
+ */
+/**
+ * @swagger
  * /quest/update/{id}:
  *   put:
  *     summary: Update a quest by ID

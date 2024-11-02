@@ -7,9 +7,10 @@ import {
     AnswerType,
     Option,
     Answer,
-    QuestionStatus
+    QuestionStatus, QuestQNAParticipantAnswer
 } from "@prisma/client";
 import {QuestQNAQuestionDTO} from "../dto/createQuestQNADTO";
+import {arrayToString} from "../utils/utilities";
 
 @injectable()
 export class QuestQnaRepository {
@@ -195,6 +196,19 @@ export class QuestQnaRepository {
         return newOption;
     }
 
+    async createQuestQNAParticipantAnswer(questQnaId: string, participantId: string, selectedOptions: string[] | null, questionStatus: QuestionStatus | null): Promise<QuestQNAParticipantAnswer> {
+        await this.prismaClient.$connect();
+        const questQNAParticipantAnswer = await this.prismaClient.questQNAParticipantAnswer.create({
+            data: {
+                questQna_id: questQnaId,
+                participantId,
+                selected_options: selectedOptions ? arrayToString(selectedOptions) : "",
+                question_status: questionStatus || QuestionStatus.UNATTEMPTED,
+            },
+        });
+        await this.prismaClient.$disconnect();
+        return questQNAParticipantAnswer;
+    }
     async createAnswerToQuestion(questionId: string, optionId: string): Promise<Answer> {
         await this.prismaClient.$connect();
 

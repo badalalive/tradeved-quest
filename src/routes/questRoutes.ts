@@ -20,7 +20,7 @@ questRoutes.get("/get/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATO
 questRoutes.post("/vote/:id/:optionId", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.voteQuest)
 questRoutes.get("/voting-article/:id", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.findVoteQuestById)
 questRoutes.get("/qna/:id", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.findQnaQuestById)
-questRoutes.get("/qna/check-answer/:questId", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.checkAnswerByQuestionId)
+questRoutes.post("/qna/check-answer/:questId", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.checkAnswerByQuestionId)
 questRoutes.post("/qna/submit", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.submitQuestionAnswer)
 // admin api
 questRoutes.put("/update-status/:id", verifyTokenAndRolesMiddleware([UserRole.SUPER_ADMIN]), questController.updateQuestStatus);

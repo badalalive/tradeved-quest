@@ -102,7 +102,7 @@ export class QuestController {
 
     checkAnswerByQuestionId = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
-            const questId =  req.params.id;
+            const questId =  req.params.questId;
             if(!questId) {
                 next(new HttpException(400, "invalid params"))
             }
@@ -114,7 +114,7 @@ export class QuestController {
                 const errorMessages = extractErrorMessages(validationErrors);
                 return next(new HttpException(400, errorMessages));
             }
-            const {data, message, statusCode} = await this.questService.findAnswerByQuestionId(questId, questQuestionOptionsDTO);
+            const {data, message, statusCode} = await this.questService.findAnswerByQuestionId(req.user, questId, questQuestionOptionsDTO);
             res.status(statusCode).send({data, message});
         } catch (error: any) {
             next(error)

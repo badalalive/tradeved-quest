@@ -24,6 +24,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestQnaRepository = void 0;
 const tsyringe_1 = require("tsyringe");
 const client_1 = require("@prisma/client");
+const utilities_1 = require("../utils/utilities");
 let QuestQnaRepository = class QuestQnaRepository {
     constructor(prismaClient) {
         this.prismaClient = prismaClient;
@@ -186,6 +187,21 @@ let QuestQnaRepository = class QuestQnaRepository {
             });
             yield this.prismaClient.$disconnect();
             return newOption;
+        });
+    }
+    createQuestQNAParticipantAnswer(questQnaId, participantId, selectedOptions, questionStatus) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.prismaClient.$connect();
+            const questQNAParticipantAnswer = yield this.prismaClient.questQNAParticipantAnswer.create({
+                data: {
+                    questQna_id: questQnaId,
+                    participantId,
+                    selected_options: selectedOptions ? (0, utilities_1.arrayToString)(selectedOptions) : "",
+                    question_status: questionStatus || client_1.QuestionStatus.UNATTEMPTED,
+                },
+            });
+            yield this.prismaClient.$disconnect();
+            return questQNAParticipantAnswer;
         });
     }
     createAnswerToQuestion(questionId, optionId) {
