@@ -168,7 +168,6 @@ export class QuestRepository {
                             question: {
                                 connect: { id: question.id }, // Link to the created question
                             },
-                            question_status: QuestionStatus.UNATTEMPTED,
                         },
                     });
                 }));

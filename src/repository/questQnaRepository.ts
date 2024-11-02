@@ -238,9 +238,10 @@ export class QuestQnaRepository {
     async findAllAnswersForQuestion(questionId: string): Promise<Answer[]> {
         await this.prismaClient.$connect();
 
-        const answers = await this.prismaClient.answer.findMany({
+        const answers: Answer[] = await this.prismaClient.answer.findMany({
             where: { questionId },
             include: {
+                question: true,
                 option: true, // Include related options
             },
         });

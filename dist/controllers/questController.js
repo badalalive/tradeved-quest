@@ -34,6 +34,7 @@ const moment_1 = __importDefault(require("moment"));
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 const utilities_1 = require("../utils/utilities");
+const questQuestionOptionDTO_1 = require("../dto/questQuestionOptionDTO");
 let QuestController = class QuestController {
     constructor(questService) {
         this.questService = questService;
@@ -89,34 +90,63 @@ let QuestController = class QuestController {
                 next(error);
             }
         });
-        this.getVoteQuestById = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.findVoteQuestById = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const questId = req.params.id;
                 if (!questId) {
                     next(new httpException_1.HttpException(400, "invalid params"));
                 }
-                const { data, message, statusCode } = yield this.questService.getQuestVoteById(questId);
+                const { data, message, statusCode } = yield this.questService.findQuestVoteById(questId);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
             }
         });
-        this.getQnaQuestById = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.findQnaQuestById = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const questId = req.params.id;
                 if (!questId) {
                     next(new httpException_1.HttpException(400, "invalid params"));
                 }
-                const { data, message, statusCode } = yield this.questService.getQnaQuestById(questId);
+                const { data, message, statusCode } = yield this.questService.findQnaQuestById(questId);
                 res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);
             }
         });
-        this.validateQuestion = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+        this.checkAnswerByQuestionId = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
+                const questId = req.params.id;
+                if (!questId) {
+                    next(new httpException_1.HttpException(400, "invalid params"));
+                }
+                const questQuestionOptionsDTO = (0, class_transformer_1.plainToInstance)(questQuestionOptionDTO_1.QuestQuestionsWithSelectedOptionsDTO, req.body);
+                const validationErrors = yield (0, class_validator_1.validate)(questQuestionOptionsDTO);
+                if (validationErrors.length > 0) {
+                    // Extract error messages for all fields
+                    const errorMessages = (0, utilities_1.extractErrorMessages)(validationErrors);
+                    return next(new httpException_1.HttpException(400, errorMessages));
+                }
+                const { data, message, statusCode } = yield this.questService.findAnswerByQuestionId(questId, questQuestionOptionsDTO);
+                res.status(statusCode).send({ data, message });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+        this.submitQuestionAnswer = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const questQuestionOptionsDTO = (0, class_transformer_1.plainToInstance)(questQuestionOptionDTO_1.QuestQuestionsWithSelectedOptionsDTO, req.body);
+                const validationErrors = yield (0, class_validator_1.validate)(questQuestionOptionsDTO);
+                if (validationErrors.length > 0) {
+                    // Extract error messages for all fields
+                    const errorMessages = (0, utilities_1.extractErrorMessages)(validationErrors);
+                    return next(new httpException_1.HttpException(400, errorMessages));
+                }
+                const { data, message, statusCode } = yield this.questService.submitQuestionAnswer(questQuestionOptionsDTO);
+                res.status(statusCode).send({ data, message });
             }
             catch (error) {
                 next(error);

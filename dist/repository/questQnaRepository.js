@@ -231,6 +231,7 @@ let QuestQnaRepository = class QuestQnaRepository {
             const answers = yield this.prismaClient.answer.findMany({
                 where: { questionId },
                 include: {
+                    question: true,
                     option: true, // Include related options
                 },
             });

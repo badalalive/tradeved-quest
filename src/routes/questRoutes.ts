@@ -18,9 +18,10 @@ questRoutes.put("/update/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CRE
 questRoutes.get("/get/:id", verifyTokenAndRolesMiddleware([UserRole.SPACE_CREATOR]), questController.findQuest);
 // quest VOTE Template user api's
 questRoutes.post("/vote/:id/:optionId", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.voteQuest)
-questRoutes.get("/voting-article/:id", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.getVoteQuestById)
-questRoutes.get("/qna/:id", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.getQnaQuestById)
-questRoutes.post("/qna", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.validateQuestion)
+questRoutes.get("/voting-article/:id", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.findVoteQuestById)
+questRoutes.get("/qna/:id", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.findQnaQuestById)
+questRoutes.get("/qna/check-answer/:questId", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.checkAnswerByQuestionId)
+questRoutes.post("/qna/submit", verifyTokenAndRolesMiddleware([UserRole.USER]), questController.submitQuestionAnswer)
 // admin api
 questRoutes.put("/update-status/:id", verifyTokenAndRolesMiddleware([UserRole.SUPER_ADMIN]), questController.updateQuestStatus);
 questRoutes.post("/approval-status/:id", verifyTokenAndRolesMiddleware([UserRole.SUPER_ADMIN]), questController.submitQuestForApproval);

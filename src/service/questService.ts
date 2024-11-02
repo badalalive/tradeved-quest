@@ -10,7 +10,7 @@ import {
     SpaceStatus,
     QuestViewStatus,
     QuestTemplate,
-    QuestCompletionStatus
+    QuestCompletionStatus, Answer, AnswerType
 } from "@prisma/client";
 import { RequestWithTokenData } from "../interfaces/auth.interface";
 import { stringToArray } from "../utils/utilities";
@@ -21,6 +21,7 @@ import {QuestParticipantsRepository} from "../repository/questParticipantsReposi
 import {QuestVoteRepository} from "../repository/questVoteRepository";
 import {QuestQnaRepository} from "../repository/questQnaRepository";
 import {transformToQuestQnADetails, transformToQuestVoteDetails} from "../interfaces/quest.interface";
+import {QuestQuestionsWithSelectedOptionsDTO} from "../dto/questQuestionOptionDTO";
 
 
 @injectable()
@@ -108,7 +109,7 @@ export class QuestService {
         }
     }
 
-    getQuestVoteById = async (questId: string) => {
+    findQuestVoteById = async (questId: string) => {
         const quest: any = await this.questRepository.findQuestById(questId);
         if(!quest.questVote) {
             throw new HttpException(404, "quest voting article not found")
@@ -120,7 +121,7 @@ export class QuestService {
         };
     }
 
-    getQnaQuestById = async (questId: string) => {
+    findQnaQuestById = async (questId: string) => {
         const data: any = await this.questQnaRepository.findQuestQNAByQuestId(questId);
         const questQna = await transformToQuestQnADetails(data);
         return {
@@ -129,6 +130,34 @@ export class QuestService {
             data: questQna
         }
     }
+
+    findAnswerByQuestionId = async (questId: string, questQuestionOptionsDTO: QuestQuestionsWithSelectedOptionsDTO) => {
+        const questQNA: any = await this.questQnaRepository.findQuestQNAByQuestId(questId);
+        if(questQNA.questQNAQuestion.question.answer_type === AnswerType.SINGLE && questQuestionOptionsDTO.question.selected_options.length > 1) {
+            throw new HttpException(400, "invalid options selected");
+        }
+        const answers: Answer[] = await this.questQnaRepository.findAllAnswersForQuestion(questQuestionOptionsDTO.question.question_id);
+        if (questQuestionOptionsDTO.question.selected_options.length === 0) {
+            throw new HttpException(400, "invalid options selected");
+        }
+        const options = answers.map(a => a.optionId);
+        const is_answer_correct = options.every(value => questQuestionOptionsDTO.question.selected_options.includes(value))
+        return {
+            statusCode: 200,
+            data: "",
+            message: "answer checked"
+        }
+
+    }
+
+    submitQuestionAnswer = async (questQuestionOptionsDTO: QuestQuestionsWithSelectedOptionsDTO) => {
+        return {
+            statusCode: 200,
+            message: "Quest Qna Submitted",
+            data: ""
+        }
+    }
+
     // Update a quest by ID
     updateQuest = async (questId: string, updateQuestDTO: UpdateQuestDTO) => {
         const quest = await this.questRepository.findQuestById(questId);

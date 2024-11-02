@@ -78,7 +78,6 @@ export async function transformToQuestQnADetails(data: any): Promise<QuestQnADet
         },
         questions: await Promise.all(data.questQNAQuestion.map((questionData: any) => ({
             id: questionData.question.id,
-            status: questionData.question_status,
             questionText: questionData.question.question,
             description: questionData.question.description,
             answerType: questionData.question.answer_type,

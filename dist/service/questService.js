@@ -101,7 +101,7 @@ let QuestService = class QuestService {
                 };
             }
         });
-        this.getQuestVoteById = (questId) => __awaiter(this, void 0, void 0, function* () {
+        this.findQuestVoteById = (questId) => __awaiter(this, void 0, void 0, function* () {
             const quest = yield this.questRepository.findQuestById(questId);
             if (!quest.questVote) {
                 throw new httpException_1.HttpException(404, "quest voting article not found");
@@ -112,13 +112,37 @@ let QuestService = class QuestService {
                 data: yield (0, quest_interface_1.transformToQuestVoteDetails)(quest.questVote),
             };
         });
-        this.getQnaQuestById = (questId) => __awaiter(this, void 0, void 0, function* () {
+        this.findQnaQuestById = (questId) => __awaiter(this, void 0, void 0, function* () {
             const data = yield this.questQnaRepository.findQuestQNAByQuestId(questId);
             const questQna = yield (0, quest_interface_1.transformToQuestQnADetails)(data);
             return {
                 statusCode: 200,
                 message: "Quest Qna Details",
                 data: questQna
+            };
+        });
+        this.findAnswerByQuestionId = (questId, questQuestionOptionsDTO) => __awaiter(this, void 0, void 0, function* () {
+            const questQNA = yield this.questQnaRepository.findQuestQNAByQuestId(questId);
+            if (questQNA.questQNAQuestion.question.answer_type === client_1.AnswerType.SINGLE && questQuestionOptionsDTO.question.selected_options.length > 1) {
+                throw new httpException_1.HttpException(400, "invalid options selected");
+            }
+            const answers = yield this.questQnaRepository.findAllAnswersForQuestion(questQuestionOptionsDTO.question.question_id);
+            if (questQuestionOptionsDTO.question.selected_options.length === 0) {
+                throw new httpException_1.HttpException(400, "invalid options selected");
+            }
+            const options = answers.map(a => a.optionId);
+            const is_answer_correct = options.every(value => questQuestionOptionsDTO.question.selected_options.includes(value));
+            return {
+                statusCode: 200,
+                data: "",
+                message: "answer checked"
+            };
+        });
+        this.submitQuestionAnswer = (questQuestionOptionsDTO) => __awaiter(this, void 0, void 0, function* () {
+            return {
+                statusCode: 200,
+                message: "Quest Qna Submitted",
+                data: ""
             };
         });
         // Update a quest by ID

@@ -179,7 +179,6 @@ let QuestRepository = class QuestRepository {
                                 question: {
                                     connect: { id: question.id }, // Link to the created question
                                 },
-                                question_status: client_1.QuestionStatus.UNATTEMPTED,
                             },
                         });
                     })));

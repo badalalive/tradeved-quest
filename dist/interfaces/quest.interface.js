@@ -34,7 +34,6 @@ function transformToQuestQnADetails(data) {
             },
             questions: yield Promise.all(data.questQNAQuestion.map((questionData) => ({
                 id: questionData.question.id,
-                status: questionData.question_status,
                 questionText: questionData.question.question,
                 description: questionData.question.description,
                 answerType: questionData.question.answer_type,

@@ -11,6 +11,7 @@ import {plainToInstance} from "class-transformer";
 import {CreateSpaceDto} from "../dto/spaceDTO";
 import {validate} from "class-validator";
 import {extractErrorMessages} from "../utils/utilities";
+import {QuestionOptionDTO, QuestQuestionsWithSelectedOptionsDTO} from "../dto/questQuestionOptionDTO";
 
 @injectable()
 export class QuestController {
@@ -73,39 +74,69 @@ export class QuestController {
         }
     }
 
-    getVoteQuestById = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    findVoteQuestById = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
             const questId =  req.params.id;
             if(!questId) {
                 next(new HttpException(400, "invalid params"))
             }
-            const {data, message, statusCode} = await this.questService.getQuestVoteById(questId);
+            const {data, message, statusCode} = await this.questService.findQuestVoteById(questId);
             res.status(statusCode).send({data, message});
         } catch (error: any) {
             next(error)
         }
     }
 
-    getQnaQuestById = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    findQnaQuestById = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
             const questId =  req.params.id;
             if(!questId) {
                 next(new HttpException(400, "invalid params"))
             }
-            const {data, message, statusCode} = await this.questService.getQnaQuestById(questId);
+            const {data, message, statusCode} = await this.questService.findQnaQuestById(questId);
             res.status(statusCode).send({data, message});
         } catch (error: any) {
             next(error)
         }
     }
 
-    validateQuestion = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    checkAnswerByQuestionId = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
-            
+            const questId =  req.params.id;
+            if(!questId) {
+                next(new HttpException(400, "invalid params"))
+            }
+            const questQuestionOptionsDTO: any = plainToInstance(QuestQuestionsWithSelectedOptionsDTO, req.body);
+            const validationErrors = await validate(questQuestionOptionsDTO);
+
+            if (validationErrors.length > 0) {
+                // Extract error messages for all fields
+                const errorMessages = extractErrorMessages(validationErrors);
+                return next(new HttpException(400, errorMessages));
+            }
+            const {data, message, statusCode} = await this.questService.findAnswerByQuestionId(questId, questQuestionOptionsDTO);
+            res.status(statusCode).send({data, message});
+        } catch (error: any) {
+            next(error)
+        }
+    }
+    submitQuestionAnswer = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+        try {
+            const questQuestionOptionsDTO: any = plainToInstance(QuestQuestionsWithSelectedOptionsDTO, req.body);
+            const validationErrors = await validate(questQuestionOptionsDTO);
+
+            if (validationErrors.length > 0) {
+                // Extract error messages for all fields
+                const errorMessages = extractErrorMessages(validationErrors);
+                return next(new HttpException(400, errorMessages));
+            }
+            const {data, message, statusCode} = await this.questService.submitQuestionAnswer(questQuestionOptionsDTO);
+            res.status(statusCode).send({data, message});
         } catch(error: any) {
             next(error)
         }
     }
+
     // Update a quest by ID
     updateQuest = async (req: RequestWithUserSpace, res: Response, next: NextFunction) => {
         try {
