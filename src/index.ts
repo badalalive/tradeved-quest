@@ -34,6 +34,7 @@ app.use(
     }),
 );
 app.use("/", rootRouter);
+app.use('/uploads', express.static('uploads'));
 
 // cron jobs
 spaceCredentialEmailTask.start()
